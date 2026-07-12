@@ -68,7 +68,7 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label class="form-label"> First Branch Account </label>
-                                <select style="width: 100%" class="select2_demo_3 form-control" name="FirstRoot_id">
+                                <select style="width: 100%"  name="FirstRoot_id" data-searchable data-placeholder="Search ...">
                                     <option></option>
                                     @foreach($accountfirst as $item)
                                     <option value="{{$item->id}}"> {{$item->FirstAccountCode}} - {{$item->FirstAccountName}} </option>

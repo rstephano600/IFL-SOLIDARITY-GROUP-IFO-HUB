@@ -40,13 +40,21 @@ use App\Http\Controllers\Loan\LoanCategoryController;
 use App\Http\Controllers\Loan\LoanPaymentController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\CostCentreController;
+use App\Http\Controllers\MemberController;
 use App\Http\Controllers\Loan\LoanDashboardController;
 use App\Http\Controllers\Loan\ClientLoanController;
 use App\Http\Controllers\Loan\DailyCollectionController;
 
+use App\Http\Controllers\MemberDashboardController;
+
 
 Route::get('/login', [AuthenticationController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthenticationController::class, 'login'])->name('login.submit');
+Route::get('/showregisterForm', [AuthenticationController::class, 'showregisterForm'])->name('showregisterForm');
+Route::post('/storeregisterdata', [AuthenticationController::class, 'storeregisterdata'])->name('storeregisterdata');
 
 Route::get('/home', [AuthenticationController::class, 'home'])->name('home');
 Route::post('/settings', [AuthenticationController::class, 'settings'])->name('settings');
@@ -56,9 +64,101 @@ Route::middleware('auth')->post('/session/ping', function () {
     session(['last_activity_time' => time()]);
     return response()->json(['status' => 'ok']);
 });
+//MEMBER INFORMATIONS ROUTES
+Route::middleware(['auth'])->group(function () {
+    Route::get('/memberdashboard', [MemberDashboardController::class, 'memberdashboard'])->name('memberdashboard');
+});
+Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
+    Route::get('/profile', [MemberDashboardController::class, 'profile'])->name('profile');
+    Route::put('/profile', [MemberDashboardController::class, 'updateProfile'])->name('profile.update');
+
+    Route::get('/settings', [MemberDashboardController::class, 'settings'])->name('settings');
+    Route::put('/settings/password', [MemberDashboardController::class, 'updatePassword'])->name('settings.password');
+
+    // Route::get('/notifications', [MemberDashboardController::class, 'notifications'])->name('notifications');
+    // Route::patch('/notifications/{id}/read', [MemberDashboardController::class, 'markNotificationRead'])->name('notifications.read');
+});
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+
+    // COMPANY INFORMATIONS
+    Route::get('/companiesinformations', [CompanyController::class, 'companiesinformations'])->name('companiesinformations');
+    Route::post('/storecompaniesinformations', [CompanyController::class, 'storecompaniesinformations'])->name('storecompaniesinformations');
+    Route::get('/viewcompaniesinformations/{id}', [CompanyController::class, 'viewcompaniesinformations'])->name('viewcompaniesinformations');
+    Route::get('/editcompaniesinformations/{id}', [CompanyController::class, 'editcompaniesinformations'])->name('editcompaniesinformations');
+    Route::put('/updatecompaniesinformations/{id}', [CompanyController::class, 'updatecompaniesinformations'])->name('updatecompaniesinformations');
+    Route::get('/deletecompaniesinformations/{id}', [CompanyController::class, 'deletecompaniesinformations'])->name('deletecompaniesinformations');
+    Route::get('/companiesRestore', [CompanyController::class, 'companiesRestore'])->name('companiesRestore');
+    Route::get('/companiesReport', [CompanyController::class, 'companiesReport'])->name('companiesReport');
+
+    // COMPANY BRANCHIES
+    Route::get('/branchiesinformations', [CompanyController::class, 'branchiesinformations'])->name('branchiesinformations');
+    Route::get('/branchiesinformationsreport', [CompanyController::class, 'branchiesinformationsreport'])->name('branchiesinformationsreport');
+    Route::post('/storebranchiesinformations', [CompanyController::class, 'storebranchiesinformations'])->name('storebranchiesinformations');
+    Route::get('/viewbranchiesinformations/{id}', [CompanyController::class, 'viewbranchiesinformations'])->name('viewbranchiesinformations');
+    Route::get('/editbranchiesinformations/{id}', [CompanyController::class, 'editbranchiesinformations'])->name('editbranchiesinformations');
+    Route::put('/updatebranchiesinformations/{id}', [CompanyController::class, 'updatebranchiesinformations'])->name('updatebranchiesinformations');
+    Route::get('/deletedbranchiesinformations', [CompanyController::class, 'deletedbranchiesinformations'])->name('deletedbranchiesinformations');
+    Route::get('/deletebranchiesinformations/{id}', [CompanyController::class, 'deletebranchiesinformations'])->name('deletebranchiesinformations');
+    Route::get('/restorebranchiesinformations/{id}', [CompanyController::class, 'restorebranchiesinformations'])->name('restorebranchiesinformations');
+
+    // DEPARTMENT INFORMATIONS
+    Route::get('/departmentinformations', [DepartmentController::class, 'departmentinformations'])->name('departmentinformations');
+    Route::get('/departmentinformationsreport', [DepartmentController::class, 'departmentinformationsreport'])->name('departmentinformationsreport');
+    Route::post('/storedepartmentinformations', [DepartmentController::class, 'storedepartmentinformations'])->name('storedepartmentinformations');
+    Route::get('/viewdepartmentinformations/{id}', [DepartmentController::class, 'viewdepartmentinformations'])->name('viewdepartmentinformations');
+    Route::get('/editdepartmentinformations/{id}', [DepartmentController::class, 'editdepartmentinformations'])->name('editdepartmentinformations');
+    Route::put('/updatedepartmentinformations/{id}', [DepartmentController::class, 'updatedepartmentinformations'])->name('updatedepartmentinformations');
+    Route::get('/deleteddepartmentinformations', [DepartmentController::class, 'deleteddepartmentinformations'])->name('deleteddepartmentinformations');
+    Route::get('/deletedepartmentinformations/{id}', [DepartmentController::class, 'deletedepartmentinformations'])->name('deletedepartmentinformations');
+    Route::get('/restoredepartmentinformations/{id}', [DepartmentController::class, 'restoredepartmentinformations'])->name('restoredepartmentinformations');
+
+    // COST CENTERS INFORMATIONS
+    Route::get('/costcentreinformations', [CostCentreController::class, 'costcentreinformations'])->name('costcentreinformations');
+    Route::get('/costcentreinformationsreport', [CostCentreController::class, 'costcentreinformationsreport'])->name('costcentreinformationsreport');
+    Route::post('/storecostcentreinformations', [CostCentreController::class, 'storecostcentreinformations'])->name('storecostcentreinformations');
+    Route::get('/viewcostcentreinformations/{id}', [CostCentreController::class, 'viewcostcentreinformations'])->name('viewcostcentreinformations');
+    Route::get('/editcostcentreinformations/{id}', [CostCentreController::class, 'editcostcentreinformations'])->name('editcostcentreinformations');
+    Route::put('/updatecostcentreinformations/{id}', [CostCentreController::class, 'updatecostcentreinformations'])->name('updatecostcentreinformations');
+    Route::get('/deletedcostcentreinformations', [CostCentreController::class, 'deletedcostcentreinformations'])->name('deletedcostcentreinformations');
+    Route::get('/deletecostcentreinformations/{id}', [CostCentreController::class, 'deletecostcentreinformations'])->name('deletecostcentreinformations');
+    Route::get('/restorecostcentreinformations/{id}', [CostCentreController::class, 'restorecostcentreinformations'])->name('restorecostcentreinformations');
+
+    // COMPANY BUSINESS CODES INFORMATIONS
+    Route::get('/companybusinesscodeinformations', [CompanyController::class, 'companybusinesscodeinformations'])->name('companybusinesscodeinformations');
+    Route::get('/companybusinesscodeinformationsreport', [CompanyController::class, 'companybusinesscodeinformationsreport'])->name('companybusinesscodeinformationsreport');
+    Route::post('/storecompanybusinesscodeinformations', [CompanyController::class, 'storecompanybusinesscodeinformations'])->name('storecompanybusinesscodeinformations');
+    Route::get('/viewcompanybusinesscodeinformations/{id}', [CompanyController::class, 'viewcompanybusinesscodeinformations'])->name('viewcompanybusinesscodeinformations');
+    Route::get('/editcompanybusinesscodeinformations/{id}', [CompanyController::class, 'editcompanybusinesscodeinformations'])->name('editcompanybusinesscodeinformations');
+    Route::put('/updatecompanybusinesscodeinformations/{id}', [CompanyController::class, 'updatecompanybusinesscodeinformations'])->name('updatecompanybusinesscodeinformations');
+    Route::get('/deletedcompanybusinesscodeinformations', [CompanyController::class, 'deletedcompanybusinesscodeinformations'])->name('deletedcompanybusinesscodeinformations');
+    Route::get('/deletecompanybusinesscodeinformations/{id}', [CompanyController::class, 'deletecompanybusinesscodeinformations'])->name('deletecompanybusinesscodeinformations');
+    Route::get('/restorecompanybusinesscodeinformations/{id}', [CompanyController::class, 'restorecompanybusinesscodeinformations'])->name('restorecompanybusinesscodeinformations');
+
+    // MEMBERS CATEGORIES INFORMATIONS
+    Route::get('/membercategoryinformations', [MemberController::class, 'membercategoryinformations'])->name('membercategoryinformations');
+    Route::get('/membercategoryinformationsreport', [MemberController::class, 'membercategoryinformationsreport'])->name('membercategoryinformationsreport');
+    Route::post('/storemembercategoryinformations', [MemberController::class, 'storemembercategoryinformations'])->name('storemembercategoryinformations');
+    Route::get('/viewmembercategoryinformations/{id}', [MemberController::class, 'viewmembercategoryinformations'])->name('viewmembercategoryinformations');
+    Route::get('/editmembercategoryinformations/{id}', [MemberController::class, 'editmembercategoryinformations'])->name('editmembercategoryinformations');
+    Route::put('/updatemembercategoryinformations/{id}', [MemberController::class, 'updatemembercategoryinformations'])->name('updatemembercategoryinformations');
+    Route::get('/deletedmembercategoryinformations', [MemberController::class, 'deletedmembercategoryinformations'])->name('deletedmembercategoryinformations');
+    Route::get('/deletemembercategoryinformations/{id}', [MemberController::class, 'deletemembercategoryinformations'])->name('deletemembercategoryinformations');
+    Route::get('/restoremembercategoryinformations/{id}', [MemberController::class, 'restoremembercategoryinformations'])->name('restoremembercategoryinformations');
+
+    // MEMBERS INFORMATIONS
+    Route::get('/memberinformations', [MemberController::class, 'memberinformations'])->name('memberinformations');
+    Route::get('/memberinformationsreport', [MemberController::class, 'memberinformationsreport'])->name('memberinformationsreport');
+    Route::post('/storememberinformations', [MemberController::class, 'storememberinformations'])->name('storememberinformations');
+    Route::post('/storememberinformationsexist', [MemberController::class, 'storememberinformationsexist'])->name('storememberinformationsexist');
+    Route::get('/viewmemberinformations/{id}', [MemberController::class, 'viewmemberinformations'])->name('viewmemberinformations');
+    Route::get('/editmemberinformations/{id}', [MemberController::class, 'editmemberinformations'])->name('editmemberinformations');
+    Route::put('/updatememberinformations/{id}', [MemberController::class, 'updatememberinformations'])->name('updatememberinformations');
+    Route::get('/deletedmemberinformations', [MemberController::class, 'deletedmemberinformations'])->name('deletedmemberinformations');
+    Route::get('/deletememberinformations/{id}', [MemberController::class, 'deletememberinformations'])->name('deletememberinformations');
+    Route::get('/restorememberinformations/{id}', [MemberController::class, 'restorememberinformations'])->name('restorememberinformations');
+
 
     // NEW IMPROVED CODES
     Route::get('/systemUsers', [UserController::class, 'systemUsers'])->name('systemUsers');

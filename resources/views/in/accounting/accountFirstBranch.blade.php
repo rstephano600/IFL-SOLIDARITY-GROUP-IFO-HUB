@@ -69,7 +69,7 @@
 
                         <div class="col-md-4">
                             <label class="form-label"> Account Root </label>
-                                <select style="width: 100%" class="select2_demo_3 form-control" name="AccountRoot_id">
+                                <select style="width: 100%" name="AccountRoot_id" data-searchable data-placeholder="Search ...">
                                     <option></option>
                                     @foreach($accountroot as $item)
                                     <option value="{{$item->id}}"> {{$item->AccountCode}} - {{$item->AccountName}} </option>
@@ -100,7 +100,6 @@
         </div>
     </div>
 </div>
-
 @endsection
 
 

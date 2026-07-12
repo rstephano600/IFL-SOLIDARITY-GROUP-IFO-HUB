@@ -130,9 +130,13 @@
                 </button>
             </form>
 
-            <p class="text-center text-muted small mt-4">
+            <!-- <p class="text-center text-muted small mt-4">
                 Having trouble? Contact your
                 <a href="#" class="text-ifl-navy text-decoration-none">system administrator</a>
+            </p> -->
+            <p class="text-center text-muted small mt-4">
+                You have no Account ?
+                <a href="{{ route('showregisterForm') }}" class="text-ifl-navy text-decoration-none">Register here</a>
             </p>
 
         </div>

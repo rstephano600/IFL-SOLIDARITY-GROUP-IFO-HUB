@@ -72,4 +72,39 @@ class Company extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class, 'company_id');
+    }
+
+    // Departments
+    public function departments()
+    {
+        return $this->hasMany(Department::class, 'company_id');
+    }
+
+    // Cost Centres
+    public function costCentres()
+    {
+        return $this->hasMany(CostCentre::class, 'company_id');
+    }
+
+    // Business Codes
+    public function businessCodes()
+    {
+        return $this->hasMany(CompanyBusinessCode::class, 'company_id');
+    }
+
+    // Member Categories
+    public function memberCategories()
+    {
+        return $this->hasMany(MemberCategory::class, 'company_id');
+    }
+
+    // Members
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'company_id');
+    }
 }

@@ -16,18 +16,23 @@ class User extends Authenticatable
      * ROLE DEFINITIONS
      * ===========================================
      */
-    public const ROLE_ADMIN           = 'admin';
-    public const ROLE_DIRECTOR        = 'director';
-    public const ROLE_CEO             = 'ceo';
-    public const ROLE_SHAREHOLDERS    = 'shareholders';
-    public const ROLE_MANAGER         = 'manager';
-    public const ROLE_MARKETING_OFFICER = 'marketingofficer';
-    public const ROLE_HR              = 'hr';
-    public const ROLE_ACCOUNTANT      = 'accountant';
-    public const ROLE_SECRETARY       = 'secretary';
-    public const ROLE_LOAN_OFFICER    = 'loanofficer';
-    public const ROLE_CLIENT          = 'client';
-    public const ROLE_USER            = 'user';
+    public const ROLE_SUPER_ADMIN     = 'SuperAdmin';
+    public const ROLE_ADMIN           = 'Admin';
+    public const ROLE_CHAIR_PERSON           = 'ChairPerson';
+    public const ROLE_SECRETARY           = 'Secretary';
+    public const ROLE_CASHIER           = 'Cashier';
+    // public const ROLE_DIRECTOR        = 'director';
+    // public const ROLE_CEO             = 'ceo';
+    public const ROLE_SHAREHOLDERS    = 'ShareHolders';
+    public const ROLE_MANAGER         = 'Manager';
+    public const ROLE_MARKETING_OFFICER = 'MarketingOfficer';
+    public const ROLE_HR              = 'Hr';
+    public const ROLE_COUNTER      = 'Counter';
+    public const ROLE_STOREKEEPER       = 'StoreKeeper';
+    public const ROLE_LOAN_OFFICER    = 'Loanofficer';
+    // public const ROLE_CLIENT          = 'client';
+    public const ROLE_MEMBER            = 'Member';
+    public const ROLE_USER            = 'User';
 
     /**
      * Return all available roles.
@@ -35,17 +40,22 @@ class User extends Authenticatable
     public static function getRoles(): array
     {
         return [
+            self::ROLE_SUPER_ADMIN,
             self::ROLE_ADMIN,
-            self::ROLE_DIRECTOR,
-            self::ROLE_CEO,
+            self::ROLE_CHAIR_PERSON,
+            self::ROLE_SECRETARY,
+            self::ROLE_CASHIER,
+            // self::ROLE_DIRECTOR,
+            // self::ROLE_CEO,
             self::ROLE_SHAREHOLDERS,
             self::ROLE_MANAGER,
             self::ROLE_MARKETING_OFFICER,
             self::ROLE_HR,
-            self::ROLE_ACCOUNTANT,
-            self::ROLE_SECRETARY,
+            self::ROLE_COUNTER,
+            self::ROLE_STOREKEEPER,
             self::ROLE_LOAN_OFFICER,
-            self::ROLE_CLIENT,
+            // self::ROLE_CLIENT,
+            self::ROLE_MEMBER,
             self::ROLE_USER,
         ];
     }
@@ -70,6 +80,7 @@ class User extends Authenticatable
         'phone_verified_at',
         'User_id',
         'Dob',
+        'profile_picture',
         'gender',
         'Status',
         'AuditingStatus',
@@ -116,8 +127,6 @@ class User extends Authenticatable
     {
         return in_array($this->role, [
             self::ROLE_ADMIN,
-            self::ROLE_DIRECTOR,
-            self::ROLE_CEO,
         ]);
     }
 
@@ -125,8 +134,6 @@ class User extends Authenticatable
     {
         return in_array($this->role, [
             self::ROLE_MANAGER,
-            self::ROLE_DIRECTOR,
-            self::ROLE_CEO,
         ]);
     }
 
@@ -138,7 +145,6 @@ class User extends Authenticatable
     public function isFinance(): bool
     {
         return in_array($this->role, [
-            self::ROLE_ACCOUNTANT,
             self::ROLE_SHAREHOLDERS,
         ]);
     }
@@ -148,17 +154,12 @@ class User extends Authenticatable
         return $this->role === self::ROLE_LOAN_OFFICER;
     }
 
-    public function isClient(): bool
-    {
-        return $this->role === self::ROLE_CLIENT;
-    }
 
     public function isEmployee(): bool
     {
         return in_array($this->role, [
             self::ROLE_HR,
             self::ROLE_MANAGER,
-            self::ROLE_ACCOUNTANT,
             self::ROLE_MARKETING_OFFICER,
             self::ROLE_SECRETARY,
             self::ROLE_LOAN_OFFICER,
@@ -232,4 +233,9 @@ class User extends Authenticatable
     {
         return in_array($slug, $this->activePermissionSlugs());
     }
+
+    public function member()
+{
+    return $this->hasOne(Member::class, 'member_id');
+}
 }

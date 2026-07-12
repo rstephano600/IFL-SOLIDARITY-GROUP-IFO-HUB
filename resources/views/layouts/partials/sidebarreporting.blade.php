@@ -2,17 +2,7 @@
     @php
         // Get the authenticated user
         $user = Auth::user();
-        
-        // Define simple permission variables using the new methods
-        $canManageAll = $user->isAdmin();
-        $isLoanOfficer = $user->isLoanOfficer();
-        $canManageHisData = $user->isLoanOfficer();
-        $canManageLoans = $user->isAdmin() || $user->isManagement();
-        $canViewClients = $user->isAdmin() || $user->isManagement() || $user->hasRole('marketing_officer');
-        $canManageGroups = $user->isAdmin() || $user->isManagement() || $user->isLoanOfficer() || $user->hasRole('marketing_officer');
-        $canManageFinance = $user->isAdmin() || $user->isManagement() || $user->isFinance();
-        $canManageHR = $user->isAdmin() || $user->isManagement() || $user->isHR();
-        $isClient = $user->isClient();
+    
     @endphp
 
     <div class="d-flex align-items-center justify-content-center gap-2 text-center py-4 border-bottom border-white border-opacity-25">

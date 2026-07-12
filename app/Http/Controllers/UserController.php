@@ -57,7 +57,7 @@ class UserController extends Controller
             $MName = strtoupper(substr($validated['MiddleName'], 0,1));
             $LName = strtoupper(substr($validated['LastName'], 0,1));
             $Name = $FName.$MName.$LName;
-            $username = 'ArBif/'. $Name . '/' . $month. '/00' . $no;
+            $username = 'IFLSG/'. $Name . '/' . $month. '/00' . $no;
 
             $validated['name'] = $name;
             $validated['username'] = $username;
