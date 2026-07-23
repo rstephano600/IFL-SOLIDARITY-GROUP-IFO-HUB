@@ -83,5 +83,47 @@ class Member extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
 
+    public function membershipFeePayments()
+    {
+        return $this->hasMany(MembershipFeePayment::class, 'member_id');
+    }
 
+    public function socialContributions()
+    {
+        return $this->hasMany(SocialContribution::class, 'member_id');
+    }
+
+    public function sharePurchaseTransactions()
+    {
+        return $this->hasMany(
+            SharePurchaseTransaction::class,
+            'member_id'
+        );
+    }
+
+    public function shareCertificates()
+    {
+        return $this->hasMany(
+            ShareCertificate::class,
+            'member_id'
+        );
+    }
+
+
+    public function sharesTransferredOut()
+    {
+        return $this->hasMany(
+            ShareTransfer::class,
+            'from_member_id'
+        );
+    }
+
+
+    public function sharesTransferredIn()
+    {
+        return $this->hasMany(
+            ShareTransfer::class,
+            'to_member_id'
+        );
+    }
 }

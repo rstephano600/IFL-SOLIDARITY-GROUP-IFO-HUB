@@ -41,6 +41,8 @@ use App\Http\Controllers\Loan\LoanPaymentController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\SalaryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ShareController;
+use App\Http\Controllers\MembershipContributionController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CostCentreController;
@@ -180,6 +182,87 @@ Route::middleware('auth')->group(function () {
     Route::get('/deletedproducts', [ProductController::class,'deletedproducts'])->name('deletedproducts');
     Route::get('/productsreport', [ProductController::class,'productsreport'])->name('productsreport');
     Route::get('/restoreproducts', [ProductController::class,'restoreproducts'])->name('restoreproducts');
+
+    // SHARE TYPES ROUTES
+    Route::get('/sharetypes',  [ShareController::class, 'sharetypes'])->name('sharetypes');
+    Route::post('/storesharetypes', [ShareController::class, 'storesharetypes'])->name('storesharetypes');
+    Route::get('/viewsharetypes/{id}', [ShareController::class,'viewsharetypes'])->name('viewsharetypes');
+    Route::get('/editsharetypes/{id}', [ShareController::class,'editsharetypes'])->name('editsharetypes');
+    Route::post('/updatesharetypes/{id}', [ShareController::class,'updatesharetypes'])->name('updatesharetypes');
+    Route::get('/destroysharetypes/{id}', [ShareController::class,'destroysharetypes'])->name('destroysharetypes');
+    Route::get('/deletedsharetypes', [ShareController::class,'deletedsharetypes'])->name('deletedsharetypes');
+    Route::get('/sharetypesreport', [ShareController::class,'sharetypesreport'])->name('sharetypesreport');
+    Route::get('/restoresharetypes', [ShareController::class,'restoresharetypes'])->name('restoresharetypes');
+
+    // SHARE OFERRING ROUTES
+    Route::get('/shareofferings',  [ShareController::class, 'shareofferings'])->name('shareofferings');
+    Route::post('/storeshareofferings', [ShareController::class, 'storeshareofferings'])->name('storeshareofferings');
+    Route::get('/viewshareofferings/{id}', [ShareController::class,'viewshareofferings'])->name('viewshareofferings');
+    Route::get('/editshareofferings/{id}', [ShareController::class,'editshareofferings'])->name('editshareofferings');
+    Route::post('/updateshareofferings/{id}', [ShareController::class,'updateshareofferings'])->name('updateshareofferings');
+    Route::get('/destroyshareofferings/{id}', [ShareController::class,'destroyshareofferings'])->name('destroyshareofferings');
+    Route::get('/deletedshareofferings', [ShareController::class,'deletedshareofferings'])->name('deletedshareofferings');
+    Route::get('/shareofferingsreport', [ShareController::class,'shareofferingsreport'])->name('shareofferingsreport');
+    Route::get('/restoreshareofferings', [ShareController::class,'restoreshareofferings'])->name('restoreshareofferings');
+
+    // SHARE PURCHASES TRANSACTIONS ROUTES
+    Route::get('/sharepurchasetransactions',  [ShareController::class, 'sharepurchasetransactions'])->name('sharepurchasetransactions');
+    Route::post('/storesharepurchasetransactions', [ShareController::class, 'storesharepurchasetransactions'])->name('storesharepurchasetransactions');
+    Route::get('/viewsharepurchasetransactions/{id}', [ShareController::class,'viewsharepurchasetransactions'])->name('viewsharepurchasetransactions');
+    Route::get('/editsharepurchasetransactions/{id}', [ShareController::class,'editsharepurchasetransactions'])->name('editsharepurchasetransactions');
+    Route::post('/updatesharepurchasetransactions/{id}', [ShareController::class,'updatesharepurchasetransactions'])->name('updatesharepurchasetransactions');
+    Route::get('/destroysharepurchasetransactions/{id}', [ShareController::class,'destroysharepurchasetransactions'])->name('destroysharepurchasetransactions');
+    Route::get('/deletedsharepurchasetransactions', [ShareController::class,'deletedsharepurchasetransactions'])->name('deletedsharepurchasetransactions');
+    Route::get('/sharepurchasetransactionsreport', [ShareController::class,'sharepurchasetransactionsreport'])->name('sharepurchasetransactionsreport');
+    Route::get('/restoresharepurchasetransactions', [ShareController::class,'restoresharepurchasetransactions'])->name('restoresharepurchasetransactions');
+    Route::get('/downloadsharepurchasetemplate', [ShareController::class,'downloadsharepurchasetemplate'])->name('downloadsharepurchasetemplate');
+    Route::post('/importsharepurchasetransactions', [ShareController::class,'importsharepurchasetransactions'])->name('importsharepurchasetransactions');
+
+    // membership fee schedules ROUTES
+    Route::get('/membershipfeeschedules',  [MembershipContributionController::class, 'membershipfeeschedules'])->name('membershipfeeschedules');
+    Route::post('/storemembershipfeeschedules', [MembershipContributionController::class, 'storemembershipfeeschedules'])->name('storemembershipfeeschedules');
+    Route::get('/viewmembershipfeeschedules/{id}', [MembershipContributionController::class,'viewmembershipfeeschedules'])->name('viewmembershipfeeschedules');
+    Route::get('/editmembershipfeeschedules/{id}', [MembershipContributionController::class,'editmembershipfeeschedules'])->name('editmembershipfeeschedules');
+    Route::post('/updatemembershipfeeschedules/{id}', [MembershipContributionController::class,'updatemembershipfeeschedules'])->name('updatemembershipfeeschedules');
+    Route::get('/destroymembershipfeeschedules/{id}', [MembershipContributionController::class,'destroymembershipfeeschedules'])->name('destroymembershipfeeschedules');
+    Route::get('/deletedmembershipfeeschedules', [MembershipContributionController::class,'deletedmembershipfeeschedules'])->name('deletedmembershipfeeschedules');
+    Route::get('/membershipfeeschedulesreport', [MembershipContributionController::class,'membershipfeeschedulesreport'])->name('membershipfeeschedulesreport');
+    Route::get('/restoremembershipfeeschedules', [MembershipContributionController::class,'restoremembershipfeeschedules'])->name('restoremembershipfeeschedules');
+
+    // membership fee schedules ROUTES
+    Route::get('/membershipfeepayments',  [MembershipContributionController::class, 'membershipfeepayments'])->name('membershipfeepayments');
+    Route::post('/storemembershipfeepayments', [MembershipContributionController::class, 'storemembershipfeepayments'])->name('storemembershipfeepayments');
+    Route::get('/viewmembershipfeepayments/{id}', [MembershipContributionController::class,'viewmembershipfeepayments'])->name('viewmembershipfeepayments');
+    Route::get('/editmembershipfeepayments/{id}', [MembershipContributionController::class,'editmembershipfeepayments'])->name('editmembershipfeepayments');
+    Route::post('/updatemembershipfeepayments/{id}', [MembershipContributionController::class,'updatemembershipfeepayments'])->name('updatemembershipfeepayments');
+    Route::get('/destroymembershipfeepayments/{id}', [MembershipContributionController::class,'destroymembershipfeepayments'])->name('destroymembershipfeepayments');
+    Route::get('/deletedmembershipfeepayments', [MembershipContributionController::class,'deletedmembershipfeepayments'])->name('deletedmembershipfeepayments');
+    Route::get('/membershipfeepaymentsreport', [MembershipContributionController::class,'membershipfeepaymentsreport'])->name('membershipfeepaymentsreport');
+    Route::get('/restoremembershipfeepayments', [MembershipContributionController::class,'restoremembershipfeepayments'])->name('restoremembershipfeepayments');
+
+    // social contribution schedules ROUTES
+    Route::get('/socialcontributionschedules',  [MembershipContributionController::class, 'socialcontributionschedules'])->name('socialcontributionschedules');
+    Route::post('/storesocialcontributionschedules', [MembershipContributionController::class, 'storesocialcontributionschedules'])->name('storesocialcontributionschedules');
+    Route::get('/viewsocialcontributionschedules/{id}', [MembershipContributionController::class,'viewsocialcontributionschedules'])->name('viewsocialcontributionschedules');
+    Route::get('/editsocialcontributionschedules/{id}', [MembershipContributionController::class,'editsocialcontributionschedules'])->name('editsocialcontributionschedules');
+    Route::post('/updatesocialcontributionschedules/{id}', [MembershipContributionController::class,'updatesocialcontributionschedules'])->name('updatesocialcontributionschedules');
+    Route::get('/destroysocialcontributionschedules/{id}', [MembershipContributionController::class,'destroysocialcontributionschedules'])->name('destroysocialcontributionschedules');
+    Route::get('/deletedsocialcontributionschedules', [MembershipContributionController::class,'deletedsocialcontributionschedules'])->name('deletedsocialcontributionschedules');
+    Route::get('/socialcontributionschedulesreport', [MembershipContributionController::class,'socialcontributionschedulesreport'])->name('socialcontributionschedulesreport');
+    Route::get('/restoresocialcontributionschedules', [MembershipContributionController::class,'restoresocialcontributionschedules'])->name('restoresocialcontributionschedules');
+
+    // social contribution monthly ROUTES
+    Route::get('/socialcontributions',  [MembershipContributionController::class, 'socialcontributions'])->name('socialcontributions');
+    Route::post('/storesocialcontributions', [MembershipContributionController::class, 'storesocialcontributions'])->name('storesocialcontributions');
+    Route::get('/viewsocialcontributions/{id}', [MembershipContributionController::class,'viewsocialcontributions'])->name('viewsocialcontributions');
+    Route::get('/editsocialcontributions/{id}', [MembershipContributionController::class,'editsocialcontributions'])->name('editsocialcontributions');
+    Route::post('/updatesocialcontributions/{id}', [MembershipContributionController::class,'updatesocialcontributions'])->name('updatesocialcontributions');
+    Route::get('/destroysocialcontributions/{id}', [MembershipContributionController::class,'destroysocialcontributions'])->name('destroysocialcontributions');
+    Route::get('/deletedsocialcontributions', [MembershipContributionController::class,'deletedsocialcontributions'])->name('deletedsocialcontributions');
+    Route::get('/socialcontributionsreport', [MembershipContributionController::class,'socialcontributionsreport'])->name('socialcontributionsreport');
+    Route::get('/restoresocialcontributions', [MembershipContributionController::class,'restoresocialcontributions'])->name('restoresocialcontributions');
+    Route::get('/downloadsocialcontributiontemplate', [MembershipContributionController::class,'downloadsocialcontributiontemplate'])->name('downloadsocialcontributiontemplate');
+    Route::post('/importsocialcontributions', [MembershipContributionController::class,'importsocialcontributions'])->name('importsocialcontributions');
 
     // NEW IMPROVED CODES
     Route::get('/systemUsers', [UserController::class, 'systemUsers'])->name('systemUsers');

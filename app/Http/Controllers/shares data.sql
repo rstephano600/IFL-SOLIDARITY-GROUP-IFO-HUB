@@ -132,9 +132,9 @@ CREATE TABLE social_contributions_schedules (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
     ScheduleRefNo VARCHAR(50) UNIQUE NOT NULL,
-    FeeAmount DECIMAL(15,2) NOT NULL,          -- e.g. 50,000
+    FeeAmount DECIMAL(15,2) NOT NULL,          
     EffectiveFrom DATE NOT NULL,
-    EffectiveTo DATE NULL,                     -- NULL = still active
+    EffectiveTo DATE NULL,                     
     Description VARCHAR(255) NULL,
 
     company_id BIGINT UNSIGNED NULL,
@@ -147,9 +147,9 @@ CREATE TABLE social_contributions_schedules (
     created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_mfs_user FOREIGN KEY (User_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
-    CONSTRAINT fk_mfs_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL,
-    CONSTRAINT fk_mfs_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
+    CONSTRAINT fk_scs_user FOREIGN KEY (User_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL,
+    CONSTRAINT fk_scs_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL,
+    CONSTRAINT fk_scs_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
 );
 
 CREATE TABLE social_contributions (
@@ -436,25 +436,3 @@ CREATE TABLE share_dividend_allocations (
 );
 
 
-INSERT INTO share_types
-    (TypeRefNo, TypeCode, TypeName, Description, NominalValue, DividendEligible, company_id, branch_id, User_id, Status, AuditingStatus, ReportStatus)
-VALUES
-    ('STY-0001', 'ORD',  'Ordinary Share',
-        'Standard tradable member shares eligible for annual dividend based on holding period',
-        10000.00, 1, 1, 1, 1, 'Active', 'Approved', 'Approved'),
-
-    ('STY-0002', 'PREF', 'Preference Share',
-        'Fixed-rate shares with priority dividend claim, non-voting',
-        10000.00, 1, 1, 1, 1, 'Active', 'Approved', 'Approved'),
-
-    ('STY-0003', 'MBR',  'Membership Share',
-        'Minimum mandatory shares required to hold active membership status; not dividend-eligible',
-        10000.00, 0, 1, 1, 1, 'Active', 'Approved', 'Approved'),
-
-    ('STY-0004', 'BON',  'Bonus Share',
-        'Shares issued from retained earnings in lieu of cash dividend, no cash cost to member',
-        10000.00, 1, 1, 1, 1, 'Active', 'Pending', 'Pending'),
-
-    ('STY-0005', 'STAFF','Staff Share',
-        'Shares reserved for staff/employee purchase scheme, subject to separate approval',
-        10000.00, 1, 1, 1, 1, 'Inactive', 'Pending', 'Pending');

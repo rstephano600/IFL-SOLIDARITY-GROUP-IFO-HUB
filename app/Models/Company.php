@@ -107,4 +107,32 @@ class Company extends Model
     {
         return $this->hasMany(Member::class, 'company_id');
     }
+
+    public function membershipFeeSchedules()
+    {
+        return $this->hasMany(MembershipFeeSchedule::class, 'company_id');
+    }
+
+    public function membershipFeePayments()
+    {
+        return $this->hasMany(MembershipFeePayment::class, 'company_id');
+    }
+
+    public function socialContributionSchedules()
+    {
+        return $this->hasMany(SocialContributionSchedule::class, 'company_id');
+    }
+
+    public function socialContributions()
+    {
+        return $this->hasMany(SocialContribution::class, 'company_id');
+    }
+
+    public function sharePurchaseTransactions()
+    {
+        return $this->hasMany(
+            SharePurchaseTransaction::class,
+            'company_id'
+        );
+    }
 }

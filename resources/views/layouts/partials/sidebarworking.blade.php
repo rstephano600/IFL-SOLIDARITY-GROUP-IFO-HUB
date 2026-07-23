@@ -38,6 +38,26 @@
         <span>Working Side</span>
     </a>
     @endcan
+    @can('view-share-purchases-menu')
+    <div class="nav-item">
+        <a href="#sharepurchasetransactions" class="nav-link" data-bs-toggle="collapse" role="button">
+            <i class="fas fa-building me-2"></i> <span>Share Purchases Menu</span><i class="fas fa-chevron-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="sharepurchasetransactions">
+            <div class="ps-4 mt-2">
+                @can('view-share-purchases')
+                <a href="{{ route('sharepurchasetransactions') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Share Purchases Info</span></a>
+                @endcan
+                <!-- @can('view-share-purchases')
+                <a href="{{ route('deletedsharepurchasetransactions') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
+                @endcan
+                @can('view-share-purchases-report')
+                <a href="{{ route('sharepurchasetransactionsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
+                @endcan -->
+            </div>
+        </div>
+    </div>
+    @endcan
     @can('view-members-menu')
     <div class="nav-item">
         <a href="#membersSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -54,6 +74,29 @@
                 @can('view-members-report')
                 <a href="{{ route('memberinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
                 @endcan
+            </div>
+        </div>
+    </div>
+    @endcan
+    @can('view-membership-fees-menu')
+    <div class="nav-item">
+        <a href="#membershipfeepayments" class="nav-link" data-bs-toggle="collapse" role="button">
+            <i class="fas fa-building me-2"></i> <span>Member Fees</span><i class="fas fa-chevron-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="membershipfeepayments">
+            <div class="ps-4 mt-2">
+                @can('view-membership-fees')
+                <a href="{{ route('socialcontributions') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Monthly Social Conts</span></a>
+                <a href="{{ route('membershipfeepayments') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Mbembership Fees</span></a>
+                @endcan
+                <!-- @can('view-membership-fees')
+                <a href="{{ route('deletedsocialcontributions') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
+                <a href="{{ route('deletedmembershipfeepayments') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
+                @endcan
+                @can('view-membership-fees-report')
+                <a href="{{ route('socialcontributionsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
+                <a href="{{ route('membershipfeepaymentsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
+                @endcan -->
             </div>
         </div>
     </div>

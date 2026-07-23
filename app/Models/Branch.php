@@ -95,4 +95,32 @@ class Branch extends Model
     {
         return $this->hasMany(Member::class, 'branch_id');
     }
+
+    public function membershipFeeSchedules()
+    {
+        return $this->hasMany(MembershipFeeSchedule::class, 'branch_id');
+    }
+
+    public function membershipFeePayments()
+    {
+        return $this->hasMany(MembershipFeePayment::class, 'branch_id');
+    }
+
+    public function socialContributionSchedules()
+    {
+        return $this->hasMany(SocialContributionSchedule::class, 'branch_id');
+    }
+
+    public function socialContributions()
+    {
+        return $this->hasMany(SocialContribution::class, 'branch_id');
+    }
+
+    public function sharePurchaseTransactions()
+    {
+        return $this->hasMany(
+            SharePurchaseTransaction::class,
+            'branch_id'
+        );
+    }
 }
