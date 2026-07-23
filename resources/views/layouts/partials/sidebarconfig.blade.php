@@ -50,11 +50,6 @@
                 @can('assign-permission-access')
                 <a href="{{ route('usersRole') }}" class="nav-link d-flex align-items-center"><i class="fas fa-key me-2"></i> <span>Assign Permissions</span></a>
                 @endcan
-                @if($canAdmin)
-                @can('assign-permission-access')
-                <a href="{{ route('usersRole') }}" class="nav-link d-flex align-items-center"><i class="fas fa-user-shield me-2"></i> <span>Assign Permissions Admin</span></a>
-                @endcan
-                @endif
             </div>
         </div>
     </div>
@@ -115,6 +110,36 @@
         </div>
     </div>
     @endcan
+    @can('view-products-menu')
+    <div class="nav-item">
+        <a href="#productSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+            <i class="fas fa-building me-2"></i> <span>Products Menu</span><i class="fas fa-chevron-down ms-auto"></i>
+        </a>
+        <div class="collapse" id="productSubmenu">
+            <div class="ps-4 mt-2">
+                @can('view-products')
+                <a href="{{ route('products') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products</span></a>
+                @endcan
+                <!-- @can('view-products')
+                <a href="{{ route('deletedproducts') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                @endcan
+                @can('view-products-report')
+                <a href="{{ route('productsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                @endcan -->
+                @can('view-products')
+                <a href="{{ route('productcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products Categories</span></a>
+                @endcan
+                <!-- @can('view-products')
+                <a href="{{ route('deletedproductcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                @endcan
+                @can('view-products-report')
+                <a href="{{ route('productcategoriesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                @endcan -->
+
+            </div>
+        </div>
+    </div>
+    @endcan
     @can('view-company-business-codes-menu')
     <div class="nav-item">
         <a href="#companybusinesscodeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -135,6 +160,7 @@
         </div>
     </div>
     @endcan
+
     @can('view-cost-centres-menu')
     <div class="nav-item">
         <a href="#costcentreSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -155,6 +181,7 @@
         </div>
     </div>
     @endcan
+
     @can('view-department-menu')
     <div class="nav-item">
         <a href="#departmentSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">

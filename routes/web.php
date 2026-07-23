@@ -40,6 +40,7 @@ use App\Http\Controllers\Loan\LoanCategoryController;
 use App\Http\Controllers\Loan\LoanPaymentController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\SalaryController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CostCentreController;
@@ -159,6 +160,26 @@ Route::middleware('auth')->group(function () {
     Route::get('/deletememberinformations/{id}', [MemberController::class, 'deletememberinformations'])->name('deletememberinformations');
     Route::get('/restorememberinformations/{id}', [MemberController::class, 'restorememberinformations'])->name('restorememberinformations');
 
+    // PRODUCTS INFORMATIONS
+    Route::get('/productcategories',  [ProductController::class, 'productcategories'])->name('productcategories');
+    Route::post('/storeproductcategories', [ProductController::class, 'storeproductcategories'])->name('storeproductcategories');
+    Route::get('/viewproductcategories/{id}', [ProductController::class,'viewproductcategories'])->name('viewproductcategories');
+    Route::get('/editproductcategories/{id}', [ProductController::class,'editproductcategories'])->name('editproductcategories');
+    Route::put('/updateproductcategories/{id}', [ProductController::class,'updateproductcategories'])->name('updateproductcategories');
+    Route::get('/destroyproductcategories/{id}', [ProductController::class,'destroyproductcategories'])->name('destroyproductcategories');
+    Route::get('/deletedproductcategories', [ProductController::class,'deletedproductcategories'])->name('deletedproductcategories');
+    Route::get('/productcategoriesreport', [ProductController::class,'productcategoriesreport'])->name('productcategoriesreport');
+    Route::get('/restoreproductcategories', [ProductController::class,'restoreproductcategories'])->name('restoreproductcategories');
+
+    Route::get('/products',  [ProductController::class, 'products'])->name('products');
+    Route::post('/storeproducts', [ProductController::class, 'storeproducts'])->name('storeproducts');
+    Route::get('/viewproducts/{id}', [ProductController::class,'viewproducts'])->name('viewproducts');
+    Route::get('/editproducts/{id}', [ProductController::class,'editproducts'])->name('editproducts');
+    Route::put('/updateproducts/{id}', [ProductController::class,'updateproducts'])->name('updateproducts');
+    Route::get('/destroyproducts/{id}', [ProductController::class,'destroyproducts'])->name('destroyproducts');
+    Route::get('/deletedproducts', [ProductController::class,'deletedproducts'])->name('deletedproducts');
+    Route::get('/productsreport', [ProductController::class,'productsreport'])->name('productsreport');
+    Route::get('/restoreproducts', [ProductController::class,'restoreproducts'])->name('restoreproducts');
 
     // NEW IMPROVED CODES
     Route::get('/systemUsers', [UserController::class, 'systemUsers'])->name('systemUsers');

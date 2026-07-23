@@ -328,7 +328,7 @@ class MemberController extends Controller
                 $nextNumber = 1;
             }
 
-            $memberCode = 'MEM-' . date('Y') . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
+            $memberCode = 'IFLSG/' . date('Y') . '/' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT);
 
             $members = Member::with([
                     'memberCategory',

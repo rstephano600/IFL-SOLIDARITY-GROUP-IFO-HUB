@@ -15,6 +15,27 @@
 
     <h1 class="fs-6 fw-semibold text-dark mb-0 d-none d-lg-block">@yield('title')</h1>
 
+    <nav class="header-module-nav d-none d-lg-flex align-items-center gap-1 ms-4">
+        @can('view-confirguration-side')
+        <a href="{{ route('configurationside') }}"
+           class="module-nav-link configurationside {{ request()->routeIs('configurationside') ? 'active' : '' }}">
+            <i class="bi bi-sliders"></i> Configuration
+        </a>
+        @endcan
+        @can('view-working-side')
+        <a href="{{ route('workingside') }}"
+           class="module-nav-link workingside {{ request()->routeIs('workingside') ? 'active' : '' }}">
+            <i class="bi bi-list-check"></i> Working
+        </a>
+        @endcan
+        @can('view-reporting-side')
+        <a href="{{ route('reportingside') }}"
+           class="module-nav-link reportingside {{ request()->routeIs('reportingside') ? 'active' : '' }}">
+            <i class="bi bi-graph-up"></i> Reports
+        </a>
+        @endcan
+    </nav>
+
     <div class="d-flex align-items-center gap-2 gap-lg-3">
 
         <a href="{{ Route::has('member.notifications') ? route('member.notifications') : '#' }}"
@@ -55,3 +76,54 @@
     </div>
 
 </header>
+
+@push('styles')
+<style>
+    .header-module-nav {
+        background: #f3f4f6;
+        border-radius: 999px;
+        padding: 4px;
+    }
+
+    .module-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: .4rem;
+        padding: .4rem .9rem;
+        border-radius: 999px;
+        font-size: .8rem;
+        font-weight: 500;
+        color: #5b6470;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: background-color .15s ease, color .15s ease;
+    }
+
+    .module-nav-link i {
+        font-size: .85rem;
+        line-height: 1;
+    }
+
+    .module-nav-link:hover {
+        background-color: rgba(13, 42, 74, 0.08);
+        color: var(--ifl-navy);
+    }
+
+    .module-nav-link.active {
+        background-color: var(--ifl-navy);
+        color: #fff;
+        box-shadow: 0 2px 6px rgba(13, 42, 74, 0.25);
+    }
+
+    .module-nav-link.active i {
+        color: var(--ifl-gold);
+    }
+
+    /* Keep the module nav from crowding the header on narrower desktop widths */
+    @media (max-width: 1199.98px) {
+        .header-module-nav { gap: 0 !important; }
+        .module-nav-link { padding: .4rem .65rem; font-size: .75rem; }
+        .module-nav-link span { display: none; }
+    }
+</style>
+@endpush

@@ -462,3 +462,313 @@ CREATE TABLE `member_notifications` (
     `updated_at` TIMESTAMP NULL DEFAULT NULL,
     INDEX `notifications_notifiable_type_notifiable_id_index` (`notifiable_type`, `notifiable_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- 22/07/2026
+CREATE TABLE product_categories (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    CompanyBusinessCode_id BIGINT UNSIGNED NOT NULL,
+
+
+    category_code VARCHAR(30) NOT NULL UNIQUE,
+    category_name VARCHAR(150) NOT NULL,
+
+    description TEXT NULL,
+
+    display_order INT DEFAULT 1,
+
+    company_id BIGINT UNSIGNED NULL,
+    branch_id BIGINT UNSIGNED NULL,
+    User_id BIGINT UNSIGNED NULL,
+    Status VARCHAR(50) DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) DEFAULT 'Pending',
+    ReportStatus VARCHAR(50) DEFAULT 'Pending',
+
+    created_by BIGINT UNSIGNED NULL,
+    updated_by BIGINT UNSIGNED NULL,
+    deleted_by BIGINT UNSIGNED NULL,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT fk_product_categories_business
+        FOREIGN KEY (CompanyBusinessCode_id)
+        REFERENCES account_businesses(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_product_categories_branch
+        FOREIGN KEY (branch_id)
+        REFERENCES branchies(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_product_categories_company
+        FOREIGN KEY (company_id)
+        REFERENCES companies(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_product_categories_user
+        FOREIGN KEY (User_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_product_categories_created_by
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_product_categories_updated_by
+        FOREIGN KEY (updated_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_product_categories_deleted_by
+        FOREIGN KEY (deleted_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+ALTER TABLE product_categories
+DROP FOREIGN KEY fk_product_categories_business;
+
+ALTER TABLE product_categories
+ADD CONSTRAINT fk_product_categories_business
+FOREIGN KEY (CompanyBusinessCode_id)
+REFERENCES company_businesses_codes(id)
+ON UPDATE CASCADE
+ON DELETE RESTRICT;
+
+CREATE TABLE brands (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    BrandRefNo VARCHAR(50) UNIQUE NOT NULL,
+    BrandCode VARCHAR(50) NULL,
+    BrandName VARCHAR(255) NOT NULL,
+
+    Description TEXT NULL,
+    company_id BIGINT UNSIGNED NULL,
+    branch_id BIGINT UNSIGNED NULL,
+    User_id BIGINT UNSIGNED NULL,
+    Status VARCHAR(50) DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) DEFAULT 'Pending',
+    ReportStatus VARCHAR(50) DEFAULT 'Pending',
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_brands_user
+        FOREIGN KEY (User_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_brands_branch
+        FOREIGN KEY (branch_id)
+        REFERENCES branchies(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_brands_company
+        FOREIGN KEY (company_id)
+        REFERENCES companies(id)
+        ON DELETE SET NULL
+);
+
+
+CREATE TABLE units_of_measure (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+
+
+    UnitRefNo VARCHAR(50) UNIQUE NOT NULL,
+
+    UnitCode VARCHAR(20) NOT NULL,
+    UnitName VARCHAR(100) NOT NULL,
+
+    Description TEXT NULL,
+
+    company_id BIGINT UNSIGNED NULL,
+    branch_id BIGINT UNSIGNED NULL,
+    User_id BIGINT UNSIGNED NULL,
+    Status VARCHAR(50) DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) DEFAULT 'Pending',
+    ReportStatus VARCHAR(50) DEFAULT 'Pending',
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_units_of_measure_user
+        FOREIGN KEY (User_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_units_of_measure_branch
+        FOREIGN KEY (branch_id)
+        REFERENCES branchies(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_units_of_measure_company
+        FOREIGN KEY (company_id)
+        REFERENCES companies(id)
+        ON DELETE SET NULL
+);
+
+CREATE TABLE products (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    product_code VARCHAR(30) NOT NULL UNIQUE,
+
+    product_name VARCHAR(200) NOT NULL,
+
+    product_category_id BIGINT UNSIGNED NOT NULL,
+
+    CompanyBusinessCode_id BIGINT UNSIGNED NOT NULL,
+
+    income_gl_account_id BIGINT UNSIGNED NULL,
+
+    expense_gl_account_id BIGINT UNSIGNED NULL,
+
+    inventory_gl_account_id BIGINT UNSIGNED NULL,
+
+    unit_of_measure_id BIGINT UNSIGNED NULL,
+
+    cost_price DECIMAL(18,2) DEFAULT 0.00,
+
+    selling_price DECIMAL(18,2) DEFAULT 0.00,
+
+    minimum_price DECIMAL(18,2) DEFAULT 0.00,
+
+    maximum_price DECIMAL(18,2) DEFAULT 0.00,
+
+    tax_rate DECIMAL(5,2) DEFAULT 0.00,
+
+    requires_member BOOLEAN DEFAULT FALSE,
+
+    requires_approval BOOLEAN DEFAULT FALSE,
+
+    is_stock_item BOOLEAN DEFAULT FALSE,
+
+    allow_discount BOOLEAN DEFAULT TRUE,
+
+    description TEXT NULL,
+
+    company_id BIGINT UNSIGNED NULL,
+    branch_id BIGINT UNSIGNED NULL,
+    User_id BIGINT UNSIGNED NULL,
+    Status VARCHAR(50) DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) DEFAULT 'Pending',
+    ReportStatus VARCHAR(50) DEFAULT 'Pending',
+
+    created_by BIGINT UNSIGNED NULL,
+    updated_by BIGINT UNSIGNED NULL,
+    deleted_by BIGINT UNSIGNED NULL,
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL,
+
+    CONSTRAINT fk_products_category
+        FOREIGN KEY (product_category_id)
+        REFERENCES product_categories(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_products_business
+        FOREIGN KEY (CompanyBusinessCode_id)
+        REFERENCES company_businesses_codes(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+
+    CONSTRAINT fk_products_branch
+        FOREIGN KEY (branch_id)
+        REFERENCES branchies(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_company
+        FOREIGN KEY (company_id)
+        REFERENCES companies(id)
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_user
+        FOREIGN KEY (User_id)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_income_gl
+        FOREIGN KEY (income_gl_account_id)
+        REFERENCES account_third_branches(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_expense_gl
+        FOREIGN KEY (expense_gl_account_id)
+        REFERENCES account_third_branches(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_inventory_gl
+        FOREIGN KEY (inventory_gl_account_id)
+        REFERENCES account_third_branches(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_uom
+        FOREIGN KEY (unit_of_measure_id)
+        REFERENCES units_of_measure(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_created_by
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_updated_by
+        FOREIGN KEY (updated_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+
+    CONSTRAINT fk_products_deleted_by
+        FOREIGN KEY (deleted_by)
+        REFERENCES users(id)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL
+);
+
+INSERT INTO permissions (name, slug, description, Status, created_at, updated_at) VALUES
+('products Menu', 'view-products-menu','products Menu', 'Active', NOW(), NOW()),
+('View products', 'view-products','View products', 'Active', NOW(), NOW()),
+('Create, Update, Delete products', 'crud-products','Create, Update or Delete products', 'Active', NOW(), NOW()),
+('Restore products', 'restore-products','Restore products', 'Active', NOW(), NOW()),
+('View products Report', 'view-products-report','View products Report', 'Active', NOW(), NOW());
+
+
+INSERT INTO units_of_measure
+    (UnitRefNo, UnitCode, UnitName, Description, company_id, branch_id, User_id, Status, AuditingStatus, ReportStatus)
+VALUES
+    ('UOM-0001', 'PCS',  'Pieces',      'Individual countable units',                 NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0002', 'KG',   'Kilogram',    'Standard weight measure',                    NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0003', 'G',    'Gram',        'Small weight measure',                       NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0004', 'L',    'Litre',       'Standard liquid volume measure',             NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0005', 'ML',   'Millilitre',  'Small liquid volume measure',                NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0006', 'BOX',  'Box',         'Packaged in boxes',                          NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0007', 'CTN',  'Carton',      'Packaged in cartons',                        NULL, NULL, 1, 'Active', 'Pending',  'Pending'),
+    ('UOM-0008', 'BAG',  'Bag',         'Sold or stored in bags (e.g. fertilizer)',   NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0009', 'SACK', 'Sack',        'Sold or stored in sacks (e.g. maize, rice)', NULL, NULL, 1, 'Active', 'Pending',  'Pending'),
+    ('UOM-0010', 'MTR',  'Meter',       'Length measure',                             NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0011', 'FT',   'Feet',        'Length measure (imperial)',                  NULL, NULL, 1, 'Active', 'Pending',  'Pending'),
+    ('UOM-0012', 'DZ',   'Dozen',       'Set of 12 units',                            NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0013', 'PKT',  'Packet',      'Small packaged unit',                        NULL, NULL, 1, 'Active', 'Approved', 'Approved'),
+    ('UOM-0014', 'ROLL', 'Roll',        'Rolled goods (e.g. wire, fabric)',           NULL, NULL, 1, 'Active', 'Pending',  'Pending'),
+    ('UOM-0015', 'TON',  'Ton',         'Bulk weight measure (1000 kg)',              NULL, NULL, 1, 'Inactive','Rejected','Rejected');

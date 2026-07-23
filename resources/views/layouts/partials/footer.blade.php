@@ -2,7 +2,7 @@
         <div class="row align-items-center">
             <div class="col-md-6 order-md-1 order-2 mt-2 mt-md-0">
                 <small class="text-muted">
-                    &copy; {{ date('Y') }} ArBif Management system - All right reserved
+                    &copy; {{ date('Y') }} IFL Solidarity Group Management system - All right reserved
                 </small>
             </div>
             <div class="col-md-6 text-md-end order-md-2 order-1">

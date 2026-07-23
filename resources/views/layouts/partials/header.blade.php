@@ -69,17 +69,15 @@
             <button class="header-user-btn" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                 <div class="header-avatar">
-                    {{ strtoupper(substr(Auth::user()->username ?? 'U', 0, 2)) }}
+                    {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 2)) }}
                 </div>
                 <div class="d-none d-md-flex flex-column text-start lh-1 ms-2">
                     <span style="font-size:13px;font-weight:600;color:#1e293b;">
-                        {{ Auth::user()->username }}
+                        {{ Auth::user()->name }}
+                        
                     </span>
                     <span style="font-size:10px;color:#94a3b8;">
-                        @php
-                            $role = Auth::user()->Role ?? '';
-                        @endphp
-                        {{ ucfirst(str_replace('_', ' ', $role)) ?: 'Staff' }}
+                        {{ Auth::user()->username }}
                     </span>
                 </div>
                 <i class="fas fa-chevron-down d-none d-md-block ms-2"
@@ -1021,8 +1019,8 @@
         this.sortDir    = 'asc';
         this.page       = 0;
         this.pageSize   = 25;
-        this.exportName = table.dataset.exportName || 'ArbifDataExported';
-        this.title      = table.dataset.title      || 'ArBif Report';
+        this.exportName = table.dataset.exportName || 'IFLSGDataExported';
+        this.title      = table.dataset.title      || 'IFLSG Report';
 
         this._buildToolbar();
         this._init();
@@ -1320,7 +1318,7 @@
             '<tbody>' + tbodyHtml + '</tbody>' +
             '</table>' +
             '<p style="font-size:10px;color:#999;margin-top:8px;">' +
-            'Exported: ' + new Date().toLocaleString() + ' &mdash; ArBif Management System</p>' +
+            'Exported: ' + new Date().toLocaleString() + ' &mdash; IFLSG Management System</p>' +
             '</body></html>';
 
         _download('\ufeff' + html, this.exportName + '.xls', 'application/vnd.ms-excel');
@@ -1369,7 +1367,7 @@
             '<small>Total records: ' + data.rows.length + '</small></div>' +
             '<table><thead><tr>' + thHtml + '</tr></thead>' +
             '<tbody>' + tbHtml + '</tbody></table>' +
-            '<div class="footer"><span>ArBif Management System</span>' +
+            '<div class="footer"><span>IFLSG Management System</span>' +
             '<span>Printed: ' + new Date().toLocaleString() + '</span></div>' +
             '</body></html>'
         );
