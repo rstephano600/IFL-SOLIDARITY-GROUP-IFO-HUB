@@ -12,308 +12,322 @@
         </h5>
     </div>
 
-<nav class="nav flex-column p-3">
+    <nav class="nav flex-column p-3">
 
-    @can('view-confirguration-side')
-    <a href="{{ route('configurationside') }}" 
-       class="nav-link {{ Request::is('configurationside*') ? 'active' : '' }}">
-        <i class="fas fa-sliders me-1"></i> 
-        <span>Configuration</span>
-    </a>
-    @endcan
-
-
-    @can('view-system-users-menu')
-    <div class="nav-item">
-        <a href="#accountingSubmenu3" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-users-cog me-2"></i> <span>System Users Menu</span><i class="fas fa-chevron-down ms-auto"></i>
+        @can('view-confirguration-side')
+        <a href="{{ route('configurationside') }}" 
+        class="nav-link {{ Request::is('configurationside*') ? 'active' : '' }}">
+            <i class="fas fa-sliders me-1"></i> 
+            <span>Configuration</span>
         </a>
-        <div class="collapse" id="accountingSubmenu3">
-            <div class="ps-4 mt-2">
-                @can('view-system-users')
-                <a href="{{ route('systemUsers') }}" class="nav-link d-flex align-items-center"><i class="fas fa-users me-2"></i> <span>System Users</span></a>
-                @endcan
+        @endcan
 
+
+        {{-- ============ ORGANIZATION STRUCTURE ============ --}}
+
+        @can('view-companies-menu')
+        <div class="nav-item">
+            <a href="#companiesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-building me-2"></i> <span>Companies</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="companiesSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-companies')
+                    <a href="{{ route('companiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Companies</span></a>
+                    @endcan
+                    @can('restore-companies')
+                    <a href="{{ route('companiesRestore') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Companies</span></a>
+                    @endcan
+                    @can('view-companies-report')
+                    <a href="{{ route('companiesReport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Companies Report</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
+        @endcan
 
+        @can('view-branches-menu')
+        <div class="nav-item">
+            <a href="#branchesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-code-branch me-2"></i> <span>Branches</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="branchesSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-branches')
+                    <a href="{{ route('branchiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Branches</span></a>
+                    @endcan
+                    @can('view-branches')
+                    <a href="{{ route('deletedbranchiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Branches</span></a>
+                    @endcan
+                    @can('view-branches-report')
+                    <a href="{{ route('branchiesinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Branches Report</span></a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
 
-    @can('view-permission-access-menu')
-    <div class="nav-item">
-        <a href="#accountingSubmenu2" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-user-lock me-2"></i> <span>Permission Access Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="accountingSubmenu2">
-            <div class="ps-4 mt-2">
-                @can('assign-permission-access')
-                <a href="{{ route('usersRole') }}" class="nav-link d-flex align-items-center"><i class="fas fa-key me-2"></i> <span>Assign Permissions</span></a>
-                @endcan
+        @can('view-department-menu')
+        <div class="nav-item">
+            <a href="#departmentSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-sitemap me-2"></i> <span>Departments</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="departmentSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-department')
+                    <a href="{{ route('departmentinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Departments</span></a>
+                    @endcan
+                    @can('view-department')
+                    <a href="{{ route('deleteddepartmentinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                    @endcan
+                    @can('view-department-report')
+                    <a href="{{ route('departmentinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
+        @endcan
 
-    @can('view-accounting-menu')
-    <div class="nav-item">
-        <a href="#accountingSubmenu" 
-           class="nav-link" 
-           data-bs-toggle="collapse" 
-           role="button">
-            <i class="fas fa-calculator me-2"></i> 
-            <span>Accounting Menu</span>
-            <i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        
-        <div class="collapse" id="accountingSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-country')
-                <a href="{{ route('accountCountry') }}" 
-                   class="nav-link d-flex align-items-center">
-                    <i class="fas fa-flag me-2"></i> 
-                    <span>Country Accounts</span>
-                </a>
-                @endcan
-                @can('view-country')
-                <a href="{{ route('accountBusiness') }}" class="nav-link d-flex align-items-center"><i class="fas fa-building me-2"></i> <span>Company Branch</span></a>
-                @endcan
-                @can('view-accounting-codes')
-                <a href="{{ route('accountRoot') }}" class="nav-link d-flex align-items-center"><i class="fas fa-sitemap me-2"></i> <span>Root Accounts (1)</span></a>
-                <a href="{{ route('accountFirstBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-code-branch me-2"></i> <span>Level Two (2)</span></a>
-                <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-folder-tree me-2"></i> <span>Level Three (3)</span></a>
-                <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-diagram-project me-2"></i> <span>Level Four (4) Control</span></a>
-                <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-book me-2"></i> <span>Level Five (5) GL</span></a>
-                <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-layer-group me-2"></i> <span>Level Six (6) Sub GL</span></a>
-                @endcan
+        @can('view-cost-centres-menu')
+        <div class="nav-item">
+            <a href="#costcentreSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-coins me-2"></i> <span>Cost Centers</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="costcentreSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-cost-centres')
+                    <a href="{{ route('costcentreinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Cost Centers</span></a>
+                    @endcan
+                    @can('view-cost-centres')
+                    <a href="{{ route('deletedcostcentreinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Cost Centers</span></a>
+                    @endcan
+                    @can('view-cost-centres-report')
+                    <a href="{{ route('costcentreinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Cost Center Report</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
-    @can('view-member-categories-menu')
-    <div class="nav-item">
-        <a href="#memberscategorySubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Members Categories Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="memberscategorySubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-member-categories')
-                <a href="{{ route('membercategoryinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Members Categories</span></a>
-                @endcan
-                @can('view-member-categories')
-                <a href="{{ route('deletedmembercategoryinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members Categories</span></a>
-                @endcan
-                @can('view-member-categories-report')
-                <a href="{{ route('membercategoryinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Categories Report</span></a>
-                @endcan
-            </div>
-        </div>
-    </div>
-    @endcan
-    @can('view-membership-fees-menu')
-    <div class="nav-item">
-        <a href="#membercontributionSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Fees Setup Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="membercontributionSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-membership-fees')
-                <a href="{{ route('membershipfeeschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Membership fees Schedule</span></a>
-                <a href="{{ route('socialcontributionschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Social fees Schedule</span></a>
-                @endcan
-                <!-- @can('view-membership-fees')
-                <a href="{{ route('deletedmembershipfeeschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
-                <a href="{{ route('deletedsocialcontributionschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
-                @endcan
-                @can('view-membership-fees-report')
-                <a href="{{ route('membershipfeeschedulesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
-                <a href="{{ route('socialcontributionschedulesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
-                @endcan -->
-            </div>
-        </div>
-    </div>
-    @endcan
-    @can('view-share-types-menu')
-    <div class="nav-item">
-        <a href="#sharetypeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Shares Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="sharetypeSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-share-types')
-                <a href="{{ route('shareofferings') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Share Offerring</span></a>
-                @endcan
-                <!-- @can('view-share-types')
-                <a href="{{ route('deletedshareofferings') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
-                @endcan
-                @can('view-share-types-report')
-                <a href="{{ route('shareofferingsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
-                @endcan -->
-                @can('view-share-types')
-                <a href="{{ route('sharetypes') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Share Types</span></a>
-                @endcan
-                <!-- @can('view-share-types')
-                <a href="{{ route('deletedsharetypes') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Share Types</span></a>
-                @endcan
-                @can('view-share-types-report')
-                <a href="{{ route('sharetypesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>share types Report</span></a>
-                @endcan -->
-            </div>
-        </div>
-    </div>
-    @endcan
-    @can('view-products-menu')
-    <div class="nav-item">
-        <a href="#productSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Products Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="productSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-products')
-                <a href="{{ route('products') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products</span></a>
-                @endcan
-                <!-- @can('view-products')
-                <a href="{{ route('deletedproducts') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
-                @endcan
-                @can('view-products-report')
-                <a href="{{ route('productsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
-                @endcan -->
-                @can('view-products')
-                <a href="{{ route('productcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products Categories</span></a>
-                @endcan
-                <!-- @can('view-products')
-                <a href="{{ route('deletedproductcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
-                @endcan
-                @can('view-products-report')
-                <a href="{{ route('productcategoriesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
-                @endcan -->
+        @endcan
 
+        @can('view-company-business-codes-menu')
+        <div class="nav-item">
+            <a href="#companybusinesscodeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-briefcase me-2"></i> <span>Business Codes</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="companybusinesscodeSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-company-business-codes')
+                    <a href="{{ route('companybusinesscodeinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Business Codes</span></a>
+                    @endcan
+                    @can('view-company-business-codes')
+                    <a href="{{ route('deletedcompanybusinesscodeinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Business Codes</span></a>
+                    @endcan
+                    @can('view-company-business-codes-report')
+                    <a href="{{ route('companybusinesscodeinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Business Codes Report</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
-    @can('view-company-business-codes-menu')
-    <div class="nav-item">
-        <a href="#companybusinesscodeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Company Business Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="companybusinesscodeSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-company-business-codes')
-                <a href="{{ route('companybusinesscodeinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Company Business</span></a>
-                @endcan
-                @can('view-company-business-codes')
-                <a href="{{ route('deletedcompanybusinesscodeinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Company Business</span></a>
-                @endcan
-                @can('view-company-business-codes-report')
-                <a href="{{ route('companybusinesscodeinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Company Business Report</span></a>
-                @endcan
-            </div>
-        </div>
-    </div>
-    @endcan
+        @endcan
 
-    @can('view-cost-centres-menu')
-    <div class="nav-item">
-        <a href="#costcentreSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Cost Center Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="costcentreSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-cost-centres')
-                <a href="{{ route('costcentreinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Cost Centers</span></a>
-                @endcan
-                @can('view-cost-centres')
-                <a href="{{ route('deletedcostcentreinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Cost Centers</span></a>
-                @endcan
-                @can('view-cost-centres-report')
-                <a href="{{ route('costcentreinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Cost Center Report</span></a>
-                @endcan
+        {{-- ============ ACCOUNTING ============ --}}
+
+        @can('view-accounting-menu')
+        <div class="nav-item">
+            <a href="#accountingSubmenu" 
+            class="nav-link" 
+            data-bs-toggle="collapse" 
+            role="button">
+                <i class="fas fa-calculator me-2"></i> 
+                <span>Chart of Accounts</span>
+                <i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            
+            <div class="collapse" id="accountingSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-country')
+                    <a href="{{ route('accountCountry') }}" 
+                    class="nav-link d-flex align-items-center">
+                        <i class="fas fa-flag me-2"></i> 
+                        <span>Country Accounts</span>
+                    </a>
+                    @endcan
+                    @can('view-country')
+                    <a href="{{ route('accountBusiness') }}" class="nav-link d-flex align-items-center"><i class="fas fa-building me-2"></i> <span>Company Branch</span></a>
+                    @endcan
+                    @can('view-accounting-codes')
+                    <a href="{{ route('accountRoot') }}" class="nav-link d-flex align-items-center"><i class="fas fa-sitemap me-2"></i> <span>Root Accounts (1)</span></a>
+                    <a href="{{ route('accountFirstBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-code-branch me-2"></i> <span>Level Two (2)</span></a>
+                    <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-folder-tree me-2"></i> <span>Level Three (3)</span></a>
+                    <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-diagram-project me-2"></i> <span>Level Four (4) Control</span></a>
+                    <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-book me-2"></i> <span>Level Five (5) GL</span></a>
+                    <a href="{{ route('accountSecondBranch') }}" class="nav-link d-flex align-items-center"><i class="fas fa-layer-group me-2"></i> <span>Level Six (6) Sub GL</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
+        @endcan
 
-    @can('view-department-menu')
-    <div class="nav-item">
-        <a href="#departmentSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Department Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="departmentSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-department')
-                <a href="{{ route('departmentinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Departments</span></a>
-                @endcan
-                @can('view-department')
-                <a href="{{ route('deleteddepartmentinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
-                @endcan
-                @can('view-department-report')
-                <a href="{{ route('departmentinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
-                @endcan
+        {{-- ============ MEMBERS, FEES & SHARES SETUP ============ --}}
+
+        @can('view-member-categories-menu')
+        <div class="nav-item">
+            <a href="#memberscategorySubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-users-rectangle me-2"></i> <span>Member Categories</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="memberscategorySubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-member-categories')
+                    <a href="{{ route('membercategoryinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Members Categories</span></a>
+                    @endcan
+                    @can('view-member-categories')
+                    <a href="{{ route('deletedmembercategoryinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members Categories</span></a>
+                    @endcan
+                    @can('view-member-categories-report')
+                    <a href="{{ route('membercategoryinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Categories Report</span></a>
+                    @endcan
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
-    @can('view-branches-menu')
-    <div class="nav-item">
-        <a href="#branchesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Branches Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="branchesSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-branches')
-                <a href="{{ route('branchiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Branches</span></a>
-                @endcan
-                @can('view-branches')
-                <a href="{{ route('deletedbranchiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Branches</span></a>
-                @endcan
-                @can('view-branches-report')
-                <a href="{{ route('branchiesinformationsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Branches Report</span></a>
-                @endcan
+        @endcan
+
+        @can('view-membership-fees-menu')
+        <div class="nav-item">
+            <a href="#membercontributionSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-money-check-dollar me-2"></i> <span>Fees & Contributions Setup</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="membercontributionSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-membership-fees')
+                    <a href="{{ route('membershipfeeschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Membership fees Schedule</span></a>
+                    <a href="{{ route('socialcontributionschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Social fees Schedule</span></a>
+                    @endcan
+                    <!-- @can('view-membership-fees')
+                    <a href="{{ route('deletedmembershipfeeschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
+                    <a href="{{ route('deletedsocialcontributionschedules') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Members</span></a>
+                    @endcan
+                    @can('view-membership-fees-report')
+                    <a href="{{ route('membershipfeeschedulesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
+                    <a href="{{ route('socialcontributionschedulesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Members Report</span></a>
+                    @endcan -->
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
-    @can('view-companies-menu')
-    <div class="nav-item">
-        <a href="#companiesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-            <i class="fas fa-building me-2"></i> <span>Companies Menu</span><i class="fas fa-chevron-down ms-auto"></i>
-        </a>
-        <div class="collapse" id="companiesSubmenu">
-            <div class="ps-4 mt-2">
-                @can('view-companies')
-                <a href="{{ route('companiesinformations') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Companies</span></a>
-                @endcan
-                @can('restore-companies')
-                <a href="{{ route('companiesRestore') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Companies</span></a>
-                @endcan
-                @can('view-companies-report')
-                <a href="{{ route('companiesReport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Companies Report</span></a>
-                @endcan
+        @endcan
+
+        @can('view-share-types-menu')
+        <div class="nav-item">
+            <a href="#sharetypeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-chart-pie me-2"></i> <span>Shares Setup</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="sharetypeSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-share-types')
+                    <a href="{{ route('shareofferings') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Share Offerring</span></a>
+                    @endcan
+                    <!-- @can('view-share-types')
+                    <a href="{{ route('deletedshareofferings') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                    @endcan
+                    @can('view-share-types-report')
+                    <a href="{{ route('shareofferingsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                    @endcan -->
+                    @can('view-share-types')
+                    <a href="{{ route('sharetypes') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Share Types</span></a>
+                    @endcan
+                    <!-- @can('view-share-types')
+                    <a href="{{ route('deletedsharetypes') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Share Types</span></a>
+                    @endcan
+                    @can('view-share-types-report')
+                    <a href="{{ route('sharetypesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>share types Report</span></a>
+                    @endcan -->
+                </div>
             </div>
         </div>
-    </div>
-    @endcan
+        @endcan
 
-    <hr class="dropdown-divider my-3">
+        {{-- ============ PRODUCTS ============ --}}
 
-    {{-- Profile with Bootstrap Icon --}}
-    <a href="{{ route('profile.show') }}" 
-       class="nav-link {{ Request::is('profile*') ? 'active' : '' }}">
-        <i class="bi bi-person-circle me-2"></i> 
-        <span>My Profile</span>
-    </a>
+        @can('view-products-menu')
+        <div class="nav-item">
+            <a href="#productSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-boxes-stacked me-2"></i> <span>Products</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="productSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-products')
+                    <a href="{{ route('products') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products</span></a>
+                    @endcan
+                    <!-- @can('view-products')
+                    <a href="{{ route('deletedproducts') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                    @endcan
+                    @can('view-products-report')
+                    <a href="{{ route('productsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                    @endcan -->
+                    @can('view-products')
+                    <a href="{{ route('productcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products Categories</span></a>
+                    @endcan
+                    <!-- @can('view-products')
+                    <a href="{{ route('deletedproductcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
+                    @endcan
+                    @can('view-products-report')
+                    <a href="{{ route('productcategoriesreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
+                    @endcan -->
+                </div>
+            </div>
+        </div>
+        @endcan
 
-    {{-- Logout with Font Awesome --}}
-    <form method="POST" action="{{ route('logout') }}" class="mt-auto">
-        @csrf
-        <button type="submit" class="nav-link text-start w-100" 
-                style="background: none; border: none;">
-            <i class="fas fa-sign-out-alt me-2"></i> 
-            <span>Logout</span>
-        </button>
-    </form>
-</nav>
+        {{-- ============ SYSTEM ADMINISTRATION ============ --}}
+
+        @can('view-system-users-menu')
+        <div class="nav-item">
+            <a href="#accountingSubmenu3" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-users-cog me-2"></i> <span>System Users</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="accountingSubmenu3">
+                <div class="ps-4 mt-2">
+                    @can('view-system-users')
+                    <a href="{{ route('systemUsers') }}" class="nav-link d-flex align-items-center"><i class="fas fa-users me-2"></i> <span>System Users</span></a>
+                    @endcan
+
+                </div>
+            </div>
+        </div>
+        @endcan
+
+        @can('view-permission-access-menu')
+        <div class="nav-item">
+            <a href="#accountingSubmenu2" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-user-lock me-2"></i> <span>Roles & Permissions</span><i class="fas fa-chevron-down ms-auto"></i>
+            </a>
+            <div class="collapse" id="accountingSubmenu2">
+                <div class="ps-4 mt-2">
+                    @can('assign-permission-access')
+                    <a href="{{ route('usersRole') }}" class="nav-link d-flex align-items-center"><i class="fas fa-key me-2"></i> <span>Assign Permissions</span></a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
+        <hr class="dropdown-divider my-3">
+
+        {{-- Profile with Bootstrap Icon --}}
+        <a href="{{ route('profile.show') }}" 
+        class="nav-link {{ Request::is('profile*') ? 'active' : '' }}">
+            <i class="bi bi-person-circle me-2"></i> 
+            <span>My Profile</span>
+        </a>
+
+        {{-- Logout with Font Awesome --}}
+        <form method="POST" action="{{ route('logout') }}" class="mt-auto">
+            @csrf
+            <button type="submit" class="nav-link text-start w-100" 
+                    style="background: none; border: none;">
+                <i class="fas fa-sign-out-alt me-2"></i> 
+                <span>Logout</span>
+            </button>
+        </form>
+    </nav>
 
 <style>
 .nav-link {

@@ -206,6 +206,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/restoreshareofferings', [ShareController::class,'restoreshareofferings'])->name('restoreshareofferings');
 
     // SHARE PURCHASES TRANSACTIONS ROUTES
+    Route::get('/sharepurchasetransactionshub',  [ShareController::class, 'sharepurchasetransactionshub'])->name('sharepurchasetransactionshub');
     Route::get('/sharepurchasetransactions',  [ShareController::class, 'sharepurchasetransactions'])->name('sharepurchasetransactions');
     Route::post('/storesharepurchasetransactions', [ShareController::class, 'storesharepurchasetransactions'])->name('storesharepurchasetransactions');
     Route::get('/viewsharepurchasetransactions/{id}', [ShareController::class,'viewsharepurchasetransactions'])->name('viewsharepurchasetransactions');
@@ -217,6 +218,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/restoresharepurchasetransactions', [ShareController::class,'restoresharepurchasetransactions'])->name('restoresharepurchasetransactions');
     Route::get('/downloadsharepurchasetemplate', [ShareController::class,'downloadsharepurchasetemplate'])->name('downloadsharepurchasetemplate');
     Route::post('/importsharepurchasetransactions', [ShareController::class,'importsharepurchasetransactions'])->name('importsharepurchasetransactions');
+    Route::post('/downloadcertificatesharepurchasetransactions', [ShareController::class,'downloadcertificatesharepurchasetransactions'])->name('downloadcertificatesharepurchasetransactions');
+
+    // WORKFLOW STAGE 1: VERIFICATION ROUTES
+    Route::get('/unverifiedsharepurchasetransactions', [ShareController::class, 'unverifiedsharepurchasetransactions'])->name('unverifiedsharepurchasetransactions');
+    Route::post('/verifysharepurchasetransaction/{id}', [ShareController::class, 'verifysharepurchasetransaction'])->name('verifysharepurchasetransaction');
+
+    // WORKFLOW STAGE 2: APPROVAL ROUTES
+    Route::get('/pendingapprovalsharepurchasetransactions', [ShareController::class, 'pendingapprovalsharepurchasetransactions'])->name('pendingapprovalsharepurchasetransactions');
+    Route::post('/approvesharepurchasetransaction/{id}', [ShareController::class, 'approvesharepurchasetransaction'])->name('approvesharepurchasetransaction');
+
+    // WORKFLOW STAGE 3: ACCOUNTING POSTING ROUTES
+    Route::get('/pendingpostingsharepurchasetransactions', [ShareController::class, 'pendingpostingsharepurchasetransactions'])->name('pendingpostingsharepurchasetransactions');
+    Route::post('/postsharepurchasetransaction/{id}', [ShareController::class, 'postsharepurchasetransaction'])->name('postsharepurchasetransaction');
+
+    // WORKFLOW STAGE 4: SHARE CERTIFICATE ROUTES
+    Route::get('/pendingcertificatesharepurchasetransactions', [ShareController::class, 'pendingcertificatesharepurchasetransactions'])->name('pendingcertificatesharepurchasetransactions');
+    Route::post('/generatecertificate/{id}', [ShareController::class, 'generatecertificate'])->name('generatecertificate');
+
+    Route::get('/completedsharepurchasetransactions', [ShareController::class, 'completedsharepurchasetransactions'])->name('completedsharepurchasetransactions');
 
     // membership fee schedules ROUTES
     Route::get('/membershipfeeschedules',  [MembershipContributionController::class, 'membershipfeeschedules'])->name('membershipfeeschedules');
@@ -230,6 +250,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/restoremembershipfeeschedules', [MembershipContributionController::class,'restoremembershipfeeschedules'])->name('restoremembershipfeeschedules');
 
     // membership fee schedules ROUTES
+    Route::get('/membershipfeepaymentshub',  [MembershipContributionController::class, 'membershipfeepaymentshub'])->name('membershipfeepaymentshub');
     Route::get('/membershipfeepayments',  [MembershipContributionController::class, 'membershipfeepayments'])->name('membershipfeepayments');
     Route::post('/storemembershipfeepayments', [MembershipContributionController::class, 'storemembershipfeepayments'])->name('storemembershipfeepayments');
     Route::get('/viewmembershipfeepayments/{id}', [MembershipContributionController::class,'viewmembershipfeepayments'])->name('viewmembershipfeepayments');
@@ -239,6 +260,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/deletedmembershipfeepayments', [MembershipContributionController::class,'deletedmembershipfeepayments'])->name('deletedmembershipfeepayments');
     Route::get('/membershipfeepaymentsreport', [MembershipContributionController::class,'membershipfeepaymentsreport'])->name('membershipfeepaymentsreport');
     Route::get('/restoremembershipfeepayments', [MembershipContributionController::class,'restoremembershipfeepayments'])->name('restoremembershipfeepayments');
+    // WORKFLOW STAGE 1: VERIFICATION ROUTES
+    Route::get('/unverifiedmembershipfeepayments', [MembershipContributionController::class, 'unverifiedmembershipfeepayments'])->name('unverifiedmembershipfeepayments');
+    Route::post('/verifymembershipfeepayment/{id}', [MembershipContributionController::class, 'verifymembershipfeepayment'])->name('verifymembershipfeepayment');
+
+    // WORKFLOW STAGE 2: APPROVAL ROUTES
+    Route::get('/pendingapprovalmembershipfeepayments', [MembershipContributionController::class, 'pendingapprovalmembershipfeepayments']) ->name('pendingapprovalmembershipfeepayments');
+    Route::post('/approvemembershipfeepayment/{id}', [MembershipContributionController::class, 'approvemembershipfeepayment'])->name('approvemembershipfeepayment');
+
+    // WORKFLOW STAGE 3: ACCOUNTING POSTING ROUTES
+    Route::get('/pendingpostingmembershipfeepayments', [MembershipContributionController::class, 'pendingpostingmembershipfeepayments'])->name('pendingpostingmembershipfeepayments');
+    Route::post('/postmembershipfeepayment/{id}', [MembershipContributionController::class, 'postmembershipfeepayment'])->name('postmembershipfeepayment');
+
+    Route::get('/completedmembershipfeepayments', [MembershipContributionController::class, 'completedmembershipfeepayments'])->name('completedmembershipfeepayments');
 
     // social contribution schedules ROUTES
     Route::get('/socialcontributionschedules',  [MembershipContributionController::class, 'socialcontributionschedules'])->name('socialcontributionschedules');
@@ -252,6 +286,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/restoresocialcontributionschedules', [MembershipContributionController::class,'restoresocialcontributionschedules'])->name('restoresocialcontributionschedules');
 
     // social contribution monthly ROUTES
+    Route::get('/socialcontributionshub',  [MembershipContributionController::class, 'socialcontributionshub'])->name('socialcontributionshub');
     Route::get('/socialcontributions',  [MembershipContributionController::class, 'socialcontributions'])->name('socialcontributions');
     Route::post('/storesocialcontributions', [MembershipContributionController::class, 'storesocialcontributions'])->name('storesocialcontributions');
     Route::get('/viewsocialcontributions/{id}', [MembershipContributionController::class,'viewsocialcontributions'])->name('viewsocialcontributions');
@@ -263,6 +298,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/restoresocialcontributions', [MembershipContributionController::class,'restoresocialcontributions'])->name('restoresocialcontributions');
     Route::get('/downloadsocialcontributiontemplate', [MembershipContributionController::class,'downloadsocialcontributiontemplate'])->name('downloadsocialcontributiontemplate');
     Route::post('/importsocialcontributions', [MembershipContributionController::class,'importsocialcontributions'])->name('importsocialcontributions');
+
+    // WORKFLOW STAGE 1: VERIFICATION ROUTES
+    Route::get('/unverifiedsocialcontributions', [MembershipContributionController::class, 'unverifiedsocialcontributions'])->name('unverifiedsocialcontributions');
+    Route::post('/verifysocialcontribution/{id}', [MembershipContributionController::class, 'verifysocialcontribution'])->name('verifysocialcontribution');
+
+    // WORKFLOW STAGE 2: APPROVAL ROUTES
+    Route::get('/pendingapprovalsocialcontributions', [MembershipContributionController::class, 'pendingapprovalsocialcontributions'])->name('pendingapprovalsocialcontributions');
+    Route::post('/approvesocialcontribution/{id}', [MembershipContributionController::class, 'approvesocialcontribution'])->name('approvesocialcontribution');
+
+    // WORKFLOW STAGE 3: ACCOUNTING POSTING ROUTES
+    Route::get('/pendingpostingsocialcontributions', [MembershipContributionController::class, 'pendingpostingsocialcontributions'])->name('pendingpostingsocialcontributions');
+    Route::post('/postsocialcontribution/{id}', [MembershipContributionController::class, 'postsocialcontribution'])->name('postsocialcontribution');
+
+    Route::get('/completedsocialcontributions', [MembershipContributionController::class, 'completedsocialcontributions'])->name('completedsocialcontributions');
 
     // NEW IMPROVED CODES
     Route::get('/systemUsers', [UserController::class, 'systemUsers'])->name('systemUsers');

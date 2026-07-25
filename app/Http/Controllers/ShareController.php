@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ShareType;
 use App\Models\ShareOffering;
 use App\Models\SharePurchaseTransaction;
+use App\Models\ShareCertificate;
 use App\Models\Company;
 use App\Models\Branch;
 use App\Models\Member;
@@ -18,6 +19,15 @@ use Maatwebsite\Excel\Facades\Excel;
 class ShareController extends Controller
 {
 
+    public function sharepurchasetransactionshub()
+    {
+        try {
+            return view('in.shares.sharepurchasetransactions.sharepurchasetransactionshub');
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical for support Tel:+255657856790');
+            return back();
+        }
+    }
     public function sharepurchasetransactions()
     {
         try {
@@ -499,6 +509,418 @@ class ShareController extends Controller
         return $prefix . $nextNumber;
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 1: VERIFICATION METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display transactions pending verification.
+     */
+    public function unverifiedsharepurchasetransactions()
+    {
+        try {
+            $transactions = SharePurchaseTransaction::with([
+                    'member',
+                    'shareOffering',
+                    'shareType',
+                    'company',
+                    'branch',
+                    'user'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Pending')
+                ->whereIn('transaction_status', ['Draft', 'Pending Verification'])
+                ->latest()
+                ->get();
+
+            return view('in.shares.sharepurchasetransactions.unverifiedsharepurchasetransactions', compact('transactions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    public function verifysharepurchasetransaction(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'verification_status'  => 'required|in:Verified,Rejected',
+            'verification_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $transaction = SharePurchaseTransaction::findOrFail($id);
+
+            if ($transaction->verification_status !== 'Pending') {
+                Alert::warning('Notice', 'This transaction has already been processed for verification.');
+                return redirect()->back();
+            }
+
+            $isVerified = $request->verification_status === 'Verified';
+
+            $transaction->update([
+                'verification_status'  => $request->verification_status,
+                'verified_by'           => auth()->id(),
+                'verified_at'           => now(),
+                'verification_remarks' => $request->verification_remarks,
+                'transaction_status'   => $isVerified ? 'Verified' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isVerified ? 'Transaction verified successfully.' : 'Transaction rejected at verification.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error verifying share transaction', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 2: APPROVAL METHODS
+    |--------------------------------------------------------------------------
+    */
+    /**
+     * Display verified transactions pending managerial approval.
+     */
+    public function pendingapprovalsharepurchasetransactions()
+    {
+        try {
+            $transactions = SharePurchaseTransaction::with([
+                    'member',
+                    'shareOffering',
+                    'shareType',
+                    'verifier',
+                    'company',
+                    'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Verified')
+                ->where('approval_status', 'Pending')
+                ->where('transaction_status', 'Verified')
+                ->latest()
+                ->get();
+
+            return view('in.shares.sharepurchasetransactions.pendingapprovalsharepurchasetransactions', compact('transactions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+    public function approvesharepurchasetransaction(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'approval_status'  => 'required|in:Approved,Rejected',
+            'approval_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $transaction = SharePurchaseTransaction::findOrFail($id);
+
+            if ($transaction->verification_status !== 'Verified') {
+                Alert::error('Action Denied', 'Transaction must be verified before approval.');
+                return redirect()->back();
+            }
+
+            if ($transaction->approval_status !== 'Pending') {
+                Alert::warning('Notice', 'This transaction has already been processed for approval.');
+                return redirect()->back();
+            }
+
+            $isApproved = $request->approval_status === 'Approved';
+
+            $transaction->update([
+                'approval_status'  => $request->approval_status,
+                'approved_by'       => auth()->id(),
+                'approved_at'       => now(),
+                'approval_remarks' => $request->approval_remarks,
+                'transaction_status' => $isApproved ? 'Approved' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isApproved ? 'Transaction approved successfully.' : 'Transaction rejected at approval stage.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error approving share transaction', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 3: ACCOUNTING POSTING METHODS
+    |--------------------------------------------------------------------------
+    */
+    public function pendingpostingsharepurchasetransactions()
+    {
+        try {
+            $transactions = SharePurchaseTransaction::with([
+                    'member',
+                    'shareOffering',
+                    'shareType',
+                    'verifier',
+                    'approver',
+                    'company',
+                    'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('approval_status', 'Approved')
+                ->where('posting_status', 'Pending')
+                ->where('transaction_status', 'Approved')
+                ->latest()
+                ->get();
+
+            return view('in.shares.sharepurchasetransactions.pendingpostingsharepurchasetransactions', compact('transactions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    public function postsharepurchasetransaction(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'cash_account_code'               => 'required|string|max:30',
+            'share_capital_account_code'     => 'required|string|max:30',
+            'membership_fee_account_code'     => 'nullable|string|max:30',
+            'social_contribution_account_code'=> 'nullable|string|max:30',
+            'posting_reference'               => 'nullable|string|max:100',
+        ]);
+
+        try {
+            $transaction = SharePurchaseTransaction::findOrFail($id);
+
+            if ($transaction->approval_status !== 'Approved') {
+                Alert::error('Action Denied', 'Transaction must be approved before accounting posting.');
+                return redirect()->back();
+            }
+
+            if ($transaction->posting_status === 'Posted') {
+                Alert::warning('Notice', 'This transaction is already posted to GL.');
+                return redirect()->back();
+            }
+
+            DB::beginTransaction();
+
+            $journalNo = 'JNL/' . date('Ym') . '/' . str_pad($transaction->id, 5, '0', STR_PAD_LEFT);
+
+            // Update transaction GL mapping and status
+            $transaction->update([
+                'posting_status'                   => 'Posted',
+                'posted_by'                        => auth()->id(),
+                'posted_at'                        => now(),
+                'posting_reference'               => $request->posting_reference ?? $transaction->TransactionRefNo,
+                'journal_no'                       => $journalNo,
+                'cash_account_code'               => $request->cash_account_code,
+                'share_capital_account_code'     => $request->share_capital_account_code,
+                'membership_fee_account_code'     => $request->membership_fee_account_code,
+                'social_contribution_account_code'=> $request->social_contribution_account_code,
+                'transaction_status'               => 'Posted',
+            ]);
+
+            DB::commit();
+
+            Alert::success('Success', "Transaction posted to GL with Journal Ref: {$journalNo}");
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            \Log::error('Error posting share transaction to GL', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 4: SHARE CERTIFICATE GENERATION METHOD
+    |--------------------------------------------------------------------------
+    */
+/**
+     * Display posted transactions ready for share certificate generation.
+     */
+    public function pendingcertificatesharepurchasetransactions()
+    {
+        try {
+            $transactions = SharePurchaseTransaction::with([
+                    'member',
+                    'shareOffering',
+                    'shareType',
+                    'poster',
+                    'company',
+                    'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('posting_status', 'Posted')
+                ->where('certificate_status', 'Not Generated')
+                ->where('transaction_status', 'Posted')
+                ->latest()
+                ->get();
+
+            return view('in.shares.sharepurchasetransactions.pendingcertificatesharepurchasetransactions', compact('transactions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+/*
+    |--------------------------------------------------------------------------
+    | STAGE 4: SHARE CERTIFICATE GENERATION METHOD
+    |--------------------------------------------------------------------------
+    */
+
+    public function generatecertificate(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        try {
+            $transaction = SharePurchaseTransaction::with(['member', 'shareType', 'shareOffering'])
+                ->findOrFail($id);
+
+            if ($transaction->posting_status !== 'Posted') {
+                Alert::error('Action Denied', 'Share purchase must be posted before generating a certificate.');
+                return redirect()->back();
+            }
+
+            if ($transaction->certificate_status === 'Generated') {
+                Alert::warning('Notice', 'Certificate has already been generated for this transaction.');
+                return redirect()->back();
+            }
+
+            DB::beginTransaction();
+
+            // Auto-generate reference numbers
+            $certificateRefNo  = $this->generateCertificateRefNo();
+            $certificateNumber = 'CERT/' . date('Y') . '/' . str_pad($transaction->id, 5, '0', STR_PAD_LEFT);
+
+            // Create record matching ShareCertificate model fields
+            $certificate = ShareCertificate::create([
+                'CertificateRefNo'           => $certificateRefNo,
+                'CertificateNumber'          => $certificateNumber,
+                'member_id'                  => $transaction->member_id,
+                'share_offering_id'          => $transaction->share_offering_id,
+                'share_type_id'              => $transaction->share_type_id,
+                'SharesQuantity'             => $transaction->SharesQuantity,
+                'IssueDate'                  => now()->format('Y-m-d'),
+                'RevocationDate'             => null,
+                'RevocationReason'           => null,
+                'replaced_by_certificate_id' => null,
+                'CertificateStatus'          => 'Active',
+
+                // System & Organization Audit Fields
+                'company_id'                 => $transaction->company_id,
+                'branch_id'                  => $transaction->branch_id,
+                'User_id'                    => auth()->id(),
+                'Status'                     => 'Active',
+                'AuditingStatus'             => 'Pending',
+                'ReportStatus'               => 'Pending',
+            ]);
+
+            // Update transaction certificate stage status
+            $transaction->update([
+                'certificate_status'       => 'Generated',
+                'certificate_generated_at' => now(),
+                'certificate_generated_by' => auth()->id(),
+                'certificate_id'           => $certificate->id,
+                'transaction_status'       => 'Completed',
+            ]);
+
+            DB::commit();
+
+            Alert::success('Success', "Share Certificate #{$certificateNumber} generated successfully.");
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            \Log::error('Error generating share certificate', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Helper function to generate sequential CertificateRefNo in format: IFLSG/CRT/0001
+     */
+    private function generateCertificateRefNo()
+    {
+        $prefix = 'IFLSG/CRT/';
+
+        $latestCertificate = ShareCertificate::where('CertificateRefNo', 'LIKE', $prefix . '%')
+            ->orderBy('id', 'desc')
+            ->first();
+
+        if (!$latestCertificate) {
+            return $prefix . '0001';
+        }
+
+        $lastNumber = (int) substr($latestCertificate->CertificateRefNo, strlen($prefix));
+        $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+
+        return $prefix . $nextNumber;
+    }
+
+    /**
+     * Display completed transactions with generated certificates.
+     */
+    public function completedsharepurchasetransactions()
+    {
+        try {
+            $transactions = SharePurchaseTransaction::with([
+                    'member',
+                    'shareOffering',
+                    'shareType',
+                    'certificate',
+                    'certificateGenerator',
+                    'company',
+                    'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('transaction_status', 'Completed')
+                ->latest()
+                ->get();
+
+            return view('in.shares.sharepurchasetransactions.completedsharepurchasetransactions', compact('transactions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+    
     public function sharetypes()
     {
         try {

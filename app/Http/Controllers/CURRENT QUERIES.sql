@@ -464,7 +464,11 @@ CREATE TABLE `member_notifications` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
--- 22/07/2026
+
+
+
+
+-- 22/07/2026 (UN POSTED TO LIVE) - PRODUCTS AND SHARE INFORMATIONS
 CREATE TABLE product_categories (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
 
@@ -1179,7 +1183,7 @@ CREATE TABLE share_transfers (
     from_member_id BIGINT UNSIGNED NOT NULL,
     to_member_id BIGINT UNSIGNED NOT NULL,
     share_offering_id BIGINT UNSIGNED NOT NULL,
-    share_type_id BIGINT UNSIGNED NOT NULL,
+    share_type_id BIGINT UNSIGNED NULL,
 
     SharesQuantity DECIMAL(15,2) NOT NULL,
     TransferPrice DECIMAL(15,2) NULL,
@@ -1209,3 +1213,325 @@ CREATE TABLE share_transfers (
     CONSTRAINT fk_transfer_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL,
     CONSTRAINT fk_transfer_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL
 );
+
+
+ALTER TABLE share_purchase_transactions
+
+-- ==========================================================
+-- VERIFICATION
+-- ==========================================================
+ADD COLUMN verification_status ENUM('Pending','Verified','Rejected')
+    NOT NULL DEFAULT 'Pending' AFTER Narration,
+
+ADD COLUMN verified_by BIGINT UNSIGNED NULL AFTER verification_status,
+
+ADD COLUMN verified_at DATETIME NULL AFTER verified_by,
+
+ADD COLUMN verification_remarks TEXT NULL AFTER verified_at,
+
+-- ==========================================================
+-- APPROVAL
+-- ==========================================================
+ADD COLUMN approval_status ENUM('Pending','Approved','Rejected')
+    NOT NULL DEFAULT 'Pending' AFTER verification_remarks,
+
+ADD COLUMN approved_by BIGINT UNSIGNED NULL AFTER approval_status,
+
+ADD COLUMN approved_at DATETIME NULL AFTER approved_by,
+
+ADD COLUMN approval_remarks TEXT NULL AFTER approved_at,
+
+-- ==========================================================
+-- ACCOUNTING POSTING
+-- ==========================================================
+ADD COLUMN posting_status ENUM('Pending','Posted','Reversed')
+    NOT NULL DEFAULT 'Pending' AFTER approval_remarks,
+
+ADD COLUMN posted_by BIGINT UNSIGNED NULL AFTER posting_status,
+
+ADD COLUMN posted_at DATETIME NULL AFTER posted_by,
+
+ADD COLUMN posting_reference VARCHAR(100) NULL AFTER posted_at,
+
+ADD COLUMN journal_no VARCHAR(50) NULL AFTER posting_reference,
+
+ADD COLUMN journal_id BIGINT UNSIGNED NULL AFTER journal_no,
+
+-- ==========================================================
+-- GL ACCOUNT CODES
+-- ==========================================================
+ADD COLUMN cash_account_code VARCHAR(30) NULL AFTER journal_id,
+
+ADD COLUMN share_capital_account_code VARCHAR(30) NULL AFTER cash_account_code,
+
+ADD COLUMN membership_fee_account_code VARCHAR(30) NULL AFTER share_capital_account_code,
+
+ADD COLUMN social_contribution_account_code VARCHAR(30) NULL AFTER membership_fee_account_code,
+
+-- ==========================================================
+-- SHARE CERTIFICATE
+-- ==========================================================
+ADD COLUMN certificate_status ENUM('Not Generated','Generated','Reissued','Cancelled')
+    NOT NULL DEFAULT 'Not Generated' AFTER social_contribution_account_code,
+
+ADD COLUMN certificate_generated_at DATETIME NULL AFTER certificate_status,
+
+ADD COLUMN certificate_generated_by BIGINT UNSIGNED NULL AFTER certificate_generated_at,
+
+ADD COLUMN certificate_id BIGINT UNSIGNED NULL AFTER certificate_generated_by;
+
+
+ALTER TABLE share_purchase_transactions
+
+ADD CONSTRAINT fk_spt_verified_by
+FOREIGN KEY (verified_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_spt_approved_by
+FOREIGN KEY (approved_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_spt_posted_by
+FOREIGN KEY (posted_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_spt_certificate_generated_by
+FOREIGN KEY (certificate_generated_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_spt_certificate
+FOREIGN KEY (certificate_id)
+REFERENCES share_certificates(id);
+
+ALTER TABLE share_purchase_transactions
+ADD COLUMN transaction_status ENUM(
+    'Draft',
+    'Pending Verification',
+    'Verified',
+    'Approved',
+    'Posted',
+    'Completed',
+    'Cancelled',
+    'Rejected'
+) NOT NULL DEFAULT 'Draft' AFTER certificate_id;
+
+
+INSERT INTO permissions (name, slug, description, Status, created_at, updated_at) VALUES
+('Verify Share Purchases', 'verify-share-purchases','Verify Share Purchase Transactions before approval', 'Active', NOW(), NOW()),
+('Approve Share Purchases', 'approve-share-purchases','Approve verified Share Purchase Transactions', 'Active', NOW(), NOW()),
+('Post Share Purchases', 'post-share-purchases','Post Share Purchase Transactions into Accounting', 'Active', NOW(), NOW()),
+('Generate Certificate Share Purchases', 'generate-certificate-share-purchases','Generate Share Certificates after successful share purchase posting', 'Active', NOW(), NOW());
+
+INSERT INTO permissions (name, slug, description, Status, created_at, updated_at) VALUES
+
+('Reject Share Purchases', 'reject-share-purchases','Reject invalid Share Purchase Transactions during verification or approval', 'Active', NOW(), NOW()),
+('Reverse Posted Share Purchases', 'reverse-share-purchases','Reverse posted Share Purchase Transactions from Accounting', 'Active', NOW(), NOW());
+
+
+ALTER TABLE social_contributions
+
+-- =====================================================
+-- VERIFICATION STAGE
+-- =====================================================
+ADD COLUMN verification_status ENUM('Pending','Verified','Rejected')
+DEFAULT 'Pending' AFTER Narration,
+
+ADD COLUMN verified_by BIGINT UNSIGNED NULL AFTER verification_status,
+
+ADD COLUMN verified_at DATETIME NULL AFTER verified_by,
+
+ADD COLUMN verification_remarks TEXT NULL AFTER verified_at,
+
+
+-- =====================================================
+-- APPROVAL STAGE
+-- =====================================================
+ADD COLUMN approval_status ENUM('Pending','Approved','Rejected')
+DEFAULT 'Pending' AFTER verification_remarks,
+
+ADD COLUMN approved_by BIGINT UNSIGNED NULL AFTER approval_status,
+
+ADD COLUMN approved_at DATETIME NULL AFTER approved_by,
+
+ADD COLUMN approval_remarks TEXT NULL AFTER approved_at,
+
+
+-- =====================================================
+-- FINANCE POSTING STAGE
+-- =====================================================
+ADD COLUMN posting_status ENUM('Pending','Posted','Reversed')
+DEFAULT 'Pending' AFTER approval_remarks,
+
+ADD COLUMN posted_by BIGINT UNSIGNED NULL AFTER posting_status,
+
+ADD COLUMN posted_at DATETIME NULL AFTER posted_by,
+
+ADD COLUMN posting_reference VARCHAR(100) NULL AFTER posted_at,
+
+
+-- =====================================================
+-- ACCOUNTING INTEGRATION
+-- =====================================================
+ADD COLUMN journal_no VARCHAR(50) NULL AFTER posting_reference,
+
+ADD COLUMN journal_id BIGINT UNSIGNED NULL AFTER journal_no,
+
+ADD COLUMN cash_account_code VARCHAR(30) NULL AFTER journal_id,
+
+ADD COLUMN social_contribution_account_code VARCHAR(30) NULL AFTER cash_account_code,
+
+
+-- =====================================================
+-- GENERAL TRANSACTION STATUS
+-- =====================================================
+ADD COLUMN transaction_status ENUM(
+    'Draft',
+    'Pending Verification',
+    'Verified',
+    'Approved',
+    'Posted',
+    'Completed',
+    'Rejected',
+    'Cancelled'
+)
+DEFAULT 'Draft' AFTER social_contribution_account_code;
+
+
+ALTER TABLE social_contributions
+
+ADD CONSTRAINT fk_social_verified_by
+FOREIGN KEY (verified_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_social_approved_by
+FOREIGN KEY (approved_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_social_posted_by
+FOREIGN KEY (posted_by)
+REFERENCES users(id);
+
+
+ALTER TABLE membership_fee_payments
+
+-- =====================================================
+-- VERIFICATION STAGE
+-- =====================================================
+ADD COLUMN verification_status ENUM('Pending','Verified','Rejected')
+DEFAULT 'Pending' AFTER Narration,
+
+ADD COLUMN verified_by BIGINT UNSIGNED NULL AFTER verification_status,
+
+ADD COLUMN verified_at DATETIME NULL AFTER verified_by,
+
+ADD COLUMN verification_remarks TEXT NULL AFTER verified_at,
+
+
+-- =====================================================
+-- APPROVAL STAGE
+-- =====================================================
+ADD COLUMN approval_status ENUM('Pending','Approved','Rejected')
+DEFAULT 'Pending' AFTER verification_remarks,
+
+ADD COLUMN approved_by BIGINT UNSIGNED NULL AFTER approval_status,
+
+ADD COLUMN approved_at DATETIME NULL AFTER approved_by,
+
+ADD COLUMN approval_remarks TEXT NULL AFTER approved_at,
+
+
+-- =====================================================
+-- FINANCE POSTING STAGE
+-- =====================================================
+ADD COLUMN posting_status ENUM('Pending','Posted','Reversed')
+DEFAULT 'Pending' AFTER approval_remarks,
+
+ADD COLUMN posted_by BIGINT UNSIGNED NULL AFTER posting_status,
+
+ADD COLUMN posted_at DATETIME NULL AFTER posted_by,
+
+ADD COLUMN posting_reference VARCHAR(100) NULL AFTER posted_at,
+
+
+-- =====================================================
+-- ACCOUNTING INTEGRATION
+-- =====================================================
+ADD COLUMN journal_no VARCHAR(50) NULL AFTER posting_reference,
+
+ADD COLUMN journal_id BIGINT UNSIGNED NULL AFTER journal_no,
+
+ADD COLUMN cash_account_code VARCHAR(30) NULL AFTER journal_id,
+
+ADD COLUMN social_contribution_account_code VARCHAR(30) NULL AFTER cash_account_code,
+
+
+-- =====================================================
+-- GENERAL TRANSACTION STATUS
+-- =====================================================
+ADD COLUMN membership_fee_payments ENUM(
+    'Draft',
+    'Pending Verification',
+    'Verified',
+    'Approved',
+    'Posted',
+    'Completed',
+    'Rejected',
+    'Cancelled'
+)
+DEFAULT 'Draft' AFTER social_contribution_account_code;
+
+
+ALTER TABLE membership_fee_payments
+
+ADD CONSTRAINT fk_somembership_fee_payments_verified_by
+FOREIGN KEY (verified_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_somembership_fee_payments_approved_by
+FOREIGN KEY (approved_by)
+REFERENCES users(id),
+
+ADD CONSTRAINT fk_membership_fee_payments_posted_by
+FOREIGN KEY (posted_by)
+REFERENCES users(id);
+
+INSERT INTO permissions 
+(name, slug, description, Status, created_at, updated_at) VALUES
+('Verify Social Contribution',  'verify-social-contribution', 'Verify member social contribution payments before posting', 'Active', NOW(), NOW()),
+('Approve Social Contribution',  'approve-social-contribution', 'Approve verified member social contribution payments', 'Active', NOW(), NOW()),
+('Post Social Contribution',  'post-social-contribution', 'Post social contribution payments into accounting', 'Active', NOW(), NOW());
+
+INSERT INTO permissions 
+(name, slug, description, Status, created_at, updated_at) VALUES
+('Reject Social Contribution', 'reject-social-contribution','Reject incorrect social contribution payments during verification or approval','Active', NOW(), NOW()),
+('View Social Contribution Report', 'view-social-contribution-report','View social contribution reports and summaries','Active', NOW(), NOW());
+
+
+INSERT INTO permissions 
+(name, slug, description, Status, created_at, updated_at) VALUES
+('Create Membership Fee Payment', 'create-membership-fee-payment', 'Create member membership fee payment transactions', 'Active', NOW(), NOW()),
+('Verify Membership Fee Payment', 'verify-membership-fee-payment', 'Verify membership fee payments before approval and posting', 'Active', NOW(), NOW()),
+('Approve Membership Fee Payment', 'approve-membership-fee-payment', 'Approve verified membership fee payment transactions', 'Active', NOW(), NOW()),
+('Post Membership Fee Payment', 'post-membership-fee-payment', 'Post membership fee payments into accounting records', 'Active', NOW(), NOW());
+
+INSERT INTO permissions 
+(name, slug, description, Status, created_at, updated_at) 
+VALUES
+
+('Reject Membership Fee Payment', 'reject-membership-fee-payment', 'Reject incorrect membership fee payment transactions', 'Active', NOW(), NOW()),
+('View Membership Fee Payment Report', 'view-membership-fee-payment-report', 'View membership fee payment reports and summaries', 'Active', NOW(), NOW());
+
+
+ALTER TABLE social_contributions
+CHANGE COLUMN membership_fee_payments transaction_status
+ENUM(
+    'Draft',
+    'Pending Verification',
+    'Verified',
+    'Approved',
+    'Posted',
+    'Completed',
+    'Rejected',
+    'Cancelled'
+)
+DEFAULT 'Draft';

@@ -257,6 +257,17 @@ class MembershipContributionController extends Controller
 
     // Membership Fee Payment;
 
+    public function membershipfeepaymentshub()
+    {
+        try {
+            return view('in.members.membershipfeepayments.membershipfeepaymentshub');
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . ' ' . auth()->user()->name, 'Technical error exists, please contact Technichal for support Tel:+255657856790');
+            return back();
+        }
+    }
+
     public function membershipfeepayments()
     {
         try {
@@ -513,7 +524,272 @@ class MembershipContributionController extends Controller
 
         return $prefix . $nextNumber;
     }
+/*
+    |--------------------------------------------------------------------------
+    | STAGE 1: VERIFICATION METHODS
+    |--------------------------------------------------------------------------
+    */
 
+    /**
+     * Display unverified membership fee payments.
+     */
+    public function unverifiedmembershipfeepayments()
+    {
+        try {
+            $payments = MembershipFeePayment::with([
+                    'member', 'company', 'branch', 'user'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Pending')
+                ->whereIn('transaction_status', ['Draft', 'Pending Verification'])
+                ->latest()
+                ->get();
+
+            return view('in.members.membershipfeepayments.unverifiedmembershipfeepayments', compact('payments'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Process verification action for membership fee payment.
+     */
+    public function verifymembershipfeepayment(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'verification_status'  => 'required|in:Verified,Rejected',
+            'verification_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $payment = MembershipFeePayment::findOrFail($id);
+
+            if ($payment->verification_status !== 'Pending') {
+                Alert::warning('Notice', 'This membership fee payment has already been verified.');
+                return redirect()->back();
+            }
+
+            $isVerified = $request->verification_status === 'Verified';
+
+            $payment->update([
+                'verification_status'  => $request->verification_status,
+                'verified_by'           => auth()->id(),
+                'verified_at'           => now(),
+                'verification_remarks' => $request->verification_remarks,
+                'transaction_status'   => $isVerified ? 'Verified' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isVerified ? 'Membership fee payment verified successfully.' : 'Membership fee payment rejected at verification.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error verifying membership fee payment', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 2: APPROVAL METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display membership fee payments pending manager approval.
+     */
+    public function pendingapprovalmembershipfeepayments()
+    {
+        try {
+            $payments = MembershipFeePayment::with([
+                    'member', 'verifier', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Verified')
+                ->where('approval_status', 'Pending')
+                ->where('transaction_status', 'Verified')
+                ->latest()
+                ->get();
+
+            return view('in.members.membershipfeepayments.pendingapprovalmembershipfeepayments', compact('payments'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Process approval action for membership fee payment.
+     */
+    public function approvemembershipfeepayment(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'approval_status'  => 'required|in:Approved,Rejected',
+            'approval_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $payment = MembershipFeePayment::findOrFail($id);
+
+            if ($payment->verification_status !== 'Verified') {
+                Alert::error('Action Denied', 'Payment must be verified before approval.');
+                return redirect()->back();
+            }
+
+            if ($payment->approval_status !== 'Pending') {
+                Alert::warning('Notice', 'This payment has already been processed for approval.');
+                return redirect()->back();
+            }
+
+            $isApproved = $request->approval_status === 'Approved';
+
+            $payment->update([
+                'approval_status'    => $request->approval_status,
+                'approved_by'         => auth()->id(),
+                'approved_at'         => now(),
+                'approval_remarks'   => $request->approval_remarks,
+                'transaction_status' => $isApproved ? 'Approved' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isApproved ? 'Membership fee payment approved successfully.' : 'Membership fee payment rejected at approval stage.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error approving membership fee payment', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 3: FINANCE & ACCOUNTING POSTING METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display approved membership fee payments pending GL posting.
+     */
+    public function pendingpostingmembershipfeepayments()
+    {
+        try {
+            $payments = MembershipFeePayment::with([
+                    'member', 'verifier', 'approver', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('approval_status', 'Approved')
+                ->where('posting_status', 'Pending')
+                ->where('transaction_status', 'Approved')
+                ->latest()
+                ->get();
+
+            return view('in.members.membershipfeepayments.pendingpostingmembershipfeepayments', compact('payments'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Post membership fee payment to GL accounts.
+     */
+    public function postmembershipfeepayment(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'cash_account_code'           => 'required|string|max:30',
+            'fee_revenue_account_code'    => 'required|string|max:30',
+            'posting_reference'           => 'nullable|string|max:100',
+        ]);
+
+        try {
+            $payment = MembershipFeePayment::findOrFail($id);
+
+            if ($payment->approval_status !== 'Approved') {
+                Alert::error('Action Denied', 'Payment must be approved before GL posting.');
+                return redirect()->back();
+            }
+
+            if ($payment->posting_status === 'Posted') {
+                Alert::warning('Notice', 'This membership fee payment is already posted to GL.');
+                return redirect()->back();
+            }
+
+            DB::beginTransaction();
+
+            $journalNo = 'JNL/FEE/' . date('Ym') . '/' . str_pad($payment->id, 5, '0', STR_PAD_LEFT);
+
+            $payment->update([
+                'posting_status'                   => 'Posted',
+                'posted_by'                        => auth()->id(),
+                'posted_at'                        => now(),
+                'posting_reference'               => $request->posting_reference ?? $payment->PaymentRefNo,
+                'journal_no'                       => $journalNo,
+                'cash_account_code'               => $request->cash_account_code,
+                'social_contribution_account_code' => $request->fee_revenue_account_code, // schema field
+                'transaction_status'               => 'Posted',
+            ]);
+
+            DB::commit();
+
+            Alert::success('Success', "Membership fee payment posted to GL with Journal Ref: {$journalNo}");
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            \Log::error('Error posting membership fee payment to GL', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Display fully completed/posted membership fee payments.
+     */
+    public function completedmembershipfeepayments()
+    {
+        try {
+            $payments = MembershipFeePayment::with([
+                    'member', 'poster', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('posting_status', 'Posted')
+                ->where('transaction_status', 'Posted')
+                ->latest()
+                ->get();
+
+            return view('in.members.membershipfeepayments.completedmembershipfeepayments', compact('payments'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
 
     // Social Contribution Schedule
 
@@ -757,6 +1033,16 @@ class MembershipContributionController extends Controller
 
     // Social Contribution
 
+    public function socialcontributionshub()
+    {
+        try {
+            return view('in.members.socialcontributions.socialcontributionshub');
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . ' ' . auth()->user()->name, 'Technical error exists, please contact Technichal for support Tel:+255657856790');
+            return back();
+        }
+    }
     public function socialcontributions()
     {
         try {
@@ -1236,5 +1522,273 @@ class MembershipContributionController extends Controller
         $nextNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
 
         return $prefix . $nextNumber;
+    }
+
+
+/*
+    |--------------------------------------------------------------------------
+    | STAGE 1: VERIFICATION METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display unverified social contributions.
+     */
+    public function unverifiedsocialcontributions()
+    {
+        try {
+            $contributions = SocialContribution::with([
+                    'schedule', 'member', 'company', 'branch', 'user'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Pending')
+                ->whereIn('transaction_status', ['Draft', 'Pending Verification'])
+                ->latest()
+                ->get();
+
+            return view('in.members.socialcontributions.unverifiedsocialcontributions', compact('contributions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Process verification action for social contribution.
+     */
+    public function verifysocialcontribution(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'verification_status'  => 'required|in:Verified,Rejected',
+            'verification_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $contribution = SocialContribution::findOrFail($id);
+
+            if ($contribution->verification_status !== 'Pending') {
+                Alert::warning('Notice', 'This contribution has already been processed for verification.');
+                return redirect()->back();
+            }
+
+            $isVerified = $request->verification_status === 'Verified';
+
+            $contribution->update([
+                'verification_status'  => $request->verification_status,
+                'verified_by'           => auth()->id(),
+                'verified_at'           => now(),
+                'verification_remarks' => $request->verification_remarks,
+                'transaction_status'   => $isVerified ? 'Verified' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isVerified ? 'Social contribution verified successfully.' : 'Social contribution rejected at verification.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error verifying social contribution', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 2: APPROVAL METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display contributions pending approval.
+     */
+    public function pendingapprovalsocialcontributions()
+    {
+        try {
+            $contributions = SocialContribution::with([
+                    'schedule', 'member', 'verifier', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('verification_status', 'Verified')
+                ->where('approval_status', 'Pending')
+                ->where('transaction_status', 'Verified')
+                ->latest()
+                ->get();
+
+            return view('in.members.socialcontributions.pendingapprovalsocialcontributions', compact('contributions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Process approval action for social contribution.
+     */
+    public function approvesocialcontribution(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'approval_status'  => 'required|in:Approved,Rejected',
+            'approval_remarks' => 'nullable|string',
+        ]);
+
+        try {
+            $contribution = SocialContribution::findOrFail($id);
+
+            if ($contribution->verification_status !== 'Verified') {
+                Alert::error('Action Denied', 'Contribution must be verified before approval.');
+                return redirect()->back();
+            }
+
+            if ($contribution->approval_status !== 'Pending') {
+                Alert::warning('Notice', 'This contribution has already been processed for approval.');
+                return redirect()->back();
+            }
+
+            $isApproved = $request->approval_status === 'Approved';
+
+            $contribution->update([
+                'approval_status'    => $request->approval_status,
+                'approved_by'         => auth()->id(),
+                'approved_at'         => now(),
+                'approval_remarks'   => $request->approval_remarks,
+                'transaction_status' => $isApproved ? 'Approved' : 'Rejected',
+            ]);
+
+            Alert::success(
+                'Success', 
+                $isApproved ? 'Social contribution approved successfully.' : 'Social contribution rejected at approval stage.'
+            );
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            \Log::error('Error approving social contribution', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | STAGE 3: FINANCE & ACCOUNTING POSTING METHODS
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Display approved contributions pending accounting posting.
+     */
+    public function pendingpostingsocialcontributions()
+    {
+        try {
+            $contributions = SocialContribution::with([
+                    'schedule', 'member', 'verifier', 'approver', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('approval_status', 'Approved')
+                ->where('posting_status', 'Pending')
+                ->where('transaction_status', 'Approved')
+                ->latest()
+                ->get();
+
+            return view('in.members.socialcontributions.pendingpostingsocialcontributions', compact('contributions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Post social contribution to GL accounts.
+     */
+    public function postsocialcontribution(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+            'cash_account_code'                => 'required|string|max:30',
+            'social_contribution_account_code' => 'required|string|max:30',
+            'posting_reference'                => 'nullable|string|max:100',
+        ]);
+
+        try {
+            $contribution = SocialContribution::findOrFail($id);
+
+            if ($contribution->approval_status !== 'Approved') {
+                Alert::error('Action Denied', 'Contribution must be approved before accounting posting.');
+                return redirect()->back();
+            }
+
+            if ($contribution->posting_status === 'Posted') {
+                Alert::warning('Notice', 'This social contribution is already posted to GL.');
+                return redirect()->back();
+            }
+
+            DB::beginTransaction();
+
+            $journalNo = 'JNL/SOC/' . date('Ym') . '/' . str_pad($contribution->id, 5, '0', STR_PAD_LEFT);
+
+            $contribution->update([
+                'posting_status'                   => 'Posted',
+                'posted_by'                        => auth()->id(),
+                'posted_at'                        => now(),
+                'posting_reference'               => $request->posting_reference ?? $contribution->ContributionRefNo,
+                'journal_no'                       => $journalNo,
+                'cash_account_code'               => $request->cash_account_code,
+                'social_contribution_account_code' => $request->social_contribution_account_code,
+                'transaction_status'               => 'Posted',
+            ]);
+
+            DB::commit();
+
+            Alert::success('Success', "Social contribution posted to GL with Journal Ref: {$journalNo}");
+
+            return redirect()->back();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            \Log::error('Error posting social contribution to GL', [
+                'user_id' => Auth::id(), 'method' => __METHOD__, 'message' => $th->getMessage(), 'trace' => $th->getTraceAsString(),
+            ]);
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
+    }
+
+    /**
+     * Display fully posted and completed social contributions.
+     */
+    public function completedsocialcontributions()
+    {
+        try {
+            $contributions = SocialContribution::with([
+                    'schedule', 'member', 'poster', 'company', 'branch'
+                ])
+                ->where('Status', 'Active')
+                ->where('posting_status', 'Posted')
+                ->where('transaction_status', 'Posted')
+                ->latest()
+                ->get();
+
+            return view('in.members.socialcontributions.completedsocialcontributions', compact('contributions'));
+
+        } catch (\Throwable $th) {
+            Alert::error('Sorry! ' . auth()->user()->name, 'Technical error exists, please contact Technical Support.');
+            return back();
+        }
     }
 }
