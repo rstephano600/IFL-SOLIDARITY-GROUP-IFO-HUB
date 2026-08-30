@@ -25,7 +25,7 @@ class MemberDashboardController extends Controller
         ->where('member_id', Auth::id())
         ->first();
 
-        return view('in.member.dashboard.dashboard', compact('member'));
+        return view('member.dashboard.dashboard', compact('member'));
     }
 
     public function profile()
@@ -38,7 +38,7 @@ class MemberDashboardController extends Controller
             ->where('member_id', $userId)
             ->first();
 
-        return view('in.member.profile.profile', compact('user', 'member'));
+        return view('member.profile.profile', compact('user', 'member'));
     }
 
     public function updateProfile(Request $request)
@@ -79,7 +79,7 @@ class MemberDashboardController extends Controller
 
     public function settings()
     {
-        return view('in.member.setting.setting');
+        return view('member.setting.setting');
     }
 
     public function updatePassword(Request $request)
@@ -128,7 +128,7 @@ class MemberDashboardController extends Controller
             ->latest()
             ->paginate(20);
 
-        return view('in.member.notification.notification', compact('notifications'));
+        return view('member.notification.notification', compact('notifications'));
     }
 
     public function markAsRead($id)

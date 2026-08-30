@@ -155,6 +155,35 @@
             </div>
         </div>
         @endcan
+                {{-- ── Expenses Menu ── --}}
+        @can('view-expenses-menu')
+        <div class="nav-item">
+            <a href="#expensesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-receipt me-2"></i>
+                <span>Expenses Menu</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+            <div class="collapse" id="expensesSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-expenses')
+                    <a href="{{ route('expenseinformations') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Expenses Info</span>
+                    </a>
+                    @endcan
+                    @can('approve-expenses')
+                    <a href="{{ route('approveexpenses') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-check me-2"></i> <span>Approve Expenses</span>
+                    </a>
+                    @endcan
+                    @can('view-expense-categories')
+                    <a href="{{ route('expensecategoryinformations') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-tags me-2"></i> <span>Expense Categories</span>
+                    </a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
         <form method="POST" action="{{ route('logout') }}" class="mt-auto">
             @csrf
             <button type="submit" 

@@ -46,7 +46,10 @@ use App\Http\Controllers\MembershipContributionController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CostCentreController;
+use App\Http\Controllers\MemberSelfInformationsController;
 use App\Http\Controllers\MemberController;
+
+
 use App\Http\Controllers\Loan\LoanDashboardController;
 use App\Http\Controllers\Loan\ClientLoanController;
 use App\Http\Controllers\Loan\DailyCollectionController;
@@ -70,6 +73,7 @@ Route::middleware('auth')->post('/session/ping', function () {
 //MEMBER INFORMATIONS ROUTES
 Route::middleware(['auth'])->group(function () {
     Route::get('/memberdashboard', [MemberDashboardController::class, 'memberdashboard'])->name('memberdashboard');
+    Route::get('/myShares', [MemberSelfInformationsController::class, 'myShares'])->name('myShares');
 });
 Route::middleware(['auth'])->prefix('member')->name('member.')->group(function () {
     Route::get('/profile', [MemberDashboardController::class, 'profile'])->name('profile');
@@ -559,7 +563,27 @@ Route::middleware('auth')->group(function () {
     Route::post('/payweeklyallowance/{id}', [SalaryController::class, 'payweeklyallowance'])->name('payweeklyallowance');
     Route::get('/weeklyallowancehistory', [SalaryController::class, 'weeklyallowancehistory'])->name('weeklyallowancehistory');
 
+
+        // EXPENSES ROUTES
+    Route::get('/expensecategories', [ExpenseController::class, 'expensecategories'])->name('expensecategories');
+    Route::post('/storeexpensecategory', [ExpenseController::class, 'storeexpensecategory'])->name('storeexpensecategory');
+    Route::get('/editexpensecategory/{id}', [ExpenseController::class, 'editexpensecategory'])->name('editexpensecategory');
+    Route::post('/updateexpensecategory/{id}', [ExpenseController::class, 'updateexpensecategory'])->name('updateexpensecategory');
+    Route::get('/viewexpensecategory/{id}', [ExpenseController::class, 'viewexpensecategory'])->name('viewexpensecategory');
+    Route::get('/destroyexpensecategory/{id}', [ExpenseController::class, 'destroyexpensecategory'])->name('destroyexpensecategory');
+
+    Route::get('/expenses', [ExpenseController::class, 'expenses'])->name('expenses');
+    Route::post('/storeexpense', [ExpenseController::class, 'storeexpense'])->name('storeexpense');
+    Route::get('/editexpense/{id}', [ExpenseController::class, 'editexpense'])->name('editexpense');
+    Route::post('/updateexpense/{id}', [ExpenseController::class, 'updateexpense'])->name('updateexpense');
+    Route::get('/viewexpense/{id}', [ExpenseController::class, 'viewexpense'])->name('viewexpense');
+    Route::get('/approveexpenses', [ExpenseController::class, 'approveexpenses'])->name('approveexpenses');
+    Route::get('/approveexpense/{id}', [ExpenseController::class, 'approveexpense'])->name('approveexpense');
+    Route::get('/rejectexpense/{id}', [ExpenseController::class, 'rejectexpense'])->name('rejectexpense');
+    Route::get('/destroyexpense/{id}', [ExpenseController::class, 'destroyexpense'])->name('destroyexpense');
+
 });
+
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
@@ -684,12 +708,6 @@ Route::post('/schedules/{id}/penalty', [RepaymentScheduleController::class, 'add
 
 Route::middleware(['auth'])->group(function () {
 Route::resource('donations', DonationController::class);
-
-Route::resource('expense-categories', ExpenseCategoryController::class);
-Route::resource('expenses', ExpenseController::class);
-Route::get('/expenses/export', [ExpenseController::class, 'export'])->name('expenses.export');
-Route::get('/expenses/export-excel', [ExpenseController::class, 'exportExcel'])->name('expenses.export.excel');
-Route::get('/expenses/export-pdf', [ExpenseController::class, 'exportPDF'])->name('expenses.export.pdf');
 
 Route::resource('salary_levels', SalaryLevelController::class);
 

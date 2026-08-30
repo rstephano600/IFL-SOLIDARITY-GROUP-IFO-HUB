@@ -1318,12 +1318,10 @@ ADD COLUMN transaction_status ENUM(
 
 INSERT INTO permissions (name, slug, description, Status, created_at, updated_at) VALUES
 ('Verify Share Purchases', 'verify-share-purchases','Verify Share Purchase Transactions before approval', 'Active', NOW(), NOW()),
-('Approve Share Purchases', 'approve-share-purchases','Approve verified Share Purchase Transactions', 'Active', NOW(), NOW()),
 ('Post Share Purchases', 'post-share-purchases','Post Share Purchase Transactions into Accounting', 'Active', NOW(), NOW()),
 ('Generate Certificate Share Purchases', 'generate-certificate-share-purchases','Generate Share Certificates after successful share purchase posting', 'Active', NOW(), NOW());
 
 INSERT INTO permissions (name, slug, description, Status, created_at, updated_at) VALUES
-
 ('Reject Share Purchases', 'reject-share-purchases','Reject invalid Share Purchase Transactions during verification or approval', 'Active', NOW(), NOW()),
 ('Reverse Posted Share Purchases', 'reverse-share-purchases','Reverse posted Share Purchase Transactions from Accounting', 'Active', NOW(), NOW());
 
@@ -1535,3 +1533,56 @@ ENUM(
     'Cancelled'
 )
 DEFAULT 'Draft';
+
+
+
+-- tarehe 25/08/2026
+CREATE TABLE share_dividend_allocations (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    share_dividend_declaration_id BIGINT UNSIGNED NOT NULL,
+    member_id BIGINT UNSIGNED NOT NULL,
+    share_type_id BIGINT UNSIGNED NULL,
+
+    shares_held DECIMAL(18,4) NOT NULL DEFAULT 0,
+    share_value DECIMAL(18,2) NOT NULL DEFAULT 0,
+    dividend_rate DECIMAL(10,4) NOT NULL DEFAULT 0,
+    dividend_amount DECIMAL(18,2) NOT NULL DEFAULT 0,
+
+    payment_status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    payment_date DATE NULL,
+    payment_reference VARCHAR(100) NULL,
+
+    accounting_transaction_id BIGINT UNSIGNED NULL,
+
+    Status VARCHAR(50) NOT NULL DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) NULL,
+    ReportStatus VARCHAR(50) NULL,
+
+    User_id BIGINT UNSIGNED NULL,
+    company_id BIGINT UNSIGNED NULL,
+    branch_id BIGINT UNSIGNED NULL,
+
+    created_at TIMESTAMP NULL DEFAULT NULL,
+    updated_at TIMESTAMP NULL DEFAULT NULL,
+
+    INDEX idx_dividend_declaration (
+        share_dividend_declaration_id
+    ),
+
+    INDEX idx_member (
+        member_id
+    ),
+
+    INDEX idx_share_type (
+        share_type_id
+    ),
+
+    INDEX idx_payment_status (
+        payment_status
+    ),
+
+    INDEX idx_accounting_transaction (
+        accounting_transaction_id
+    )
+);

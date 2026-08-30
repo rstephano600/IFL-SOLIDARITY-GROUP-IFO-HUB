@@ -23,6 +23,8 @@ use App\Models\GroupMember;
 use App\Models\Group;
 use App\Models\Employee;
 use App\Helpers\LogActivity;
+use App\Models\Company;
+use App\Models\Branch;
 use Illuminate\Support\Facades\Auth;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Crypt;
@@ -39,7 +41,7 @@ class ExpenseController extends Controller
 
     public function expensecategoryinformations()
     {
-        try {
+        // try {
 
             $data = ExpenseCategory::with([
                     'user',
@@ -50,22 +52,22 @@ class ExpenseController extends Controller
                 ->get();
 
             return view(
-                'in.expenses.categories.expensecategoryinformations',
+                'in.expenses.expensecategoryinformations',
                 compact('data')
             );
 
-        } catch (\Throwable $th) {
+        // } catch (\Throwable $th) {
 
-            Alert::error(
-                'Sorry! '.Auth()->user()->name,
-                'Technical error exists, please contact Technical Support.'
-            );
+        //     Alert::error(
+        //         'Sorry! '.Auth()->user()->name,
+        //         'Technical error exists, please contact Technical Support.'
+        //     );
 
-            return back();
-        }
+        //     return back();
+        // }
     }
 
-    public function registerexpensecategory(Request $request)
+    public function storeexpensecategory(Request $request)
     {
         try {
 
@@ -535,6 +537,33 @@ class ExpenseController extends Controller
     }
 
 // POST: Process approval status changes
+    public function approveexpenses()
+    {
+        // try {
+
+            $data = Expense::where('AppStatus', 'Pending')
+                            ->get();
+            $companies = Company::where('Status', 'Active')->get();
+            $branchies = Branch::where('Status', 'Active')->get();
+
+            $categories = ExpenseCategory::where('Status', 'Active')->get();
+
+            return view(
+                'in.expenses.approveexpenses',
+                compact(
+                    'data',
+                    'categories', 'companies', 'branchies'));
+
+        // } catch (\Throwable $th) {
+
+        //     Alert::error(
+        //         'Sorry! '.Auth()->user()->name,
+        //         'Technical error exists, please contact Technical for support Tel:+255657856790'
+        //     );
+
+        //     return back();
+        // }
+    }
     public function approveexpense($id)
     {
         try {

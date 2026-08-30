@@ -89,7 +89,7 @@ class ShareController extends Controller
                 'share_type_id'     => $request->share_type_id,
                 'TransactionType'   => $request->TransactionType ?? 'Purchase',
                 'SharesQuantity'    => $request->SharesQuantity,
-                'PricePerShare'     => $request->PricePerShare,
+                'PricePerShare'     => $share_offering->PricePerShare,
                 'TransactionDate'   => $request->TransactionDate,
                 'PaymentMethod'     => $request->PaymentMethod,
                 'PaymentReference'  => $request->PaymentReference,
