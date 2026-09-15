@@ -1586,3 +1586,44 @@ CREATE TABLE share_dividend_allocations (
         accounting_transaction_id
     )
 );
+
+
+--- TAREHE 06/09/2026
+CREATE TABLE product_subcategories (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    company_id BIGINT UNSIGNED NOT NULL,
+    branch_id BIGINT UNSIGNED NULL,
+    User_id BIGINT UNSIGNED NOT NULL,
+
+    SubCategoryRefNo VARCHAR(50) UNIQUE NOT NULL,
+
+    category_id BIGINT UNSIGNED NOT NULL,
+
+    SubCategoryCode VARCHAR(50) NULL,
+    SubCategoryName VARCHAR(255) NOT NULL,
+    Description TEXT NULL,
+
+    Status VARCHAR(50) DEFAULT 'Active',
+    AuditingStatus VARCHAR(50) DEFAULT 'Pending',
+    ReportStatus VARCHAR(50) DEFAULT 'Pending',
+
+    created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    FOREIGN KEY (category_id)
+        REFERENCES product_categories(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (company_id)
+        REFERENCES companies(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (User_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (branch_id)
+        REFERENCES branchies(id)
+        ON DELETE SET NULL
+);

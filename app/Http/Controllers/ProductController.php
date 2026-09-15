@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
+use App\Models\ProductSubCategory;
 use App\Models\CompanyBusinessCode;
 use App\Models\Company;
 use App\Models\Branch;
@@ -574,4 +575,620 @@ class ProductController extends Controller
 
         }
     }
+    
+
+    public function productSubCategory()
+    {
+        try {
+
+            $data = ProductSubCategory::where('Status', 'Active')
+                ->with(['category','branch'])
+                ->get();
+
+            $categories = ProductCategory::where('Status','Active')
+                ->get();
+
+            $branchies = Branch::where('Status','Active')->get();
+
+            return view(
+                'in.products.productsubcategory',
+                compact(
+                    'data',
+                    'categories',
+                    'branchies'
+                )
+            );
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! '.Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+
+    public function storeproductSubCategory(Request $request)
+    {
+        $request->validate([
+
+            'branch_id'       => 'required',
+            'category_id'     => 'required',
+
+            'SubCategoryCode' => 'nullable|string|max:50|unique:product_subcategories,SubCategoryCode',
+
+            'SubCategoryName' => 'required|string|max:255',
+            'Description'     => 'nullable|string',
+
+        ]);
+
+        try {
+
+            $branch = Branch::findOrFail($request->branch_id);
+
+            $company = $branch->company_id;
+
+            $branchWords = explode(
+                ' ',
+                strtoupper($branch->branch_name)
+            );
+
+            $branchPrefix = '';
+
+            foreach ($branchWords as $word) {
+
+                $branchPrefix .= substr($word,0,1);
+
+            }
+
+            $branchPrefix = substr($branchPrefix,0,3);
+
+            do {
+
+                $generatedRefNo =
+                    'SUB-' .
+                    $branchPrefix . '-' .
+                    date('Y') . '-' .
+                    mt_rand(1000,9999);
+
+            } while (
+
+                ProductSubCategory::where(
+                    'SubCategoryRefNo',
+                    $generatedRefNo
+                )->exists()
+
+            );
+
+            ProductSubCategory::create([
+
+                'company_id'      => $company,
+
+                'branch_id'       => $branch->branch_id,
+
+                'User_id'         => Auth::id(),
+
+                'category_id'     => $request->category_id,
+
+                'SubCategoryRefNo'=> $generatedRefNo,
+
+                'SubCategoryCode' => $request->SubCategoryCode
+                                        ? strtoupper($request->SubCategoryCode)
+                                        : null,
+
+                'SubCategoryName' => strtoupper($request->SubCategoryName),
+
+                'Description'     => $request->Description,
+
+                'Status'          => 'Active',
+
+                'AuditingStatus'  => 'Pending',
+
+                'ReportStatus'    => 'Report',
+
+            ]);
+
+            Alert::success(
+                'Success '.Auth()->user()->name,
+                'You\'ve Registered Product Sub Category Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! '.Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+
+    public function editproductSubCategory($id)
+    {
+        try {
+
+            $id = Crypt::decrypt($id);
+
+            $data = ProductSubCategory::findOrFail($id);
+
+            $categories = ProductCategory::where('Status','Active')
+                ->get();
+
+            $branchies = Branch::where('Status','Active')->get();
+
+            return view(
+                'in.products.editproductsubcategory',
+                compact(
+                    'data',
+                    'categories',
+                    'branchies'
+                )
+            );
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! '.Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+
+    public function updateproductSubCategory(Request $request,$id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+
+            'branch_id'       => 'required',
+
+            'category_id'     => 'required',
+
+            'SubCategoryCode' => 'nullable|string|max:50|unique:product_subcategories,SubCategoryCode,' . $id,
+
+            'SubCategoryName' => 'required|string|max:255',
+
+            'Description'     => 'nullable|string',
+
+        ]);
+
+        try {
+
+            $branch = Branch::findOrFail(
+                $request->branch_id
+            );
+
+            $company = $branch->company_id;
+
+            $subcategory = ProductSubCategory::findOrFail($id);
+
+            $subcategory->update([
+
+                'company_id'      => $company,
+
+                'branch_id'       => $branch->branch_id,
+
+                'User_id'         => Auth::id(),
+
+                'category_id'     => $request->category_id,
+
+                'SubCategoryCode' => $request->SubCategoryCode
+                                    ? strtoupper($request->SubCategoryCode)
+                                    : null,
+
+                'SubCategoryName' => strtoupper($request->SubCategoryName),
+
+                'Description'     => $request->Description,
+
+            ]);
+
+            Alert::success(
+                'Success '.Auth()->user()->name,
+                'You\'ve Updated Product Sub Category Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! '.Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+        public function destroyproductSubCategory($id)
+        {
+            try {
+                $id = Crypt::decrypt($id);
+                $brand = ProductSubCategory::findOrFail($id);
+
+                // Set logical deletion status pattern
+                $brand->update([
+                    'Status'  => 'Deleted',
+                ]);
+
+                Alert::success(
+                    'Success ' . Auth()->user()->name,
+                    'You\'ve Removed Product Sub Category Successfully'
+                );
+
+                return back();
+
+            } catch (\Throwable $th) {
+                Alert::error(
+                    'Sorry! ' . Auth()->user()->name,
+                    'Technical error exists, please contact Technichal for support Tel:+255657856790'
+                );
+                return back();
+            }
+        }
+
+        
+    public function deletedproductSubCategory()
+    {
+        try {
+            $data = ProductSubCategory::where('Status', 'Deleted')
+                ->with(['company', 'branch'])
+                ->get();
+
+            return view('in.products.deletedproductSubCategory', compact('data'));
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+        public function restoreproductSubCategory($id)
+        {
+            try {
+                $id = Crypt::decrypt($id);
+                $brand = ProductSubCategory::findOrFail($id);
+
+                $brand->update([
+                    'Status'  => 'Active',
+                ]);
+
+                Alert::success(
+                    'Success ' . Auth()->user()->name,
+                    'You\'ve Restored Product Sub Category Successfully'
+                );
+
+                return back();
+
+            } catch (\Throwable $th) {
+                Alert::error(
+                    'Sorry! ' . Auth()->user()->name,
+                    'Technical error exists, please contact Technichal for support Tel:+255657856790'
+                );
+                return back();
+            }
+        }
+    /**
+     * Display a listing of active units of measure.
+     */
+    public function unitOfMeasure()
+    {
+        try {
+            // Fetch scoped units using your custom branchData() trait method
+            $data = UnitOfMeasure::where('Status', 'Active')
+                ->with(['company', 'branch', 'user'])
+                ->get();
+
+            $companies = Company::where('Status', 'Active')->get();
+            $branchies = Branch::where('Status', 'Active')->with('company')->get();
+
+            return view('in.products.unitOfMeasure', compact('data', 'companies', 'branchies'));
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+    /**
+     * Store a newly created unit of measure in storage with dynamic branch prefixes.
+     */
+    public function storeunitOfMeasure(Request $request)
+    {
+        $request->validate([
+
+            'branch_id'   => 'required|integer',
+
+            'UnitCode'    => 'nullable|string|max:50|unique:units_of_measure,UnitCode',
+
+            'UnitName'    => 'required|string|max:255',
+
+            'Description' => 'nullable|string',
+
+        ]);
+
+        try {
+
+            $branch = Branch::findOrFail(
+                $request->branch_id
+            );
+
+            $company = $branch->company_id;
+
+            $branchWords = explode(
+                ' ',
+                strtoupper($branch->branch_name)
+            );
+
+            $branchPrefix = '';
+
+            foreach ($branchWords as $word) {
+
+                $branchPrefix .= substr($word, 0, 1);
+
+            }
+
+            $branchPrefix = substr($branchPrefix, 0, 3);
+
+            do {
+
+                $generatedRefNo =
+                    'UOM-' .
+                    $branchPrefix . '-' .
+                    date('Y') . '-' .
+                    mt_rand(1000, 9999);
+
+            } while (
+
+                UnitOfMeasure::where(
+                    'UnitRefNo',
+                    $generatedRefNo
+                )->exists()
+
+            );
+
+            UnitOfMeasure::create([
+
+                'company_id'     => $company,
+
+                'branch_id'      => $branch->branch_id,
+
+                'User_id'        => Auth::id(),
+
+                'UnitRefNo'      => $generatedRefNo,
+
+                'UnitCode'       => $request->UnitCode
+                                    ? strtoupper($request->UnitCode)
+                                    : null,
+
+                'UnitName'       => strtoupper($request->UnitName),
+
+                'Description'    => $request->Description,
+
+                'Status'         => 'Active',
+
+                'AuditingStatus' => 'Pending',
+
+                'ReportStatus'   => 'Report',
+
+
+            ]);
+
+            Alert::success(
+                'Success ' . Auth()->user()->name,
+                'You\'ve Registered Unit Of Measure Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+    /**
+     * Show the form for editing the specified unit of measure.
+     */
+    public function editunitOfMeasure($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $data = UnitOfMeasure::findOrFail($id);
+
+            $companies = Company::where('Status', 'Active')->get();
+            $branchies = Branch::where('Status', 'Active')->with('company')->get();
+
+            return view('in.products.editunitOfMeasure', compact('data', 'companies', 'branchies'));
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+    /**
+     * Update the specified unit of measure in storage.
+     */
+    public function updateunitOfMeasure(Request $request, $id)
+    {
+        $id = Crypt::decrypt($id);
+
+        $request->validate([
+
+            'branch_id'   => 'required|integer',
+
+            'UnitCode'    => 'nullable|string|max:50|unique:units_of_measure,UnitCode,' . $id,
+
+            'UnitName'    => 'required|string|max:255',
+
+            'Description' => 'nullable|string',
+
+        ]);
+
+        try {
+
+            $branch = Branch::findOrFail(
+                $request->branch_id
+            );
+
+            $company = $branch->company_id;
+
+            $unit = UnitOfMeasure::findOrFail($id);
+
+            $unit->update([
+
+                'company_id'  => $company,
+
+                'branch_id'   => $branch->branch_id,
+
+                'User_id'     => Auth::id(),
+
+                'UnitCode'    => $request->UnitCode
+                                    ? strtoupper($request->UnitCode)
+                                    : null,
+
+                'UnitName'    => strtoupper($request->UnitName),
+
+                'Description' => $request->Description,
+
+
+            ]);
+
+            Alert::success(
+                'Success ' . Auth()->user()->name,
+                'You\'ve Updated Unit Of Measure Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+
+            return back();
+        }
+    }
+
+    /**
+     * Display the specific unit of measure details.
+     */
+    public function viewunitOfMeasure($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $data = UnitOfMeasure::with(['company', 'branch', 'user'])->findOrFail($id);
+
+            return view('in.products.viewunitOfMeasure', compact('data'));
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+    /**
+     * Soft delete the specified unit of measure.
+     */
+    public function destroyunitOfMeasure($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $unit = UnitOfMeasure::findOrFail($id);
+
+            $unit->update([
+                'Status'     => 'Deleted',
+            ]);
+
+            Alert::success(
+                'Success ' . Auth()->user()->name,
+                'You\'ve Removed Unit of Measure Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+    /**
+     * Display a listing of soft-deleted units of measure.
+     */
+    public function deletedunitOfMeasure()
+    {
+        try {
+            $data = UnitOfMeasure::where('Status', 'Deleted')
+                ->with(['company', 'branch'])
+                ->get();
+
+            return view('in.products.deletedunitOfMeasure', compact('data'));
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+    /**
+     * Restore a soft-deleted unit of measure back to Active status.
+     */
+    public function restoreunitOfMeasure($id)
+    {
+        try {
+            $id = Crypt::decrypt($id);
+            $unit = UnitOfMeasure::findOrFail($id);
+
+            $unit->update([
+                'Status'     => 'Active',
+            ]);
+
+            Alert::success(
+                'Success ' . Auth()->user()->name,
+                'You\'ve Restored Unit of Measure Successfully'
+            );
+
+            return back();
+
+        } catch (\Throwable $th) {
+            Alert::error(
+                'Sorry! ' . Auth()->user()->name,
+                'Technical error exists, please contact Technichal for support Tel:+255657856790'
+            );
+            return back();
+        }
+    }
+
+
 }

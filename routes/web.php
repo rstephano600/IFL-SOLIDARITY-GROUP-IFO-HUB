@@ -187,6 +187,42 @@ Route::middleware('auth')->group(function () {
     Route::get('/productsreport', [ProductController::class,'productsreport'])->name('productsreport');
     Route::get('/restoreproducts', [ProductController::class,'restoreproducts'])->name('restoreproducts');
 
+    Route::get('/productCategory', [ProductController::class, 'productCategory'])->name('productCategory');
+    Route::post('/storeproductCategory', [ProductController::class, 'storeproductCategory'])->name('storeproductCategory');
+    Route::get('/editproductCategory/{id}', [ProductController::class, 'editproductCategory'])->name('editproductCategory');
+    Route::put('/updateproductCategory/{id}', [ProductController::class, 'updateproductCategory'])->name('updateproductCategory');
+    Route::get('/viewproductCategory/{id}', [ProductController::class, 'viewproductCategory'])->name('viewproductCategory');
+    Route::get('/destroyproductCategory/{id}', [ProductController::class, 'destroyproductCategory'])->name('destroyproductCategory');
+    Route::get('/deletedproductCategory', [ProductController::class, 'deletedproductCategory'])->name('deletedproductCategory');
+    Route::get('/restoreproductCategory/{id}', [ProductController::class, 'restoreproductCategory'])->name('restoreproductCategory');
+
+    Route::get('/brand', [ProductController::class, 'brand'])->name('brand');
+    Route::post('/storebrand', [ProductController::class, 'storebrand'])->name('storebrand');
+    Route::get('/editbrand/{id}', [ProductController::class, 'editbrand'])->name('editbrand');
+    Route::put('/updatebrand/{id}', [ProductController::class, 'updatebrand'])->name('updatebrand');
+    Route::get('/viewbrand/{id}', [ProductController::class, 'viewbrand'])->name('viewbrand');
+    Route::get('/destroybrand/{id}', [ProductController::class, 'destroybrand'])->name('destroybrand');
+    Route::get('/deletedbrand', [ProductController::class, 'deletedbrand'])->name('deletedbrand');
+    Route::get('/restorebrand/{id}', [ProductController::class, 'restorebrand'])->name('restorebrand');
+
+    Route::get('/productSubCategory', [ProductController::class, 'productSubCategory'])->name('productSubCategory');
+    Route::post('/storeproductSubCategory', [ProductController::class, 'storeproductSubCategory'])->name('storeproductSubCategory');
+    Route::get('/editproductSubCategory/{id}', [ProductController::class, 'editproductSubCategory'])->name('editproductSubCategory');
+    Route::post('/updateproductSubCategory/{id}', [ProductController::class, 'updateproductSubCategory'])->name('updateproductSubCategory');
+    Route::get('/viewproductSubCategory/{id}', [ProductController::class, 'viewproductSubCategory'])->name('viewproductSubCategory');
+    Route::get('/destroyproductSubCategory/{id}', [ProductController::class, 'destroyproductSubCategory'])->name('destroyproductSubCategory');
+    Route::get('/deletedproductSubCategory', [ProductController::class, 'deletedproductSubCategory'])->name('deletedproductSubCategory');
+    Route::get('/restoreproductSubCategory/{id}', [ProductController::class, 'restoreproductSubCategory'])->name('restoreproductSubCategory');
+
+    Route::get('/unitOfMeasure', [ProductController::class, 'unitOfMeasure'])->name('unitOfMeasure');
+    Route::post('/storeunitOfMeasure', [ProductController::class, 'storeunitOfMeasure'])->name('storeunitOfMeasure');
+    Route::get('/editunitOfMeasure/{id}', [ProductController::class, 'editunitOfMeasure'])->name('editunitOfMeasure');
+    Route::put('/updateunitOfMeasure/{id}', [ProductController::class, 'updateunitOfMeasure'])->name('updateunitOfMeasure');
+    Route::get('/viewunitOfMeasure/{id}', [ProductController::class, 'viewunitOfMeasure'])->name('viewunitOfMeasure');
+    Route::get('/destroyunitOfMeasure/{id}', [ProductController::class, 'destroyunitOfMeasure'])->name('destroyunitOfMeasure');
+    Route::get('/deletedunitOfMeasure', [ProductController::class, 'deletedunitOfMeasure'])->name('deletedunitOfMeasure');
+    Route::get('/restoreunitOfMeasure/{id}', [ProductController::class, 'restoreunitOfMeasure'])->name('restoreunitOfMeasure');
+
     // SHARE TYPES ROUTES
     Route::get('/sharetypes',  [ShareController::class, 'sharetypes'])->name('sharetypes');
     Route::post('/storesharetypes', [ShareController::class, 'storesharetypes'])->name('storesharetypes');

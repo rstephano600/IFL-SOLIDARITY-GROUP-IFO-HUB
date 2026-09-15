@@ -250,12 +250,12 @@
         @can('view-products-menu')
         <div class="nav-item">
             <a href="#productSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-                <i class="fas fa-boxes-stacked me-2"></i> <span>Products</span><i class="fas fa-chevron-down ms-auto"></i>
+                <i class="fas fa-boxes-stacked me-2"></i> <span>Products Menu</span><i class="fas fa-chevron-down ms-auto"></i>
             </a>
             <div class="collapse" id="productSubmenu">
                 <div class="ps-4 mt-2">
                     @can('view-products')
-                    <a href="{{ route('products') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products</span></a>
+                    <a href="{{ route('products') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Products</span></a>
                     @endcan
                     <!-- @can('view-products')
                     <a href="{{ route('deletedproducts') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
@@ -264,7 +264,10 @@
                     <a href="{{ route('productsreport') }}" class="nav-link d-flex align-items-center"><i class="fas fa-chart-bar me-2"></i> <span>Department Report</span></a>
                     @endcan -->
                     @can('view-products')
-                    <a href="{{ route('productcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>View Products Categories</span></a>
+                    <a href="{{ route('productcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-eye me-2"></i> <span>Products Categories</span></a>
+                    <a href="{{ route('productSubCategory') }}" class="nav-link d-flex align-items-center"><i class="fas fa-tags me-2"></i> <span>Products Sub Categories</span></a>
+                    <a href="{{ route('brand') }}" class="nav-link d-flex align-items-center"><i class="fas fa-copyright me-2"></i> <span>Products Brands</span></a>
+                    <a href="{{ route('unitOfMeasure') }}" class="nav-link d-flex align-items-center"><i class="fas fa-balance-scale me-2"></i> <span>Units Of Measures</span></a>
                     @endcan
                     <!-- @can('view-products')
                     <a href="{{ route('deletedproductcategories') }}" class="nav-link d-flex align-items-center"><i class="fas fa-trash-arrow-up me-2"></i> <span>Deleted Departments</span></a>
