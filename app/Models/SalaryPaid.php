@@ -8,75 +8,33 @@ use Illuminate\Database\Eloquent\Model;
 class SalaryPaid extends Model
 {
     use HasFactory;
-
     protected $table = 'salary_paids';
 
     protected $fillable = [
-
-        'Employee_id',
-        'User_id',
-
-        'AmountPaid',
-        'ActualGross',
-        'NetPay',
-
-        'Allowance',
-        'Overtime',
-
-        'Advance',
-        'OvtmAdvn',
-        'Heslb',
-        'Absent',
-        'Bcabd',
-
-        'EmpNssf',
-        'NssfPay',
-        'Paye',
-        'SdlPay',
-        'WcfPay',
-
-        'PayMode',
-
-        'PaidMonth',
-        'PayrollYear',
-        'PaidDate',
-        'NextPaidDate',
-
-        'Status',
-        'Conditions',
-        'ActionPay',
-
-        'ApprovalStatus',
-        'PaymentStatus',
-
-        'HrManager',
-        'HrDirector',
-        'FinManger',
-        'DafComnt',
-        'MdComnt',
-
-        'HrManagerComnt',
-        'HrDirectorComnt',
-        'FinMangerComnt',
-        'DafComntComnt',
-        'MdComntComnt',
-
-        'PayrollComment',
-
-        'AuditingStatus',
-        'ReportStatus',
+        'Employee_id', 'ActualGross', 'Allowance', 'Overtime', 'OvtmAdvn',
+        'Heslb', 'Absent', 'Bcabd', 'Advance', 'AmountPaid', 'EmpNssf',
+        'Paye', 'NetPay', 'SdlPay', 'NssfPay', 'WcfPay', 'PaidMonth','PayrollYear',
+        'BatchCode', 'DatePaid', 'User_id', 'Condition', 'Status',
     ];
 
     protected $casts = [
-        'PaidDate' => 'date',
-        'NextPaidDate' => 'date',
+        'ActualGross' => 'decimal:6',
+        'Allowance'   => 'decimal:6',
+        'Overtime'    => 'decimal:6',
+        'OvtmAdvn'    => 'decimal:6',
+        'Heslb'       => 'decimal:6',
+        'Absent'      => 'decimal:6',
+        'Bcabd'       => 'decimal:6',
+        'Advance'     => 'decimal:6',
+        'AmountPaid'  => 'decimal:6',
+        'EmpNssf'     => 'decimal:6',
+        'Paye'        => 'decimal:6',
+        'NetPay'      => 'decimal:6',
+        'SdlPay'      => 'decimal:6',
+        'NssfPay'     => 'decimal:6',
+        'WcfPay'      => 'decimal:6',
+        'DatePaid'    => 'date',
     ];
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relationships
-    |--------------------------------------------------------------------------
-    */
 
     public function employee()
     {
@@ -84,16 +42,6 @@ class SalaryPaid extends Model
     }
 
     public function user()
-    {
-        return $this->belongsTo(User::class, 'User_id');
-    }
-
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'User_id');
-    }
-
-    public function preparedBy()
     {
         return $this->belongsTo(User::class, 'User_id');
     }

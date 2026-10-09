@@ -17,6 +17,7 @@ class Product extends Model
         'product_name',
 
         'product_category_id',
+        'procurement_type_id',
         'CompanyBusinessCode_id',
 
         'income_gl_account_id',
@@ -152,5 +153,13 @@ class Product extends Model
     public function stockOuts()
     {
         return $this->hasMany(StockOutProduct::class, 'Product_id');
+    }
+
+    public function procurementType()
+    {
+        return $this->belongsTo(
+            ProcurementType::class,
+            'procurement_type_id'
+        );
     }
 }

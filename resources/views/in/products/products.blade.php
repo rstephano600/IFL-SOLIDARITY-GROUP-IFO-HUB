@@ -21,8 +21,10 @@
                         <th class="sortable">Product Code</th>
                         <th class="sortable">Product Name</th>
                         <th class="sortable">Category</th>
-                        <th class="sortable">Cost Price</th>
-                        <th class="sortable">Selling Price</th>
+                        <th class="sortable">Category Code</th>
+                        <th class="sortable">Procurement Type</th>
+                        <!-- <th class="sortable">Cost Price</th> -->
+                        <!-- <th class="sortable">Selling Price</th> -->
                         <th class="sortable">UOM</th>
                         <th class="sortable">Type</th>
                         <th class="sortable">Status</th>
@@ -36,11 +38,13 @@
                         <td><span class="arbif-badge arbif-badge-navy">{{ $item->product_code }}</span></td>
                         <td>
                             <div class="fw-bold text-dark">{{ $item->product_name }}</div>
-                            <small class="text-muted">{{ $item->company->company_name ?? '—' }}</small>
                         </td>
+
                         <td>{{ $item->category->category_name ?? '—' }}</td>
-                        <td>{{ number_format($item->cost_price, 2) }}</td>
-                        <td><strong class="text-navy">{{ number_format($item->selling_price, 2) }}</strong></td>
+                        <td>{{ $item->category->category_code ?? '—' }}</td>
+                        <td>{{ $item->procurementType->procurement_name ?? '—' }}</td>
+                        <!-- <td><strong class="text-navy">{{ number_format($item->selling_price, 2) }}</strong></td> -->
+                                                 <!-- <td>{{ number_format($item->cost_price, 2) }}</td> -->
                         <td><span class="badge bg-light text-dark border">{{ $item->unit->UnitName ?? $item->unit->symbol ?? '—' }}</span></td>
                         <td>
                             @if($item->is_stock_item)
@@ -86,7 +90,7 @@
 
 <!-- Product Creation Modal -->
 <div class="modal fade arbif-modal" id="addProductModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%;">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-icon"><i class="fas fa-box"></i></div>
@@ -147,7 +151,19 @@
                             </select>
                         </div>
 
-                        <div class="col-md-8">
+                        <div class="col-md-4">
+                            <label class="form-label">Procurement Type <span class="text-danger">*</span></label>
+                            <select style="width: 100%" name="procurement_type_id" data-searchable data-placeholder="Select Proc type..." required>
+                                <option></option>
+                                @foreach($procurementtypes as $procurementtype)
+                                    <option value="{{ $procurementtype->id }}" {{ old('procurement_type_id') == $procurementtype->id ? 'selected' : '' }}>
+                                        {{ $procurementtype->procurement_name }} {{ $procurementtype->procurement_code ? '(' . $procurementtype->procurement_code . ')' : '' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
                             <label class="form-label" for="description">Description & Specifications</label>
                             <textarea id="description" name="description" class="form-control" rows="1" placeholder="Product details...">{{ old('description') }}</textarea>
                         </div>

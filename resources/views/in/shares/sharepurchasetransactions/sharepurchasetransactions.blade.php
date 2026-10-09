@@ -118,7 +118,7 @@
 
 <!-- Modal 1: Download Template -->
 <div class="modal fade arbif-modal" id="downloadTemplateModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%;">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-icon"><i class="fas fa-file-excel text-success"></i></div>

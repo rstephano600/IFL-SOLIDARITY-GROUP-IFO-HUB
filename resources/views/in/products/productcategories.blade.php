@@ -82,7 +82,7 @@
 
 <!-- Category Onboarding Modal -->
 <div class="modal fade arbif-modal" id="addCategoryFormModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%;">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-icon"><i class="fas fa-folder-plus"></i></div>

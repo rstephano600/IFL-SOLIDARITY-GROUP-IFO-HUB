@@ -30,7 +30,7 @@ class User extends Authenticatable
     public const ROLE_COUNTER      = 'Counter';
     public const ROLE_STOREKEEPER       = 'StoreKeeper';
     public const ROLE_LOAN_OFFICER    = 'Loanofficer';
-    // public const ROLE_CLIENT          = 'client';
+    public const ROLE_EMPLOYEE          = 'employee';
     public const ROLE_MEMBER            = 'Member';
     public const ROLE_USER            = 'User';
 
@@ -54,7 +54,7 @@ class User extends Authenticatable
             self::ROLE_COUNTER,
             self::ROLE_STOREKEEPER,
             self::ROLE_LOAN_OFFICER,
-            // self::ROLE_CLIENT,
+            self::ROLE_EMPLOYEE,
             self::ROLE_MEMBER,
             self::ROLE_USER,
         ];

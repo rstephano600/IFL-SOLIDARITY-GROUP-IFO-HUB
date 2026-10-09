@@ -279,6 +279,24 @@
             </div>
         </div>
         @endcan
+        {{-- ── Procurement Configuration Menu ── --}}
+        @can('view-procurement-types-menu')
+        <div class="nav-item">
+            <a href="#procurementConfigurationSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-cogs me-2"></i> <span>Procurement Configuration</span> <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+            <div class="collapse" id="procurementConfigurationSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-procurement-types')
+                    <a href="{{ route('procurementType') }}" class="nav-link d-flex align-items-center"> <i class="fas fa-layer-group me-2"></i> <span>Procurement Types</span></a>
+                    @endcan
+                    @can('view-procurement-workflow-steps')
+                    <a href="{{ route('procurementWorkflowStep') }}" class="nav-link d-flex align-items-center"> <i class="fas fa-project-diagram me-2"></i> <span>Procurement Workflow Steps</span> </a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
 
         {{-- ============ SYSTEM ADMINISTRATION ============ --}}
 

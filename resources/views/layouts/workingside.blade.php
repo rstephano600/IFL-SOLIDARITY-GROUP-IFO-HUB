@@ -541,6 +541,7 @@
         // Auto-run on page load
         document.addEventListener('DOMContentLoaded', initSearchableSelects);
     </script>
+    @stack('scripts')
     @include('sweetalert::alert')
 </body>
 </html>

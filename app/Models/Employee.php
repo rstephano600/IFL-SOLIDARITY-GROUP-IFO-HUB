@@ -35,14 +35,70 @@ class Employee extends Model
         'User_id',
         'Status',
         'AuditingStatus',
-        'ReportStatus'
+        'ReportStatus',
+
+        // Payment / Salary processing
+        'bank_name',
+        'bank_account_number',
+        'bank_account_name',
+        'bank_branch',
+        'mobile_money_provider',
+        'mobile_money_number',
+        'payment_method',
+        'housing_allowance',
+        'transport_allowance',
+        'medical_allowance',
+        'overtime_rate',
+
+        // Tanzanian statutory / compliance
+        'tin_number',
+        'nssf_number',
+        'pssss_number',
+        'nhif_number',
+        'wcf_number',
+        'employment_type',
+        'contract_start_date',
+        'contract_end_date',
+
+        // Employment structure
+        'supervisor_id',
+        'branch_id',
+        'termination_date',
+        'termination_reason',
+        'leave_balance',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'date_of_birth' => 'date',
         'date_of_hire' => 'date',
+
+        // Money / rate fields — 6 decimal precision
+        'basic_salary' => 'decimal:6',
+        'weekly_allowance_amount' => 'decimal:6',
+        'housing_allowance' => 'decimal:6',
+        'transport_allowance' => 'decimal:6',
+        'medical_allowance' => 'decimal:6',
+        'overtime_rate' => 'decimal:6',
+        'leave_balance' => 'decimal:6',
+
+        // New dates
+        'contract_start_date' => 'date',
+        'contract_end_date' => 'date',
+        'termination_date' => 'date',
     ];
+
+    // Optional relationships, if you add the FKs from the ALTER TABLE
+    public function supervisor()
+    {
+        return $this->belongsTo(Employee::class, 'supervisor_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
 
     // Relationships
     public function user()

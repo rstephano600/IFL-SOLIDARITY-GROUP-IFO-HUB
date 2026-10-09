@@ -48,8 +48,11 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\CostCentreController;
 use App\Http\Controllers\MemberSelfInformationsController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\ProcurementController;
+use App\Http\Controllers\PurchaseOrderController;
 
-
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Loan\LoanDashboardController;
 use App\Http\Controllers\Loan\ClientLoanController;
 use App\Http\Controllers\Loan\DailyCollectionController;
@@ -409,15 +412,375 @@ Route::middleware('auth')->group(function () {
     Route::put('/updateaccountSecondBranch/{id}', [AccountingController::class, 'updateaccountSecondBranch'])->name('updateaccountSecondBranch');
     Route::get('/destroyaccountSecondBranch/{id}', [AccountingController::class, 'destroyaccountSecondBranch'])->name('destroyaccountSecondBranch');
 
-    Route::get('/employeeinfo', [EmployeeController::class, 'employeeinfo'])->name('employeeinfo');
-    Route::post('/storenewemployeeinfo', [EmployeeController::class, 'storenewemployeeinfo'])->name('storenewemployeeinfo');
-    Route::get('employees/{id}/edit', [EmployeeController::class, 'editemployeeinfo'])->name('editemployeeinfo');
-    Route::put('employees/{id}/update', [EmployeeController::class, 'updateemployeeinfo'])->name('updateemployeeinfo');
-    Route::get('/destroyemployeeinfo/{id}', [EmployeeController::class, 'destroyemployeeinfo'])->name('destroyemployeeinfo');
-    Route::post('/storeemployeeInformation', [EmployeeController::class, 'storeemployeeInformation'])->name('storeemployeeInformation');
-    Route::get('/editemployeeInformation/{id}', [EmployeeController::class, 'editemployeeInformation'])->name('editemployeeInformation');
-    Route::get('/viewemployeeInformation/{id}', [EmployeeController::class, 'viewemployeeInformation'])->name('viewemployeeInformation');
-    Route::get('/deletedemployeeInformation', [EmployeeController::class, 'deletedemployeeInformation'])->name('deletedemployeeInformation');
+    Route::get('/customer', [CustomerController::class, 'customer'])->name('customer');
+    Route::post('/storecustomer', [CustomerController::class, 'storecustomer'])->name('storecustomer');
+    Route::get('/downloadTemplateCustomer', [CustomerController::class, 'downloadTemplateCustomer'])->name('downloadTemplateCustomer');
+    Route::post('/importStoreCustomer', [CustomerController::class, 'importStoreCustomer'])->name('importStoreCustomer');
+    Route::get('/editcustomer/{id}', [CustomerController::class, 'editcustomer'])->name('editcustomer');
+    Route::post('/updatecustomer/{id}', [CustomerController::class, 'updatecustomer'])->name('updatecustomer');
+    Route::get('/viewcustomer/{id}', [CustomerController::class, 'viewcustomer'])->name('viewcustomer');
+    Route::get('/destroycustomer/{id}', [CustomerController::class, 'destroycustomer'])->name('destroycustomer');
+    Route::get('/deletedcustomer', [CustomerController::class, 'deletedcustomer'])->name('deletedcustomer');
+    Route::get('/restorecustomer/{id}', [CustomerController::class, 'restorecustomer'])->name('restorecustomer');
+
+    Route::get('/salesinvoice', [SaleController::class, 'salesinvoice'])->name('salesinvoice');
+    Route::post('/storesalesinvoice', [SaleController::class, 'storesalesinvoice'])->name('storesalesinvoice');
+    Route::get('/downloadTemplatesalesinvoice', [SaleController::class, 'downloadTemplatesalesinvoice'])->name('downloadTemplatesalesinvoice');
+    Route::post('/importStoresalesinvoice', [SaleController::class, 'importStoresalesinvoice'])->name('importStoresalesinvoice');
+    Route::get('/editsalesinvoice/{id}', [SaleController::class, 'editsalesinvoice'])->name('editsalesinvoice');
+    Route::post('/updatesalesinvoice/{id}', [SaleController::class, 'updatesalesinvoice'])->name('updatesalesinvoice');
+    Route::get('/viewsalesinvoice/{id}', [SaleController::class, 'viewsalesinvoice'])->name('viewsalesinvoice');
+    Route::get('/destroysalesinvoice/{id}', [SaleController::class, 'destroysalesinvoice'])->name('destroysalesinvoice');
+    Route::get('/deletedsalesinvoice', [SaleController::class, 'deletedsalesinvoice'])->name('deletedsalesinvoice');
+    Route::get('/restoresalesinvoice/{id}', [SaleController::class, 'restoresalesinvoice'])->name('restoresalesinvoice');
+    
+    Route::get('/customerPaymentinvoice', [SaleController::class, 'customerPaymentinvoice'])->name('customerPaymentinvoice');
+    Route::get('/stockOutsalesinvoice', [SaleController::class, 'stockOutsalesinvoice'])->name('stockOutsalesinvoice');
+    Route::get('/createPaymentSales/{id}', [SaleController::class, 'createPaymentSales'])->name('createPaymentSales');
+    Route::post('/storePaymentSales/store', [SaleController::class, 'storePaymentSales'])->name('storePaymentSales');
+
+    Route::get('/customerPayment', [SaleController::class, 'customerPayment'])->name('customerPayment');
+    Route::post('/storecustomerPayment', [SaleController::class, 'storecustomerPayment'])->name('storecustomerPayment');
+    Route::get('/downloadTemplatecustomerPayment', [SaleController::class, 'downloadTemplatecustomerPayment'])->name('downloadTemplatecustomerPayment');
+    Route::post('/importStorecustomerPayment', [SaleController::class, 'importStorecustomerPayment'])->name('importStorecustomerPayment');
+    Route::get('/editcustomerPayment/{id}', [SaleController::class, 'editcustomerPayment'])->name('editcustomerPayment');
+    Route::post('/updatecustomerPayment/{id}', [SaleController::class, 'updatecustomerPayment'])->name('updatecustomerPayment');
+    Route::get('/viewcustomerPayment/{id}', [SaleController::class, 'viewcustomerPayment'])->name('viewcustomerPayment');
+    Route::get('/destroycustomerPayment/{id}', [SaleController::class, 'destroycustomerPayment'])->name('destroycustomerPayment');
+    Route::get('/deletedcustomerPayment', [SaleController::class, 'deletedcustomerPayment'])->name('deletedcustomerPayment');
+    Route::get('/restorecustomerPayment/{id}', [SaleController::class, 'restorecustomerPayment'])->name('restorecustomerPayment');
+
+    Route::get('/supplier', [SupplierController::class, 'supplier'])->name('supplier');
+    Route::post('/storesupplier', [SupplierController::class, 'storesupplier'])->name('storesupplier');
+    Route::get('/editsupplier/{id}', [SupplierController::class, 'editsupplier'])->name('editsupplier');
+    Route::post('/updatesupplier/{id}', [SupplierController::class, 'updatesupplier'])->name('updatesupplier');
+    Route::get('/viewsupplier/{id}', [SupplierController::class, 'viewsupplier'])->name('viewsupplier');
+    Route::get('/destroysupplier/{id}', [SupplierController::class, 'destroysupplier'])->name('destroysupplier');
+    Route::get('/deletedsupplier', [SupplierController::class, 'deletedsupplier'])->name('deletedsupplier');
+    Route::get('/restoresupplier/{id}', [SupplierController::class, 'restoresupplier'])->name('restoresupplier');
+
+    // Listing
+    Route::get('employeeinfo/', [EmployeeController::class, 'employeeinfo'])->name('employeeinfo');
+    Route::post('storenewemployeeinfo/store', [EmployeeController::class, 'storenewemployeeinfo'])->name('storenewemployeeinfo');
+    Route::get('showemployeeinfo/show/{id}', [EmployeeController::class, 'showemployeeinfo'])->name('showemployeeinfo');
+    Route::get('editemployeeinfo/edit/{id}', [EmployeeController::class, 'editemployeeinfo'])->name('editemployeeinfo');
+    Route::put('updateemployeeinfo/update/{id}', [EmployeeController::class, 'updateemployeeinfo'])->name('updateemployeeinfo');
+    Route::get('deleteemployeeinfo/delete/{id}', [EmployeeController::class, 'deleteemployeeinfo'])->name('destroyemployeeinfo');
+    Route::get('trashedemployeeinfo/trashed', [EmployeeController::class, 'trashedemployeeinfo'])->name('trashedemployeeinfo');
+    Route::get('restoreemployeeinfo/restore/{id}', [EmployeeController::class, 'restoreemployeeinfo'])->name('restoreemployeeinfo');
+    Route::get('lockemployeeaccount/lock/{id}', [EmployeeController::class, 'lockemployeeaccount'])->name('lockemployeeaccount');
+    Route::get('unlockemployeeaccount/unlock/{id}', [EmployeeController::class, 'unlockemployeeaccount'])->name('unlockemployeeaccount');
+
+    // Dashboard
+    Route::get('/salarypay', [SalaryController::class, 'salarypay'])->name('salarypay');
+    // Batch generation / rollback / month change
+    Route::post('/generate/generatePayrollByMonth', [SalaryController::class, 'generatePayrollByMonth'])->name('generatePayrollByMonth');
+    Route::post('/rollback/rollbackGeneratedPayroll', [SalaryController::class, 'rollbackGeneratedPayroll'])->name('rollbackGeneratedPayroll');
+    Route::post('/change-month/changeGeneratedPayrollMonth', [SalaryController::class, 'changeGeneratedPayrollMonth'])->name('changeGeneratedPayrollMonth');
+    // Edit gross salary (AmountPaid)
+    Route::get('/edit-salary/editsalary/{id}', [SalaryController::class, 'editsalary'])->name('editsalary');
+    Route::post('/edit-salary/tempsalaryreg', [SalaryController::class, 'tempsalaryreg'])->name('tempsalaryreg');
+    // Edit net salary (NetPay override)
+    Route::get('/edit-net-salary/{id}', [SalaryController::class, 'editnetsalary'])->name('editnetsalary');
+    Route::post('/edit-net-salary/editnetsalary', [SalaryController::class, 'tempnetsalaryreg'])->name('tempnetsalaryreg');
+    // Edit salary details (Allowance/Overtime/Absent/Gross)
+    Route::get('/edit-salary-details/editsalarydetails/{id}', [SalaryController::class, 'editsalarydetails'])->name('editsalarydetails');
+    Route::post('/edit-salary-details/tempsalarydetailsreg', [SalaryController::class, 'tempsalarydetailsreg'])->name('tempsalarydetailsreg');
+
+
+    // Queue + history
+    Route::get('payroll/payrollApprovalIndex', [SalaryController::class, 'payrollApprovalIndex'])->name('payrollApprovalIndex');
+    Route::get('/review/payrollBatchReview/{batchCode}', [SalaryController::class, 'payrollBatchReview'])->name('payrollBatchReview');
+    Route::post('/submit/submitPayrollForApproval', [SalaryController::class, 'submitPayrollForApproval'])->name('submitPayrollForApproval');
+    Route::post('/approve/approvePayroll', [SalaryController::class, 'approvePayroll'])->middleware('can:approve-payroll')->name('approvePayroll');
+    Route::post('/reject/rejectPayroll', [SalaryController::class, 'rejectPayroll'])->middleware('can:approve-payroll')->name('rejectPayroll');
+
+    // STAFF ADVANCE SALARIES ROUTES
+    Route::get('/staffadvncslries', [SalaryController::class, 'staffadvncslries'])->name('staffadvncslries');
+    Route::post('/storestaffadvncslries', [SalaryController::class, 'storestaffadvncslries'])->name('storestaffadvncslries');
+    Route::get('/viewstaffadvncslries/{id}', [SalaryController::class, 'viewstaffadvncslries'])->name('viewstaffadvncslries');
+    Route::get('/editstaffadvncslries/{id}', [SalaryController::class, 'editstaffadvncslries'])->name('editstaffadvncslries');
+    Route::post('/updatestaffadvncslries/{id}', [SalaryController::class, 'updatestaffadvncslries'])->name('updatestaffadvncslries');
+    Route::get('/deletestaffadvncslries/{id}', [SalaryController::class, 'deletestaffadvncslries'])->name('deletestaffadvncslries');
+    Route::get('/restorestaffadvncslries/{id}', [SalaryController::class, 'restorestaffadvncslries'])->name('restorestaffadvncslries');
+
+    // STAFF OVERTIMES ROUTES
+    Route::get('/staffovertimes', [SalaryController::class, 'staffovertimes'])->name('staffovertimes');
+    Route::post('/storestaffovertimes', [SalaryController::class, 'storestaffovertimes'])->name('storestaffovertimes');
+    Route::get('/viewstaffovertimes/{id}', [SalaryController::class, 'viewstaffovertimes'])->name('viewstaffovertimes');
+    Route::get('/editstaffovertimes/{id}', [SalaryController::class, 'editstaffovertimes'])->name('editstaffovertimes');
+    Route::post('/updatestaffovertimes/{id}', [SalaryController::class, 'updatestaffovertimes'])->name('updatestaffovertimes');
+    Route::get('/deletestaffovertimes/{id}', [SalaryController::class, 'deletestaffovertimes'])->name('deletestaffovertimes');
+    Route::get('/restorestaffovertimes/{id}', [SalaryController::class, 'restorestaffovertimes'])->name('restorestaffovertimes');
+
+    // SALARY ALLOWANCES ROUTES
+    Route::get('/slrallwncs', [SalaryController::class, 'slrallwncs'])->name('slrallwncs');
+    Route::post('/storeslrallwncs', [SalaryController::class, 'storeslrallwncs'])->name('storeslrallwncs');
+    Route::get('/viewslrallwncs/{id}', [SalaryController::class, 'viewslrallwncs'])->name('viewslrallwncs');
+    Route::get('/editslrallwncs/{id}', [SalaryController::class, 'editslrallwncs'])->name('editslrallwncs');
+    Route::post('/updateslrallwncs/{id}', [SalaryController::class, 'updateslrallwncs'])->name('updateslrallwncs');
+    Route::get('/deleteslrallwncs/{id}', [SalaryController::class, 'deleteslrallwncs'])->name('deleteslrallwncs');
+    Route::get('/restoreslrallwncs/{id}', [SalaryController::class, 'restoreslrallwncs'])->name('restoreslrallwncs');
+
+    // Staff Absent Calendar Routes
+    Route::get('/staffabsentcalenders', [SalaryController::class, 'staffabsentcalenders'])->name('staffabsentcalenders');
+    Route::post('/storestaffabsentcalenders', [SalaryController::class, 'storestaffabsentcalenders'])->name('storestaffabsentcalenders');
+    Route::get('/viewstaffabsentcalenders/{id}', [SalaryController::class, 'viewstaffabsentcalenders'])->name('viewstaffabsentcalenders');
+    Route::get('/editstaffabsentcalenders/{id}', [SalaryController::class, 'editstaffabsentcalenders'])->name('editstaffabsentcalenders');
+    Route::post('/updatestaffabsentcalenders/{id}', [SalaryController::class, 'updatestaffabsentcalenders'])->name('updatestaffabsentcalenders');
+    Route::get('/deletestaffabsentcalenders/{id}', [SalaryController::class, 'deletestaffabsentcalenders'])->name('deletestaffabsentcalenders');
+    Route::get('/restorestaffabsentcalenders/{id}', [SalaryController::class, 'restorestaffabsentcalenders'])->name('restorestaffabsentcalenders');
+
+    // Staff Absent Deduction Routes
+    Route::get('/staffabsent', [SalaryController::class, 'staffabsent'])->name('staffabsent');
+    Route::post('/storestaffabsent', [SalaryController::class, 'storestaffabsent'])->name('storestaffabsent');
+    Route::get('/viewstaffabsent/{id}', [SalaryController::class, 'viewstaffabsent'])->name('viewstaffabsent');
+    Route::get('/editstaffabsent/{id}', [SalaryController::class, 'editstaffabsent'])->name('editstaffabsent');
+    Route::post('/updatestaffabsent/{id}', [SalaryController::class, 'updatestaffabsent'])->name('updatestaffabsent');
+    Route::get('/deletestaffabsent/{id}', [SalaryController::class, 'deletestaffabsent'])->name('deletestaffabsent');
+    Route::get('/restorestaffabsent/{id}', [SalaryController::class, 'restorestaffabsent'])->name('restorestaffabsent');
+
+
+    // SUPPLIER CATEGORY ROUTES
+    Route::get('/supplier-categories', [SupplierController::class, 'supplierCategory'])->name('supplierCategory');
+    Route::post('/supplier-categories/store', [SupplierController::class, 'storesupplierCategory'])->name('storesupplierCategory');
+    Route::get('/supplier-categories/edit/{id}', [SupplierController::class, 'editsupplierCategory'])->name('editsupplierCategory');
+    Route::post('/supplier-categories/update/{id}', [SupplierController::class, 'updatesupplierCategory'])->name('updatesupplierCategory');
+    Route::get('/supplier-categories/view/{id}', [SupplierController::class, 'viewsupplierCategory'])->name('viewsupplierCategory');
+    Route::get('/supplier-categories/destroy/{id}', [SupplierController::class, 'destroysupplierCategory'])->name('destroysupplierCategory');
+    Route::get('/supplier-categories/deleted', [SupplierController::class, 'deletedsupplierCategory'])->name('deletedsupplierCategory');
+    Route::get('/supplier-categories/restore/{id}', [SupplierController::class, 'restoresupplierCategory'])->name('restoresupplierCategory');
+
+    // SUPPLIER ROUTES
+    Route::get('/suppliers', [SupplierController::class, 'suppliers'])->name('suppliers');
+    Route::post('/suppliers/store-member', [SupplierController::class, 'storeMemberSupplier'])->name('storeMemberSupplier');
+    Route::post('/suppliers/store-external', [SupplierController::class, 'storeExternalSupplier'])->name('storeExternalSupplier');
+    Route::get('/suppliers/edit/{id}', [SupplierController::class, 'editSupplier'])->name('editSupplier');
+    Route::post('/suppliers/update/{id}', [SupplierController::class, 'updateSupplier'])->name('updateSupplier');
+    Route::get('/suppliers/view/{id}', [SupplierController::class, 'viewSupplier'])->name('viewSupplier');
+    Route::get('/suppliers/destroy/{id}', [SupplierController::class, 'destroySupplier'])->name('destroySupplier');
+    Route::get('/suppliers/deleted', [SupplierController::class, 'deletedSuppliers'])->name('deletedSuppliers');
+    Route::get('/suppliers/restore/{id}', [SupplierController::class, 'restoreSupplier'])->name('restoreSupplier');
+
+    Route::get('/supplierProducts', [SupplierController::class, 'supplierProducts'])->name('supplierProducts');
+    Route::get('/supplierDocuments', [SupplierController::class, 'supplierDocuments'])->name('supplierDocuments');
+    Route::get('/supplierEvaluation', [SupplierController::class, 'supplierEvaluation'])->name('supplierEvaluation');
+    Route::get('/supplierTransactions', [SupplierController::class, 'supplierTransactions'])->name('supplierTransactions');
+
+    // PROCUREMENT TYPES ROUTES
+    Route::get('/procurement-types',[ProcurementController::class, 'procurementType'])->name('procurementType');
+    Route::post('/procurement-types/store',[ProcurementController::class, 'storeprocurementType'])->name('storeprocurementType');
+    Route::get('/procurement-types/edit/{id}',[ProcurementController::class, 'editprocurementType'])->name('editprocurementType');
+    Route::post('/procurement-types/update/{id}',[ProcurementController::class, 'updateprocurementType'])->name('updateprocurementType');
+    Route::get('/procurement-types/view/{id}',[ProcurementController::class, 'viewprocurementType'])->name('viewprocurementType');
+    Route::get('/procurement-types/destroy/{id}',[ProcurementController::class, 'destroyprocurementType'])->name('destroyprocurementType');
+    Route::get('/procurement-types/deleted',[ProcurementController::class, 'deletedprocurementType'])->name('deletedprocurementType');
+    Route::get('/procurement-types/restore/{id}',[ProcurementController::class, 'restoreprocurementType'])->name('restoreprocurementType');
+
+    // PROCUREMENT WORKFLOW STEPS ROUTES
+    Route::get('/procurement-workflow-steps',[ProcurementController::class, 'procurementWorkflowStep'])->name('procurementWorkflowStep');
+    Route::post('/procurement-workflow-steps/store',[ProcurementController::class, 'storeprocurementWorkflowStep'])->name('storeprocurementWorkflowStep');
+    Route::get('/procurement-workflow-steps/edit/{id}',[ProcurementController::class, 'editprocurementWorkflowStep'])->name('editprocurementWorkflowStep');
+    Route::post('/procurement-workflow-steps/update/{id}',[ProcurementController::class, 'updateprocurementWorkflowStep'])->name('updateprocurementWorkflowStep');
+    Route::get('/procurement-workflow-steps/view/{id}',[ProcurementController::class, 'viewprocurementWorkflowStep'])->name('viewprocurementWorkflowStep');
+    Route::get('/procurement-workflow-steps/toggle/{id}',[ProcurementController::class, 'toggleprocurementWorkflowStep'])->name('toggleprocurementWorkflowStep');
+    Route::post('/procurement-workflow-steps/reorder',[ProcurementController::class, 'reorderprocurementWorkflowSteps'])->name('reorderprocurementWorkflowSteps');
+    Route::get('/procurement-workflow-steps/destroy/{id}',[ProcurementController::class, 'destroyprocurementWorkflowStep'])->name('destroyprocurementWorkflowStep');
+    Route::get('/procurement-workflow-steps/deleted',[ProcurementController::class, 'deletedprocurementWorkflowStep'])->name('deletedprocurementWorkflowStep');
+    Route::get('/procurement-workflow-steps/restore/{id}',[ProcurementController::class, 'restoreprocurementWorkflowStep'])->name('restoreprocurementWorkflowStep');
+
+    // PURCHASE REQUEST ROUTES
+    Route::get('/purchase-requests',[PurchaseController::class, 'purchaseRequest'])->name('purchaseRequest');
+    Route::get('/purchase-requests/create',[PurchaseController::class, 'createpurchaseRequest'])->name('createpurchaseRequest');
+    Route::post('/purchase-requests/store',[PurchaseController::class, 'storepurchaseRequest'])->name('storepurchaseRequest');
+    Route::get('/purchase-requests/view/{id}',[PurchaseController::class, 'viewpurchaseRequest'])->name('viewpurchaseRequest');
+    Route::get('/purchase-requests/edit/{id}',[PurchaseController::class, 'editpurchaseRequest'])->name('editpurchaseRequest');
+    Route::post('/purchase-requests/update/{id}',[PurchaseController::class, 'updatepurchaseRequest'])->name('updatepurchaseRequest');
+
+    // WORKFLOW / APPROVAL ACTIONS
+    Route::get('/purchase-requests/submit/{id}',[PurchaseController::class, 'submitpurchaseRequest'])->name('submitpurchaseRequest');
+    Route::post('/purchase-requests/approve/{id}',[PurchaseController::class, 'approvepurchaseRequest'])->name('approvepurchaseRequest');
+    Route::post('/purchase-requests/reject/{id}',[PurchaseController::class, 'rejectpurchaseRequest'])->name('rejectpurchaseRequest');
+    Route::get('/purchase-requests/resubmit/{id}',[PurchaseController::class, 'resubmitpurchaseRequest'])->name('resubmitpurchaseRequest');
+    Route::get('/purchase-requests/cancel/{id}',[PurchaseController::class, 'cancelpurchaseRequest'])->name('cancelpurchaseRequest');
+    Route::get('/purchase-requests/workflow-history/{id}',[PurchaseController::class, 'purchaseRequestWorkflow'])->name('purchaseRequestWorkflow');
+
+    // SOFT DELETE & RECOVERY
+    Route::get('/purchase-requests/destroy/{id}',[PurchaseController::class, 'destroypurchaseRequest'])->name('destroypurchaseRequest');
+    Route::get('/purchase-requests/deleted',[PurchaseController::class, 'deletedpurchaseRequest'])->name('deletedpurchaseRequest');
+    Route::get('/purchase-requests/restore/{id}',[PurchaseController::class, 'restorepurchaseRequest'])->name('restorepurchaseRequest');
+
+    // PURCHASE REQUEST APPROVAL QUEUES
+    Route::get('/purchase-requests/approvals/level-1',[PurchaseController::class, 'purchaseRequestApprovalLevel1'])->name('purchaseRequestApprovalLevel1');
+    Route::get('/purchase-requests/approvals/level-2',[PurchaseController::class, 'purchaseRequestApprovalLevel2'])->name('purchaseRequestApprovalLevel2');
+    Route::get('/purchase-requests/approvals/level-3',[PurchaseController::class, 'purchaseRequestApprovalLevel3'])->name('purchaseRequestApprovalLevel3');
+    Route::get('/purchase-requests/approvals/level-4',[PurchaseController::class, 'purchaseRequestApprovalLevel4'])->name('purchaseRequestApprovalLevel4');
+    Route::get('/purchase-requests/approvals/level-5',[PurchaseController::class, 'purchaseRequestApprovalLevel5'])->name('purchaseRequestApprovalLevel5');
+    Route::get('/purchase-requests/approvals/level-6',[PurchaseController::class, 'purchaseRequestApprovalLevel6'])->name('purchaseRequestApprovalLevel6');
+
+    // APPROVE PURCHASE REQUEST BY LEVEL
+    Route::post('/purchase-requests/approve/level-1/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel1'])->name('approvepurchaseRequestLevel1');
+    Route::post('/purchase-requests/approve/level-2/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel2'])->name('approvepurchaseRequestLevel2');
+    Route::post('/purchase-requests/approve/level-3/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel3'])->name('approvepurchaseRequestLevel3');
+    Route::post('/purchase-requests/approve/level-4/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel4'])->name('approvepurchaseRequestLevel4');
+    Route::post('/purchase-requests/approve/level-5/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel5'])->name('approvepurchaseRequestLevel5');
+    Route::post('/purchase-requests/approve/level-6/{id}',[PurchaseController::class, 'approvepurchaseRequestLevel6'])->name('approvepurchaseRequestLevel6');
+
+    // REJECT PURCHASE REQUEST BY LEVEL
+    Route::post('/purchase-requests/reject/level-1/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel1'])->name('rejectpurchaseRequestLevel1');
+    Route::post('/purchase-requests/reject/level-2/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel2'])->name('rejectpurchaseRequestLevel2');
+    Route::post('/purchase-requests/reject/level-3/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel3'])->name('rejectpurchaseRequestLevel3');
+    Route::post('/purchase-requests/reject/level-4/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel4'])->name('rejectpurchaseRequestLevel4');
+    Route::post('/purchase-requests/reject/level-5/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel5'])->name('rejectpurchaseRequestLevel5');
+    Route::post('/purchase-requests/reject/level-6/{id}',[PurchaseController::class, 'rejectpurchaseRequestLevel6'])->name('rejectpurchaseRequestLevel6');
+
+
+    Route::get('/supplierTender', [SupplierController::class, 'supplierTender'])->name('supplierTender');
+    Route::post('/storesupplierTender', [SupplierController::class, 'storesupplierTender'])->name('storesupplierTender');
+    Route::get('/editsupplierTender/{id}/edit', [SupplierController::class, 'editsupplierTender'])->name('editsupplierTender');
+    Route::put('/updatesupplierTender/{id}', [SupplierController::class, 'updatesupplierTender'])->name('updatesupplierTender');
+    Route::get('/viewsupplierTender/{id}', [SupplierController::class, 'viewsupplierTender'])->name('viewsupplierTender');
+    Route::delete('/destroysupplierTender/{id}', [SupplierController::class, 'destroysupplierTender'])->name('destroysupplierTender');
+    Route::get('/deletedsupplierTender/status/deleted', [SupplierController::class, 'deletedsupplierTender'])->name('deletedsupplierTender');
+    Route::patch('/restoresupplierTender/{id}/restore', [SupplierController::class, 'restoresupplierTender'])->name('restoresupplierTender');
+
+
+    Route::get('/supplierQuotation',  [SupplierController::class, 'supplierQuotation'])->name('supplierQuotation');
+    Route::get('/createsupplierQuotation/create',  [SupplierController::class, 'createsupplierQuotation'])->name('createsupplierQuotation');
+    Route::post('/storesupplierQuotation',  [SupplierController::class, 'storesupplierQuotation'])->name('storesupplierQuotation');
+    Route::get('/editsupplierQuotation/{id}/edit',  [SupplierController::class, 'editsupplierQuotation'])->name('editsupplierQuotation');
+    Route::put('/updatesupplierQuotation/{id}',  [SupplierController::class, 'updatesupplierQuotation'])->name('updatesupplierQuotation');
+    Route::get('/viewsupplierQuotation/{id}',  [SupplierController::class, 'viewsupplierQuotation'])->name('viewsupplierQuotation');
+    Route::delete('/destroysupplierQuotation/{id}',  [SupplierController::class, 'destdestroysupplierQuotationroy'])->name('destroysupplierQuotation');
+    Route::get('/deletedsupplierQuotation-deleted',  [SupplierController::class, 'deletedsupplierQuotation'])->name('deletedsupplierQuotation');
+    Route::patch('/restoresupplierQuotation/{id}/restore',  [SupplierController::class, 'restoresupplierQuotation'])->name('restoresupplierQuotation');
+
+    // Quotation Evaluation Routes
+    Route::get('/quotationEvaluation', [SupplierController::class, 'quotationEvaluation'])->name('quotationEvaluation');
+    Route::post('/storequotationEvaluation', [SupplierController::class, 'storequotationEvaluation'])->name('storequotationEvaluation');
+    Route::get('/editquotationEvaluation/edit/{id}', [SupplierController::class, 'editquotationEvaluation'])->name('editquotationEvaluation');
+    Route::post('/updatequotationEvaluation/update/{id}', [SupplierController::class, 'updatequotationEvaluation'])->name('updatequotationEvaluation');
+    Route::get('/viewquotationEvaluation/view/{id}', [SupplierController::class, 'viewquotationEvaluation'])->name('viewquotationEvaluation');
+    Route::get('/destroyquotationEvaluation/destroy/{id}', [SupplierController::class, 'destroyquotationEvaluation'])->name('destroyquotationEvaluation');
+    
+    // Trash / Soft Deletes Routes
+    Route::get('/quotationEvaluation/deleted', [SupplierController::class, 'deleted'])->name('deletedquotationEvaluation');
+    Route::get('/quotationEvaluation/restore/{id}', [SupplierController::class, 'restore'])->name('restorequotationEvaluation');
+
+
+    Route::controller(SupplierController::class)->group(function () {
+        Route::get('/supplier-awards', 'supplierAward')->name('supplierAward');
+        Route::get('/supplier-awards/create', 'createsupplierAward')->name('createsupplierAward');
+        Route::post('/supplier-awards/store', 'storesupplierAward')->name('storesupplierAward');
+        Route::get('/supplier-awards/view/{id}', 'viewsupplierAward')->name('viewsupplierAward');
+        Route::get('/supplier-awards/edit/{id}', 'editsupplierAward')->name('editsupplierAward');
+        Route::post('/supplier-awards/update/{id}', 'updatesupplierAward')->name('updatesupplierAward');
+
+        // Approval Actions
+        Route::post('/supplier-awards/approve/{id}', 'approvesupplierAward')->name('approvesupplierAward');
+        Route::post('/supplier-awards/reject/{id}', 'rejectsupplierAward')->name('rejectsupplierAward');
+
+        // Soft Delete & Recovery
+        Route::get('/supplier-awards/destroy/{id}', 'destroysupplierAward')->name('destroysupplierAward');
+        Route::get('/supplier-awards/deleted', 'deletedsupplierAward')->name('deletedsupplierAward');
+        Route::get('/supplier-awards/restore/{id}', 'restoresupplierAward')->name('restoresupplierAward');
+    });
+
+    Route::controller(PurchaseOrderController::class)->group(function () {
+        Route::get('/purchase-orders', 'purchaseOrder')->name('purchaseOrder');
+        Route::get('/purchase-orders/create', 'createpurchaseOrder')->name('createpurchaseOrder');
+        Route::post('/purchase-orders/store', 'storepurchaseOrder')->name('storepurchaseOrder');
+        Route::get('/purchase-orders/view/{id}', 'viewpurchaseOrder')->name('viewpurchaseOrder');
+        Route::get('/purchase-orders/edit/{id}', 'editpurchaseOrder')->name('editpurchaseOrder');
+        Route::post('/purchase-orders/update/{id}', 'updatepurchaseOrder')->name('updatepurchaseOrder');
+
+        // Approval Actions
+        Route::post('/purchase-orders/approve/{id}', 'approvepurchaseOrder')->name('approvepurchaseOrder');
+        Route::post('/purchase-orders/reject/{id}', 'rejectpurchaseOrder')->name('rejectpurchaseOrder');
+
+        // Soft Delete & Restore
+        Route::get('/purchase-orders/destroy/{id}', 'destroypurchaseOrder')->name('destroypurchaseOrder');
+        Route::get('/purchase-orders/deleted', 'deletedpurchaseOrder')->name('deletedpurchaseOrder');
+        Route::get('/purchase-orders/restore/{id}', 'restorepurchaseOrder')->name('restorepurchaseOrder');
+    });
+
+
+    Route::controller(PurchaseOrderController::class)->group(function () {
+        // Goods Receipts History List
+        Route::get('/goods-receipts', 'goodsReceipt')->name('goodsReceipt');
+
+        // Unreceived Approved Purchase Orders List
+        Route::get('/goods-receipts/unreceived-purchase-orders', 'unreceivedPurchaseOrders')->name('unreceivedPurchaseOrders');
+
+        // Receive Form & Action
+        Route::get('/goods-receipts/create/{encryptedPoId}', 'creategoodsReceipt')->name('creategoodsReceipt');
+        Route::post('/goods-receipts/store/{encryptedPoId}', 'storegoodsReceipt')->name('storegoodsReceipt');
+
+        // View Details
+        Route::get('/goods-receipts/view/{encryptedId}', 'viewgoodsReceipt')->name('viewgoodsReceipt');
+
+        // Soft Delete & Restore
+        Route::get('/goods-receipts/destroy/{encryptedId}', 'destroygoodsReceipt')->name('destroygoodsReceipt');
+        Route::get('/goods-receipts/deleted', 'deletedgoodsReceipt')->name('deletedgoodsReceipt');
+        Route::get('/goods-receipts/restore/{encryptedId}', 'restoregoodsReceipt')->name('restoregoodsReceipt');
+    });
+
+
+
+    Route::controller(SupplierController::class)->group(function () {
+        // Invoices List
+        Route::get('/supplier-invoices', 'supplierInvoice')->name('supplierInvoice');
+
+        // Pending Goods Receipts to Invoice
+        Route::get('/supplier-invoices/un-invoiced-goods-receipts', 'unInvoicedGoodsReceipts')->name('unInvoicedGoodsReceipts');
+
+        // Create Invoice against GRN
+        Route::get('/supplier-invoices/create/{encryptedGrnId}', 'createsupplierInvoice')->name('createsupplierInvoice');
+        Route::post('/supplier-invoices/store/{encryptedGrnId}', 'storesupplierInvoice')->name('storesupplierInvoice');
+
+        // View & Edit Invoice
+        Route::get('/supplier-invoices/view/{encryptedId}', 'viewsupplierInvoice')->name('viewsupplierInvoice');
+        Route::get('/supplier-invoices/edit/{encryptedId}', 'editsupplierInvoice')->name('editsupplierInvoice');
+        Route::post('/supplier-invoices/update/{encryptedId}', 'updatesupplierInvoice')->name('updatesupplierInvoice');
+
+        // Verification / Approval Action
+        Route::post('/supplier-invoices/verify/{encryptedId}', 'verifysupplierInvoice')->name('verifysupplierInvoice');
+
+        // Soft Delete & Restore
+        Route::get('/supplier-invoices/destroy/{encryptedId}', 'destroysupplierInvoice')->name('destroysupplierInvoice');
+        Route::get('/supplier-invoices/deleted', 'deletedsupplierInvoice')->name('deletedsupplierInvoice');
+        Route::get('/supplier-invoices/restore/{encryptedId}', 'restoresupplierInvoice')->name('restoresupplierInvoice');
+    });
+
+
+    Route::controller(SupplierController::class)->group(function () {
+        // Payments History List
+        Route::get('/supplier-payments', 'supplierPayment')->name('supplierPayment');
+
+        // Unpaid & Partially Paid Verified Invoices List
+        Route::get('/supplier-payments/unpaid-invoices', 'unPaidSupplierInvoices')->name('unPaidSupplierInvoices');
+
+        // Make Payment Form & Action
+        Route::get('/supplier-payments/create/{encryptedInvoiceId}', 'createsupplierPayment')->name('createsupplierPayment');
+        Route::post('/supplier-payments/store/{encryptedInvoiceId}', 'storesupplierPayment')->name('storesupplierPayment');
+
+        // View Payment Details
+        Route::get('/supplier-payments/view/{encryptedId}', 'viewsupplierPayment')->name('viewsupplierPayment');
+
+        // Soft Delete & Recovery
+        Route::get('/supplier-payments/destroy/{encryptedId}', 'destroysupplierPayment')->name('destroysupplierPayment');
+        Route::get('/supplier-payments/deleted', 'deletedsupplierPayment')->name('deletedsupplierPayment');
+        Route::get('/supplier-payments/restore/{encryptedId}', 'restoresupplierPayment')->name('restoresupplierPayment');
+    });
+
+
+
+
+
+
+
+
+
 
     Route::get('/groupCenter', [GroupController::class, 'groupCenter'])->name('groupCenter');
     Route::post('/storegroupCenter', [GroupController::class, 'storegroupCenter'])->name('storegroupCenter');
@@ -618,13 +981,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/rejectexpense/{id}', [ExpenseController::class, 'rejectexpense'])->name('rejectexpense');
     Route::get('/destroyexpense/{id}', [ExpenseController::class, 'destroyexpense'])->name('destroyexpense');
 
-});
-
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::resource('users', UserController::class);
-    Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
-    Route::post('users/{user}/toggle-lock', [UserController::class, 'toggleLock'])->name('users.toggle-lock');
-    Route::put('/users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
 });
 
 

@@ -11,6 +11,7 @@ use App\Models\Branch;
 use App\Models\Product;
 use App\Models\AccountThirdBranch;
 use App\Models\UnitOfMeasure;
+use App\Models\ProcurementType;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use RealRashid\SweetAlert\Facades\Alert;
@@ -37,6 +38,7 @@ class ProductController extends Controller
                 ->where('Status', 'Active')
                 ->latest()
                 ->get();
+            $procurementtypes     = ProcurementType::where('Status', 'Active')->orderBy('procurement_name')->get();
             $categories     = ProductCategory::where('Status', 'Active')->orderBy('category_name')->get();
             $businessCodes  = CompanyBusinessCode::where('Status', 'Active')->orderBy('business_code')->get();
             $companies      = Company::where('Status', 'Active')->orderBy('company_name')->get();
@@ -44,7 +46,7 @@ class ProductController extends Controller
             $glAccounts     = AccountThirdBranch::orderBy('ThirdAccountCode')->get();
             $unitsOfMeasure = UnitOfMeasure::orderBy('UnitName')->get();
 
-            return view('in.products.products', compact('products','categories', 'businessCodes', 'companies', 'branches', 'glAccounts', 'unitsOfMeasure'));
+            return view('in.products.products', compact('products','categories', 'businessCodes', 'companies', 'branches', 'glAccounts', 'unitsOfMeasure', 'procurementtypes'));
         } catch (\Throwable $th) {
             Alert::error('Sorry! ' . ' ' . auth()->user()->name, 'Technical error exists, please contact Technichal for support Tel:+255657856790');
             return back();
@@ -57,6 +59,7 @@ class ProductController extends Controller
             'product_code'           => 'required|string|max:50|unique:products,product_code',
             'product_name'           => 'required|string|max:200',
             'product_category_id'    => 'nullable|exists:product_categories,id',
+            'procurement_type_id'    => 'nullable|exists:procurement_types,id',
             'CompanyBusinessCode_id' => 'nullable|exists:company_businesses_codes,id',
             'income_gl_account_id'   => 'nullable|exists:account_third_branches,id',
             'expense_gl_account_id'  => 'nullable|exists:account_third_branches,id',
@@ -82,6 +85,7 @@ class ProductController extends Controller
                 'product_code'           => $request->product_code,
                 'product_name'           => $request->product_name,
                 'product_category_id'    => $request->product_category_id,
+                'procurement_type_id'    => $request->procurement_type_id,
                 'CompanyBusinessCode_id' => $request->CompanyBusinessCode_id,
                 'income_gl_account_id'   => $request->income_gl_account_id,
                 'expense_gl_account_id'  => $request->expense_gl_account_id,

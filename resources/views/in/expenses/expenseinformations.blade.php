@@ -173,7 +173,7 @@
      id="addExpenseModal"
      tabindex="-1">
 
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 90%;">
 
         <div class="modal-content">
 

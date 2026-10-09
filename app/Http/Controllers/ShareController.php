@@ -360,7 +360,7 @@ class ShareController extends Controller
         }
     }
 
-    public function editsharepurchasetransaction($id)
+    public function editsharepurchasetransactions($id)
     {
         try {
             $id = Crypt::decrypt($id);
@@ -403,7 +403,7 @@ class ShareController extends Controller
         }
     }
 
-    public function updatesharepurchasetransaction(Request $request, $id)
+    public function updatesharepurchasetransactions(Request $request, $id)
     {
         $id = Crypt::decrypt($id);
 
