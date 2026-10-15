@@ -51,6 +51,12 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\ProcurementController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\SaleController;
+use App\Http\Controllers\BillingCompanyController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CommitteeController;
+use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ServiceRequestController;
 
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\Loan\LoanDashboardController;
@@ -540,7 +546,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/deletestaffabsent/{id}', [SalaryController::class, 'deletestaffabsent'])->name('deletestaffabsent');
     Route::get('/restorestaffabsent/{id}', [SalaryController::class, 'restorestaffabsent'])->name('restorestaffabsent');
 
-
     // SUPPLIER CATEGORY ROUTES
     Route::get('/supplier-categories', [SupplierController::class, 'supplierCategory'])->name('supplierCategory');
     Route::post('/supplier-categories/store', [SupplierController::class, 'storesupplierCategory'])->name('storesupplierCategory');
@@ -773,9 +778,235 @@ Route::middleware('auth')->group(function () {
         Route::get('/supplier-payments/restore/{encryptedId}', 'restoresupplierPayment')->name('restoresupplierPayment');
     });
 
+    // SALES TYPE ROUTES
+
+    Route::controller(SaleController::class)->group(function () {
+        Route::get('/sales-types', 'salesType')->name('salesType');
+        Route::post('/sales-types/store', 'storesalesType')->name('storesalesType');
+        Route::get('/sales-types/view/{id}', 'viewsalesType')->name('viewsalesType');
+        Route::get('/sales-types/edit/{id}', 'editsalesType')->name('editsalesType');
+        Route::post('/sales-types/update/{id}', 'updatesalesType')->name('updatesalesType');
+        Route::get('/sales-types/destroy/{id}', 'destroysalesType')->name('destroysalesType');
+        Route::get('/sales-types/deleted', 'deletedsalesType')->name('deletedsalesType');
+        Route::get('/sales-types/restore/{id}', 'restoresalesType')->name('restoresalesType');
+    });
+
+    // SALES CUSTOMERS ROUTES
+    Route::controller(SaleController::class)->group(function () {
+        Route::get('/sales-customers', 'salesCustomer')->name('salesCustomer');
+        Route::post('/sales-customers/store', 'storesalesCustomer')->name('storesalesCustomer');
+        Route::get('/sales-customers/view/{id}', 'viewsalesCustomer')->name('viewsalesCustomer');
+        Route::get('/sales-customers/edit/{id}', 'editsalesCustomer')->name('editsalesCustomer');
+        Route::post('/sales-customers/update/{id}', 'updatesalesCustomer')->name('updatesalesCustomer');
+        Route::get('/sales-customers/destroy/{id}', 'destroysalesCustomer')->name('destroysalesCustomer');
+        Route::get('/sales-customers/deleted', 'deletedsalesCustomer')->name('deletedsalesCustomer');
+        Route::get('/sales-customers/restore/{id}', 'restoresalesCustomer')->name('restoresalesCustomer');
+    });
+
+    // STAFF MEAL SHIFT ROUTES
+    Route::controller(BillingCompanyController::class)->group(function () {
+        Route::get('/staff-meal-shifts', 'staffMealShift')->name('staffMealShift');
+        Route::post('/staff-meal-shifts/store', 'storestaffMealShift')->name('storestaffMealShift');
+        Route::get('/staff-meal-shifts/view/{id}', 'viewstaffMealShift')->name('viewstaffMealShift');
+        Route::get('/staff-meal-shifts/edit/{id}', 'editstaffMealShift')->name('editstaffMealShift');
+        Route::post('/staff-meal-shifts/update/{id}', 'updatestaffMealShift')->name('updatestaffMealShift');
+        Route::get('/staff-meal-shifts/destroy/{id}', 'destroystaffMealShift')->name('destroystaffMealShift');
+        Route::get('/staff-meal-shifts/deleted', 'deletedstaffMealShift')->name('deletedstaffMealShift');
+        Route::get('/staff-meal-shifts/restore/{id}', 'restorestaffMealShift')->name('restorestaffMealShift');
+    });
+
+    Route::controller(SaleController::class)->group(function () {
+        Route::get('/sales', 'sales')->name('sales');
+        Route::get('/sales/create', 'createSale')->name('createSale');
+        Route::post('/sales/store', 'storeSale')->name('storeSale');
+        Route::get('/sales/view/{encryptedId}', 'viewSale')->name('viewSale');
+
+        // Payments
+        Route::post('/sales/payment/store/{encryptedSaleId}', 'storeSalePayment')->name('storeSalePayment');
+
+        // Soft Delete & Restore
+        Route::get('/sales/destroy/{encryptedId}', 'destroySale')->name('destroySale');
+        Route::get('/sales/deleted', 'deletedSales')->name('deletedSales');
+        Route::get('/sales/restore/{encryptedId}', 'restoreSale')->name('restoreSale');
+
+        Route::get('/sales-payments', 'salesPayments')->name('salesPayments');
+
+        // Track & Pay Pending / Partial Sales
+        Route::get('/sales-payments/pending', 'pendingSalesPayments')->name('pendingSalesPayments');
+
+
+        // View Single Payment Receipt
+        Route::get('/sales-payments/view/{encryptedId}', 'viewSalePayment')->name('viewSalePayment');
+
+        // Soft Delete & Recovery
+        Route::get('/sales-payments/destroy/{encryptedId}', 'destroySalePayment')->name('destroySalePayment');
+        Route::get('/sales-payments/deleted', 'deletedSalePayments')->name('deletedSalePayments');
+        Route::get('/sales-payments/restore/{encryptedId}', 'restoreSalePayment')->name('restoreSalePayment');
+    });
+
+
+    Route::controller(CustomerController::class)->group(function () {
+        // Customers Directory & Profiles
+        Route::get('/salesCustomers-customers', 'customers')->name('salesCustomers');
+        Route::get('/viewsaleCustomer-customers/view/{encryptedId}', 'viewsaleCustomer')->name('viewsaleCustomer');
+
+        // Invoice Generation
+        Route::get('/createCustomerInvoice-customers/invoice/create/{encryptedCustomerId}', 'createCustomerInvoice')->name('createCustomerInvoice');
+        Route::post('/sales-customers/invoice/store/{encryptedCustomerId}', 'storeCustomerInvoice')->name('storeCustomerInvoice');
+        Route::post('/sales-customers/invoice/add-sales/{encryptedInvoiceId}', 'addSalesToInvoice')->name('addSalesToInvoice');
+      
+        // Invoice View, Payment & Printing
+        Route::get('/sales-customers/invoice/view/{encryptedId}', 'viewCustomerInvoice')->name('viewCustomerInvoice');
+        Route::post('/sales-customers/invoice/pay/{encryptedInvoiceId}', 'storeInvoicePayment')->name('storeInvoicePayment');
+        Route::get('/sales-customers/invoice/print/{encryptedId}', 'printCustomerInvoice')->name('printCustomerInvoice');
+    });
+
+    Route::controller(CommitteeController::class)->group(function () {
+        Route::get('/committees', 'committee')->name('committee');
+        Route::post('/committees/store', 'storeCommittee')->name('storeCommittee');
+        Route::get('/committees/edit/{id}', 'editCommittee')->name('editCommittee');
+        Route::post('/committees/update/{id}', 'updateCommittee')->name('updateCommittee');
+        Route::get('/viewCommittee/view/{id}', 'viewCommittee')->name('viewCommittee');
+        Route::get('/committees/destroy/{id}', 'destroyCommittee')->name('destroyCommittee');
+        Route::get('/committees/deleted', 'deletedCommittee')->name('deletedCommittee');
+        Route::get('/committees/restore/{id}', 'restoreCommittee')->name('restoreCommittee');
+
+        Route::get('/committeeMemberResponsibilities', 'committeeMemberResponsibilities')->name('committeeMemberResponsibilities');
+        Route::get('/committeeReports', 'committeeReports')->name('committeeReports');
+
+        Route::get('/committee-positions', 'committeePosition')->name('committeePosition');
+        Route::post('/committee-positions/store', 'storeCommitteePosition')->name('storeCommitteePosition');
+        Route::get('/committee-positions/edit/{id}', 'editCommitteePosition')->name('editCommitteePosition');
+        Route::post('/committee-positions/update/{id}', 'updateCommitteePosition')->name('updateCommitteePosition');
+        Route::get('/committee-positions/view/{id}', 'viewCommitteePosition')->name('viewCommitteePosition');
+        Route::get('/committee-positions/destroy/{id}', 'destroyCommitteePosition')->name('destroyCommitteePosition');
+        Route::get('/committee-positions/deleted', 'deletedCommitteePosition')->name('deletedCommitteePosition');
+        Route::get('/committee-positions/restore/{id}', 'restoreCommitteePosition')->name('restoreCommitteePosition');
+
+        Route::get('/committee-members', 'committeeMember')->name('committeeMember');
+        Route::post('/committee-members/store', 'storeCommitteeMember')->name('storeCommitteeMember');
+        Route::get('/committee-members/edit/{id}', 'editCommitteeMember')->name('editCommitteeMember');
+        Route::post('/committee-members/update/{id}', 'updateCommitteeMember')->name('updateCommitteeMember');
+        Route::get('/committee-members/view/{id}', 'viewCommitteeMember')->name('viewCommitteeMember');
+        Route::get('/committee-members/destroy/{id}', 'destroyCommitteeMember')->name('destroyCommitteeMember');
+        Route::get('/committee-members/deleted', 'deletedCommitteeMember')->name('deletedCommitteeMember');
+        Route::get('/committee-members/restore/{id}', 'restoreCommitteeMember')->name('restoreCommitteeMember');
+    });
+
+
+    Route::get('/serviceCategory', [ServiceController::class, 'serviceCategory'])->name('serviceCategory');
+    Route::post('/serviceCategory', [ServiceController::class, 'storeserviceCategory'])->name('storeserviceCategory');
+    Route::get('/serviceCategory/edit/{id}', [ServiceController::class, 'editserviceCategory'])->name('editserviceCategory');
+    Route::put('/serviceCategory/{id}', [ServiceController::class, 'updateserviceCategory'])->name('updateserviceCategory');
+    Route::get('/serviceCategory/{id}', [ServiceController::class, 'viewserviceCategory'])->name('viewserviceCategory');
+    Route::delete('/serviceCategory/{id}', [ServiceController::class, 'destroyserviceCategory'])->name('destroyserviceCategory');
+    Route::get('/deletedserviceCategory/deleted', [ServiceController::class, 'deletedserviceCategory'])->name('deletedserviceCategory');
+    Route::put('/serviceCategory/restore/{id}', [ServiceController::class, 'restoreserviceCategory'])->name('restoreserviceCategory');
+
+    Route::get('/serviceCatalog', [ServiceController::class, 'serviceCatalog'])->name('serviceCatalog');
+    Route::post('/storeServiceCatalog', [ServiceController::class, 'storeServiceCatalog'])->name('storeserviceCatalog');
+    Route::get('/editServiceCatalog/edit/{id}', [ServiceController::class, 'editServiceCatalog'])->name('editserviceCatalog');
+    Route::put('/updateServiceCatalog/{id}', [ServiceController::class, 'updateServiceCatalog'])->name('updateserviceCatalog');
+    Route::get('/viewServiceCatalog/{id}', [ServiceController::class, 'viewServiceCatalog'])->name('viewserviceCatalog');
+    Route::delete('/destroyServiceCatalog/{id}', [ServiceController::class, 'destroyServiceCatalog'])->name('destroyserviceCatalog');
+    Route::get('/deletedServiceCatalog/deleted', [ServiceController::class, 'deletedServiceCatalog'])->name('deletedserviceCatalog');
+    Route::put('/restoreServiceCatalog/restore/{id}', [ServiceController::class, 'restoreServiceCatalog'])->name('restoreserviceCatalog');
+
+
+    Route::controller(ServiceRequestController::class)->group(function () {
+        Route::get('/service-requests', 'serviceRequest')->name('serviceRequest');
+        Route::get('/service-requests/create', 'createServiceRequest')->name('createServiceRequest');
+        Route::post('/service-requests/store', 'storeServiceRequest')->name('storeServiceRequest');
+        Route::get('/service-requests/view/{id}', 'viewServiceRequest')->name('viewServiceRequest');
+        Route::get('/service-requests/edit/{id}', 'editServiceRequest')->name('editServiceRequest');
+        Route::post('/service-requests/update/{id}', 'updateServiceRequest')->name('updateServiceRequest');
+        
+        // Approval Routes
+        Route::post('/service-requests/committee-chairman-approval/{id}', 'committeeChairmanApproval')->name('committeeChairmanApproval');
+        Route::post('/service-requests/group-chairman-approval/{id}', 'groupChairmanApproval')->name('groupChairmanApproval');
+        
+        // Soft Deletes
+        Route::get('/service-requests/destroy/{id}', 'destroyServiceRequest')->name('destroyServiceRequest');
+        Route::get('/service-requests/deleted', 'deletedServiceRequest')->name('deletedServiceRequest');
+        Route::get('/service-requests/restore/{id}', 'restoreServiceRequest')->name('restoreServiceRequest');
+        Route::get('/printServiceRequest/{id}', 'printServiceRequest')->name('printServiceRequest');
+        Route::get('/printServiceMoneyRequest/{id}', 'printServiceMoneyRequest')->name('printServiceMoneyRequest');
+
+        Route::get('/service-money-requests', 'serviceMoneyRequest')->name('serviceMoneyRequest');
+        Route::get('/service-money-requests/create/{service_request_id?}', 'createServiceMoneyRequest')->name('createServiceMoneyRequest');
+        Route::post('/service-money-requests/store', 'storeServiceMoneyRequest')->name('storeServiceMoneyRequest');
+        Route::get('/service-money-requests/view/{id}', 'viewServiceMoneyRequest')->name('viewServiceMoneyRequest');
+        Route::get('/service-money-requests/edit/{id}', 'editServiceMoneyRequest')->name('editServiceMoneyRequest');
+        Route::post('/service-money-requests/update/{id}', 'updateServiceMoneyRequest')->name('updateServiceMoneyRequest');
+        
+        // Workflow Approvals & Payment Processing
+        Route::post('/service-money-requests/finance-approval/{id}', 'financeChairmanApproval')->name('financeChairmanApproval');
+        Route::post('/service-money-requests/group-approval/{id}', 'groupChairmanMoneyApproval')->name('groupChairmanMoneyApproval');
+        Route::post('/service-money-requests/process-payment/{id}', 'processPayment')->name('processPayment');
+        
+        // Soft Deletes
+        Route::get('/service-money-requests/destroy/{id}', 'destroyServiceMoneyRequest')->name('destroyServiceMoneyRequest');
+        Route::get('/service-money-requests/deleted', 'deletedServiceMoneyRequest')->name('deletedServiceMoneyRequest');
+        Route::get('/service-money-requests/restore/{id}', 'restoreServiceMoneyRequest')->name('restoreServiceMoneyRequest');
+        
+        Route::get('/pendingServiceMoneyRequests-money-requests/restore/', 'pendingServiceMoneyRequests')->name('pendingServiceMoneyRequests');
+        Route::get('/processServiceMoneyRequests-money-requests/restore/', 'processServiceMoneyRequests')->name('processServiceMoneyRequests');
+        Route::get('/serviceMoneyRequestReports-money-requests/restore/', 'serviceMoneyRequestReports')->name('serviceMoneyRequestReports');
+    });
+
+    // Expenses
+    Route::get('/expenses', [ExpenseController::class, 'expenses'])->name('expenses');
+    Route::get('/expenses/create', [ExpenseController::class, 'createExpense'])->name('createExpense');
+    Route::post('/expenses/store', [ExpenseController::class, 'storeExpense'])->name('storeExpense');
+
+    Route::get('/expenses/deleted', [ExpenseController::class, 'deletedExpenses'])->name('deletedExpenses');
+
+    Route::get('/expenses/{id}/view', [ExpenseController::class, 'viewExpense'])->name('viewExpense');
+    Route::get('/expenses/{id}/edit', [ExpenseController::class, 'editExpense'])->name('editExpense');
+    Route::put('/expenses/{id}/update', [ExpenseController::class, 'updateExpense'])->name('updateExpense');
+
+    Route::post('/expenses/{id}/approve', [ExpenseController::class, 'approveExpense'])->name('approveExpense');
+    Route::post('/expenses/{id}/pay', [ExpenseController::class, 'processExpensePayment'])->name('processExpensePayment');
+
+    Route::delete('/expenses/{id}/destroy', [ExpenseController::class, 'destroyExpense'])->name('destroyExpense');
+    Route::post('/expenses/{id}/restore', [ExpenseController::class, 'restoreExpense'])->name('restoreExpense');
+
+    Route::get('/expense-payments', [ExpenseController::class, 'expensePayments'])->name('expensePayments');
+    Route::get('/expense-payments/deleted', [ExpenseController::class, 'deletedExpensePayments'])->name('deletedExpensePayments');
+    Route::get('/expense-payments/{id}/view', [ExpenseController::class, 'viewExpensePayment'])->name('viewExpensePayment');
+    Route::delete('/expense-payments/{id}/destroy', [ExpenseController::class, 'destroyExpensePayment'])->name('destroyExpensePayment');
+    Route::post('/expense-payments/{id}/restore', [ExpenseController::class, 'restoreExpensePayment'])->name('restoreExpensePayment');
+    // Payment processing page (form posts to existing processExpensePayment route)
+    Route::get('/expenses/{id}/pay', [ExpenseController::class, 'payExpense'])->name('payExpense');
+
+    // Approved expenses waiting to be paid (declare before /expenses/{id}/... routes)
+    Route::get('/expenses/unpaid', [ExpenseController::class, 'unpaidExpenses'])->name('unpaidExpenses');
+
+        // EXPENSES ROUTES
+    Route::get('/expensecategoryinformations', [ExpenseController::class, 'expensecategoryinformations'])->name('expensecategoryinformations');
+    Route::get('/inactiveexpensecategory', [ExpenseController::class, 'inactiveexpensecategory'])->name('inactiveexpensecategory');
+    Route::post('/storeexpensecategory', [ExpenseController::class, 'storeexpensecategory'])->name('storeexpensecategory');
+    Route::get('/editexpensecategory/{id}', [ExpenseController::class, 'editexpensecategory'])->name('editexpensecategory');
+    Route::post('/updateexpensecategory/{id}', [ExpenseController::class, 'updateexpensecategory'])->name('updateexpensecategory');
+    Route::get('/viewexpensecategory/{id}', [ExpenseController::class, 'viewexpensecategory'])->name('viewexpensecategory');
+    Route::get('/deleteexpensecategory/{id}', [ExpenseController::class, 'deleteexpensecategory'])->name('deleteexpensecategory');
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
 
 
 
@@ -906,35 +1137,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/destroyloanpenalty/{id}', [LoanController::class, 'destroyloanpenalty'])->name('destroyloanpenalty');
     Route::get('/payloanpenalty/{id}', [LoanController::class, 'payloanpenalty'])->name('payloanpenalty');
 
-    // EXPENSES
-    Route::get('/expensecategoryinformations',[ExpenseController::class,'expensecategoryinformations'])->name('expensecategoryinformations');
-    Route::post('/registerexpensecategory',[ExpenseController::class,'registerexpensecategory'])->name('registerexpensecategory');
-    Route::get('/viewexpensecategory/{id}',[ExpenseController::class,'viewexpensecategory'])->name('viewexpensecategory');
-    Route::get('/editexpensecategory/{id}',[ExpenseController::class,'editexpensecategory'])->name('editexpensecategory');
-    Route::post('/updateexpensecategory/{id}',[ExpenseController::class,'updateexpensecategory'])->name('updateexpensecategory');
-    Route::get('/deleteexpensecategory/{id}',[ExpenseController::class,'deleteexpensecategory'])->name('deleteexpensecategory');
-    Route::get('/activeexpensecategory/{id}',[ExpenseController::class,'activeexpensecategory'])->name('activeexpensecategory');
-    Route::get('/inactiveexpensecategory/{id}',[ExpenseController::class,'inactiveexpensecategory'])->name('inactiveexpensecategory');
-
-    Route::get('/expenseinformations', [ExpenseController::class, 'expenseinformations'])->name('expenseinformations');
-    Route::post('/registerexpense', [ExpenseController::class, 'registerexpense'])->name('registerexpense');
-    Route::post('/importexcelexpense', [ExpenseController::class, 'importexcelexpense'])->name('importexcelexpense');
-    Route::get('/viewexpense/{id}', [ExpenseController::class, 'viewexpense'])->name('viewexpense');
-    Route::get('/editexpense', [ExpenseController::class, 'editexpense'])->name('editexpense');
-    Route::post('/updateexpense/{id}', [ExpenseController::class, 'updateexpense'])->name('updateexpense');
-    Route::get('/deleteexpense/{id}', [ExpenseController::class, 'deleteexpense'])->name('deleteexpense');
-
-    Route::get('/pendingexpenseinformations', [ExpenseController::class, 'pendingexpenseinformations'])->name('pendingexpenseinformations');
-    Route::post('/approveexpense/{id}', [ExpenseController::class, 'approveexpense'])->name('approveexpense');
-    Route::post('/rejectexpense/{id}', [ExpenseController::class, 'rejectexpense'])->name('rejectexpense');
-    Route::get('/pendingexpense', [ExpenseController::class, 'pendingexpense'])->name('pendingexpense');
-    Route::post('/payexpense/{id}', [ExpenseController::class, 'payexpense'])->name('payexpense');
-    Route::get('/unpayedexpense', [ExpenseController::class, 'unpayedexpense'])->name('unpayedexpense');
-    Route::get('/payedexpense', [ExpenseController::class, 'payedexpense'])->name('payedexpense');
-    Route::get('/expensehistory', [ExpenseController::class, 'expensehistory'])->name('expensehistory');
-    Route::get('/expensepayments', [ExpenseController::class, 'expensepayments'])->name('expensepayments');
-    Route::get('/expensepaymenthistory', [ExpenseController::class, 'expensepaymenthistory'])->name('expensepaymenthistory');
-
     // Salary Information
     Route::get('/salaryinformations', [SalaryController::class, 'salaryinformations'])->name('salaryinformations');
     Route::get('/registersalary', [SalaryController::class, 'registersalary'])->name('registersalary');
@@ -963,23 +1165,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/weeklyallowancehistory', [SalaryController::class, 'weeklyallowancehistory'])->name('weeklyallowancehistory');
 
 
-        // EXPENSES ROUTES
-    Route::get('/expensecategories', [ExpenseController::class, 'expensecategories'])->name('expensecategories');
-    Route::post('/storeexpensecategory', [ExpenseController::class, 'storeexpensecategory'])->name('storeexpensecategory');
-    Route::get('/editexpensecategory/{id}', [ExpenseController::class, 'editexpensecategory'])->name('editexpensecategory');
-    Route::post('/updateexpensecategory/{id}', [ExpenseController::class, 'updateexpensecategory'])->name('updateexpensecategory');
-    Route::get('/viewexpensecategory/{id}', [ExpenseController::class, 'viewexpensecategory'])->name('viewexpensecategory');
-    Route::get('/destroyexpensecategory/{id}', [ExpenseController::class, 'destroyexpensecategory'])->name('destroyexpensecategory');
-
-    Route::get('/expenses', [ExpenseController::class, 'expenses'])->name('expenses');
-    Route::post('/storeexpense', [ExpenseController::class, 'storeexpense'])->name('storeexpense');
-    Route::get('/editexpense/{id}', [ExpenseController::class, 'editexpense'])->name('editexpense');
-    Route::post('/updateexpense/{id}', [ExpenseController::class, 'updateexpense'])->name('updateexpense');
-    Route::get('/viewexpense/{id}', [ExpenseController::class, 'viewexpense'])->name('viewexpense');
-    Route::get('/approveexpenses', [ExpenseController::class, 'approveexpenses'])->name('approveexpenses');
-    Route::get('/approveexpense/{id}', [ExpenseController::class, 'approveexpense'])->name('approveexpense');
-    Route::get('/rejectexpense/{id}', [ExpenseController::class, 'rejectexpense'])->name('rejectexpense');
-    Route::get('/destroyexpense/{id}', [ExpenseController::class, 'destroyexpense'])->name('destroyexpense');
 
 });
 

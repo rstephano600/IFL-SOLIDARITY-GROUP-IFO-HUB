@@ -13,78 +13,346 @@
     </a>
 </div>
 
+
 <div class="arbif-card mb-4">
     <div class="arbif-card-body">
-        <h4 class="mb-3 text-navy font-weight-bold"><i class="fas fa-info-circle me-2"></i> Core Branch Information</h4>
+
+        {{-- ===================================================== --}}
+        {{-- CORE BRANCH INFORMATION --}}
+        {{-- ===================================================== --}}
+
+        <h4 class="mb-3 text-navy font-weight-bold">
+            <i class="fas fa-info-circle me-2"></i> Core Branch Information
+        </h4>
+
         <div class="row g-3">
+
             <div class="col-md-3">
                 <label class="form-label d-block text-muted mb-0">Branch Code</label>
-                <span class="arbif-badge arbif-badge-navy mt-1" style="font-size: 0.95rem;">{{ $branch->branch_code }}</span>
+                <span class="arbif-badge arbif-badge-navy mt-1" style="font-size: 0.95rem;">
+                    {{ $branch->branch_code }}
+                </span>
             </div>
+
+            <div class="col-md-3">
+                <label class="form-label d-block text-muted mb-0">Branch Name</label>
+                <span class="fw-bold text-dark d-block mt-1">
+                    {{ $branch->branch_name }}
+                </span>
+            </div>
+
             <div class="col-md-3">
                 <label class="form-label d-block text-muted mb-0">Assigned Company</label>
-                <span class="fw-bold text-dark d-block mt-1">{{ $branch->company->company_name ?? '—' }}</span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">Established Date</label>
                 <span class="fw-bold text-dark d-block mt-1">
-                    {{ $branch->established_date ? \Carbon\Carbon::parse($branch->established_date)->format('M d, Y') : '—' }}
-                </span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">Auditing Status / Report</label>
-                <span class="fw-bold text-dark d-block mt-1">
-                    <span class="badge bg-secondary">{{ $branch->AuditingStatus ?? 'Pending' }}</span>
+                    {{ $branch->company->company_name ?? '—' }}
                 </span>
             </div>
 
-            <div class="col-md-12">
-                <hr class="my-2">
-            </div>
+            @if($branch->established_date)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">Established Date</label>
+                    <span class="fw-bold text-dark d-block mt-1">
+                        {{ \Carbon\Carbon::parse($branch->established_date)->format('M d, Y') }}
+                    </span>
+                </div>
+            @endif
 
             <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0"><i class="fas fa-phone me-1"></i> Phone Line</label>
-                <span class="text-dark d-block mt-1">{{ $branch->phone ?? '—' }}</span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0"><i class="fas fa-envelope me-1"></i> Email Address</label>
-                <span class="text-dark d-block mt-1">{{ $branch->email ?? '—' }}</span>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label d-block text-muted mb-0"><i class="fas fa-map-marker-alt me-1"></i> Physical Address</label>
-                <span class="text-dark d-block mt-1">{{ $branch->address ?? '—' }}</span>
+                <label class="form-label d-block text-muted mb-0">Auditing Status</label>
+                <span class="fw-bold text-dark d-block mt-1">
+                    <span class="badge bg-secondary">
+                        {{ $branch->AuditingStatus ?? 'Pending' }}
+                    </span>
+                </span>
             </div>
 
-            <div class="col-md-12">
-                <hr class="my-2">
-            </div>
+            @if($branch->Status)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">Branch Status</label>
+                    <span class="fw-bold text-dark d-block mt-1">
+                        <span class="badge bg-success">{{ $branch->Status }}</span>
+                    </span>
+                </div>
+            @endif
 
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">Region</label>
-                <span class="text-dark d-block mt-1">{{ $branch->region ?? '—' }}</span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">District</label>
-                <span class="text-dark d-block mt-1">{{ $branch->district ?? '—' }}</span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">Ward</label>
-                <span class="text-dark d-block mt-1">{{ $branch->ward ?? '—' }}</span>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label d-block text-muted mb-0">Village / Street</label>
-                <span class="text-dark d-block mt-1">{{ $branch->village ?? '—' }}</span>
-            </div>
+            @if($branch->phone)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">
+                        <i class="fas fa-phone me-1"></i> Phone Line
+                    </label>
+                    <span class="text-dark d-block mt-1">{{ $branch->phone }}</span>
+                </div>
+            @endif
+
+            @if($branch->email)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">
+                        <i class="fas fa-envelope me-1"></i> Email Address
+                    </label>
+                    <span class="text-dark d-block mt-1">{{ $branch->email }}</span>
+                </div>
+            @endif
+
+            @if($branch->address)
+                <div class="col-md-6">
+                    <label class="form-label d-block text-muted mb-0">
+                        <i class="fas fa-map-marker-alt me-1"></i> Physical Address
+                    </label>
+                    <span class="text-dark d-block mt-1">{{ $branch->address }}</span>
+                </div>
+            @endif
+
+            @if($branch->region)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">Region</label>
+                    <span class="text-dark d-block mt-1">{{ $branch->region }}</span>
+                </div>
+            @endif
+
+            @if($branch->district)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">District</label>
+                    <span class="text-dark d-block mt-1">{{ $branch->district }}</span>
+                </div>
+            @endif
+
+            @if($branch->ward)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">Ward</label>
+                    <span class="text-dark d-block mt-1">{{ $branch->ward }}</span>
+                </div>
+            @endif
+
+            @if($branch->village)
+                <div class="col-md-3">
+                    <label class="form-label d-block text-muted mb-0">Village / Street</label>
+                    <span class="text-dark d-block mt-1">{{ $branch->village }}</span>
+                </div>
+            @endif
 
             @if($branch->description)
-            <div class="col-md-12">
-                <label class="form-label d-block text-muted mb-1">Operational Description</label>
-                <div class="p-3 bg-light rounded text-secondary" style="font-size: 0.9rem; line-height: 1.5;">
-                    {{ $branch->description }}
+                <div class="col-md-12">
+                    <label class="form-label d-block text-muted mb-1">Operational Description</label>
+                    <div class="p-3 bg-light rounded text-secondary" style="font-size: 0.9rem; line-height: 1.5;">
+                        {{ $branch->description }}
+                    </div>
                 </div>
-            </div>
             @endif
+
         </div>
+
+        {{-- ===================================================== --}}
+        {{-- BANK ACCOUNT INFORMATION --}}
+        {{-- ===================================================== --}}
+
+        @if(
+            $branch->bank_name ||
+            $branch->bank_branch ||
+            $branch->bank_account_name ||
+            $branch->bank_account_number ||
+            $branch->bank_swift_code
+        )
+            <hr class="my-4">
+
+            <h4 class="mb-3 text-navy font-weight-bold">
+                <i class="fas fa-university me-2"></i> Bank Account Information
+            </h4>
+
+            <div class="row g-3">
+
+                @if($branch->bank_name)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Bank Name</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->bank_name }}</span>
+                    </div>
+                @endif
+
+                @if($branch->bank_branch)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Bank Branch</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->bank_branch }}</span>
+                    </div>
+                @endif
+
+                @if($branch->bank_account_name)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Account Name</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->bank_account_name }}</span>
+                    </div>
+                @endif
+
+                @if($branch->bank_account_number)
+                    <div class="col-md-6">
+                        <label class="form-label d-block text-muted mb-0">Bank Account Number</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->bank_account_number }}</span>
+                    </div>
+                @endif
+
+                @if($branch->bank_swift_code)
+                    <div class="col-md-6">
+                        <label class="form-label d-block text-muted mb-0">SWIFT / BIC Code</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->bank_swift_code }}</span>
+                    </div>
+                @endif
+
+            </div>
+        @endif
+
+        {{-- ===================================================== --}}
+        {{-- MOBILE MONEY INFORMATION --}}
+        {{-- ===================================================== --}}
+
+        @if(
+            $branch->mobile_money_provider ||
+            $branch->mobile_money_number ||
+            $branch->mobile_money_account_name
+        )
+            <hr class="my-4">
+
+            <h4 class="mb-3 text-navy font-weight-bold">
+                <i class="fas fa-mobile-alt me-2"></i> Mobile Money Information
+            </h4>
+
+            <div class="row g-3">
+
+                @if($branch->mobile_money_provider)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Mobile Money Provider</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->mobile_money_provider }}</span>
+                    </div>
+                @endif
+
+                @if($branch->mobile_money_number)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Mobile Money Number</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->mobile_money_number }}</span>
+                    </div>
+                @endif
+
+                @if($branch->mobile_money_account_name)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Account Name</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->mobile_money_account_name }}</span>
+                    </div>
+                @endif
+
+            </div>
+        @endif
+
+        {{-- ===================================================== --}}
+        {{-- PAYMENT SETTINGS --}}
+        {{-- ===================================================== --}}
+
+        @if(
+            $branch->default_payment_method ||
+            $branch->default_currency ||
+            $branch->payment_reference_prefix
+        )
+            <hr class="my-4">
+
+            <h4 class="mb-3 text-navy font-weight-bold">
+                <i class="fas fa-money-bill-wave me-2"></i> Payment Settings
+            </h4>
+
+            <div class="row g-3">
+
+                @if($branch->default_payment_method)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Default Payment Method</label>
+                        <span class="text-dark d-block mt-1">
+                            {{ ucwords(strtolower(str_replace('_', ' ', $branch->default_payment_method))) }}
+                        </span>
+                    </div>
+                @endif
+
+                @if($branch->default_currency)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Default Currency</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->default_currency }}</span>
+                    </div>
+                @endif
+
+                @if($branch->payment_reference_prefix)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Payment Reference Prefix</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->payment_reference_prefix }}</span>
+                    </div>
+                @endif
+
+            </div>
+        @endif
+
+        {{-- ===================================================== --}}
+        {{-- FINANCE CONTACT INFORMATION --}}
+        {{-- ===================================================== --}}
+
+        @if(
+            $branch->finance_contact_person ||
+            $branch->finance_phone ||
+            $branch->finance_email
+        )
+            <hr class="my-4">
+
+            <h4 class="mb-3 text-navy font-weight-bold">
+                <i class="fas fa-address-card me-2"></i> Finance Contact Information
+            </h4>
+
+            <div class="row g-3">
+
+                @if($branch->finance_contact_person)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Finance Contact Person</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->finance_contact_person }}</span>
+                    </div>
+                @endif
+
+                @if($branch->finance_phone)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Finance Phone</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->finance_phone }}</span>
+                    </div>
+                @endif
+
+                @if($branch->finance_email)
+                    <div class="col-md-4">
+                        <label class="form-label d-block text-muted mb-0">Finance Email</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->finance_email }}</span>
+                    </div>
+                @endif
+
+            </div>
+        @endif
+
+        {{-- ===================================================== --}}
+        {{-- TAX INFORMATION --}}
+        {{-- ===================================================== --}}
+
+        @if($branch->tin_number || $branch->vrn_number)
+            <hr class="my-4">
+
+            <h4 class="mb-3 text-navy font-weight-bold">
+                <i class="fas fa-file-invoice me-2"></i> Tax Information
+            </h4>
+
+            <div class="row g-3">
+
+                @if($branch->tin_number)
+                    <div class="col-md-6">
+                        <label class="form-label d-block text-muted mb-0">TIN Number</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->tin_number }}</span>
+                    </div>
+                @endif
+
+                @if($branch->vrn_number)
+                    <div class="col-md-6">
+                        <label class="form-label d-block text-muted mb-0">VRN Number</label>
+                        <span class="text-dark d-block mt-1">{{ $branch->vrn_number }}</span>
+                    </div>
+                @endif
+
+            </div>
+        @endif
+
     </div>
 </div>
 

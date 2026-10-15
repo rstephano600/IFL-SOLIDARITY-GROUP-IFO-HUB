@@ -130,21 +130,24 @@
             <div class="collapse" id="salesSubmenu">
                 <div class="ps-4 mt-2">
                     @can('view-customers')
-                    <a href="{{ route('customer') }}" class="nav-link d-flex align-items-center">
+                    <a href="{{ route('salesCustomer') }}" class="nav-link d-flex align-items-center">
                         <i class="fas fa-users me-2"></i> <span>Customers</span>
                     </a>
                     @endcan
                     @can('view-sales-invoices')
-                    <a href="{{ route('salesinvoice') }}" class="nav-link d-flex align-items-center">
-                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Sales Invoices</span>
+                    <a href="{{ route('sales') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Sales</span>
                     </a>
                     @endcan
                     @can('view-customer-invoice-payments')
-                    <a href="{{ route('customerPayment') }}" class="nav-link d-flex align-items-center">
+                    <a href="{{ route('salesPayments') }}" class="nav-link d-flex align-items-center">
                         <i class="fas fa-credit-card me-2"></i> <span>Customer Payments</span>
                     </a>
-                    <a href="{{ route('customerPaymentinvoice') }}" class="nav-link d-flex align-items-center">
-                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Add Invoice Sales</span>
+                    <a href="{{ route('pendingSalesPayments') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Pending Payments</span>
+                    </a>
+                    <a href="{{ route('salesCustomers') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Sales Customers</span>
                     </a>
                     @endcan
                     @can('view-stock-adjustments')
@@ -485,7 +488,128 @@
             </div>
         </div>
         @endcan
+        {{-- ===================================================== --}}
+        {{-- SERVICE MANAGEMENT MENU --}}
+        {{-- ===================================================== --}}
 
+        @can('view-service-requests-menu')
+        <div class="nav-item">
+            <a href="#serviceRequestsSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-concierge-bell me-2"></i>
+                <span>Service Management</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+
+            <div class="collapse" id="serviceRequestsSubmenu">
+                <div class="ps-4 mt-2">
+
+                    @can('view-service-requests')
+                    <a href="{{ route('serviceRequest') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-alt me-2"></i>
+                        <span>Service Requests</span>
+                    </a>
+                    @endcan
+
+                    @can('view-service-categories')
+                    <a href="{{ route('serviceCategory') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-list-alt me-2"></i>
+                        <span>Service Categories</span>
+                    </a>
+                    @endcan
+
+                    @can('view-service-catalog')
+                    <a href="{{ route('serviceCatalog') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-book-open me-2"></i>
+                        <span>Service Catalog</span>
+                    </a>
+                    @endcan
+
+                    @can('view-service-requests-report')
+                    <a href="{{ route('serviceCategory') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-chart-line me-2"></i>
+                        <span>Service Request Reports</span>
+                    </a>
+                    @endcan
+
+                </div>
+            </div>
+        </div>
+        @endcan
+        {{-- ===================================================== --}}
+        {{-- SERVICE MONEY REQUESTS MENU --}}
+        {{-- ===================================================== --}}
+
+        @can('view-service-money-requests-menu')
+        <div class="nav-item">
+            <a href="#serviceMoneySubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-money-check-alt me-2"></i>
+                <span>Service Money Requests</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+
+            <div class="collapse" id="serviceMoneySubmenu">
+                <div class="ps-4 mt-2">
+
+                    @can('view-service-money-requests')
+                    <a href="{{ route('serviceMoneyRequest') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-money-bill-wave me-2"></i>
+                        <span>All Money Requests</span>
+                    </a>
+                    @endcan
+
+                    <!-- @can('view-service-money-requests')
+                    <a href="{{ route('pendingServiceMoneyRequests') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-hourglass-half me-2"></i>
+                        <span>Pending Money Requests</span>
+                    </a>
+                    @endcan
+
+                    @can('process-service-money-requests')
+                    <a href="{{ route('processServiceMoneyRequests') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-cash-register me-2"></i>
+                        <span>Process Disbursements</span>
+                    </a>
+                    @endcan
+
+                    @can('view-service-money-requests-report')
+                    <a href="{{ route('serviceMoneyRequestReports') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        <span>Money Request Reports</span>
+                    </a>
+                    @endcan -->
+
+                </div>
+            </div>
+        </div>
+        @endcan
+        {{-- ── Expenses Menu ── --}}
+        @can('view-expenses-menu')
+        <div class="nav-item">
+            <a href="#expensesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-receipt me-2"></i>
+                <span>Expenses Menu</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+            <div class="collapse" id="expensesSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-expenses')
+                    <a href="{{ route('expenses') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Expenses Info</span>
+                    </a>
+                    @endcan
+                    @can('view-expenses')
+                    <a href="{{ route('unpaidExpenses') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Un Paid Expenses</span>
+                    </a>
+                    <a href="{{ route('expensePayments') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Expenses Payments</span>
+                    </a>
+                    @endcan
+
+                </div>
+            </div>
+        </div>
+        @endcan
         @can('view-share-purchases-menu')
         <div class="nav-item">
             <a href="#sharepurchasetransactions" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -558,6 +682,7 @@
         </div>
         @endcan
 
+
         @can('view-membership-fees-menu')
         <div class="nav-item">
             <a href="#membershipfeepayments" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -603,36 +728,8 @@
             </div>
         </div>
         @endcan
-                {{-- ── Expenses Menu ── --}}
-        @can('view-expenses-menu')
-        <div class="nav-item">
-            <a href="#expensesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
-                <i class="fas fa-receipt me-2"></i>
-                <span>Expenses Menu</span>
-                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
-            </a>
-            <div class="collapse" id="expensesSubmenu">
-                <div class="ps-4 mt-2">
-                    @can('view-expenses')
-                    <a href="{{ route('expenseinformations') }}" class="nav-link d-flex align-items-center">
-                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Expenses Info</span>
-                    </a>
-                    @endcan
-                    @can('approve-expenses')
-                    <a href="{{ route('approveexpenses') }}" class="nav-link d-flex align-items-center">
-                        <i class="fas fa-check me-2"></i> <span>Approve Expenses</span>
-                    </a>
-                    @endcan
-                    @can('view-expense-categories')
-                    <a href="{{ route('expensecategoryinformations') }}" class="nav-link d-flex align-items-center">
-                        <i class="fas fa-tags me-2"></i> <span>Expense Categories</span>
-                    </a>
-                    @endcan
-                </div>
-            </div>
-        </div>
-        @endcan
-                {{-- ── Employee Menu ── --}}
+
+        {{-- ── Employee Menu ── --}}
         @can('view-employee-menu')
         <div class="nav-item">
             <a href="#employeeSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
@@ -656,6 +753,57 @@
                         <i class="fas fa-heart me-2"></i> <span>Employee Next of Kin</span>
                     </a>
                     @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
+
+        @can('view-committees-menu')
+        <div class="nav-item">
+            <a href="#committeesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-users-cog me-2"></i>
+                <span>Committee Management</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+
+            <div class="collapse" id="committeesSubmenu">
+                <div class="ps-4 mt-2">
+
+                    @can('view-committees')
+                    <a href="{{ route('committee') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-users me-2"></i>
+                        <span>Committees</span>
+                    </a>
+                    @endcan
+
+                    @can('view-committee-positions')
+                    <a href="{{ route('committeePosition') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-user-tag me-2"></i>
+                        <span>Committee Positions</span>
+                    </a>
+                    @endcan
+
+                    @can('view-committee-members')
+                    <a href="{{ route('committeeMember') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-user-friends me-2"></i>
+                        <span>Committee Members</span>
+                    </a>
+                    @endcan
+
+                    @can('view-committee-member-responsibilities')
+                    <a href="{{ route('committeeMemberResponsibilities') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-tasks me-2"></i>
+                        <span>Member Responsibilities</span>
+                    </a>
+                    @endcan
+
+                    @can('view-committees-report')
+                    <a href="{{ route('committeeReports') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        <span>Committee Reports</span>
+                    </a>
+                    @endcan
+
                 </div>
             </div>
         </div>

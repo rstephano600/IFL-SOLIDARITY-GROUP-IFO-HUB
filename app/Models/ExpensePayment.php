@@ -13,30 +13,20 @@ class ExpensePayment extends Model
     protected $table = 'expense_payments';
 
     protected $fillable = [
-
         'expense_id',
-
         'payment_number',
-
         'payment_date',
-
         'amount_paid',
-
         'payment_method',
-
         'reference_number',
-
         'descriptions',
-
         'paid_by',
-
+        'company_id',
+        'branch_id',
         'User_id',
-
         'Status',
-
         'AuditingStatus',
-
-        'ReportStatus'
+        'ReportStatus',
     ];
 
     protected $casts = [
@@ -69,5 +59,15 @@ class ExpensePayment extends Model
             User::class,
             'User_id'
         );
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }

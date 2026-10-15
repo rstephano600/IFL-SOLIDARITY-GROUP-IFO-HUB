@@ -4088,3 +4088,2181 @@ ALTER TABLE procurement_workflow_steps
         AFTER approval_permission,
     ADD COLUMN rejection_permission VARCHAR(150) NULL
         AFTER view_permission;
+
+
+
+
+
+-- TAREHE 09/10/2026
+-- SALES RECORDS
+USE `iflsgdb`;
+
+-- ============================================================
+-- 1. SALES TYPES
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales_types` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `type_code` VARCHAR(50) NOT NULL UNIQUE,
+    `type_name` VARCHAR(150) NOT NULL,
+    `description` TEXT NULL,
+    `requires_customer` TINYINT(1) DEFAULT 0,
+    `requires_employee` TINYINT(1) DEFAULT 0,
+    `default_payment_terms` ENUM('IMMEDIATE','CREDIT','COMPANY_ACCOUNT')
+        DEFAULT 'IMMEDIATE',
+    `allows_discount` TINYINT(1) DEFAULT 1,
+    `display_order` INT DEFAULT 0,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    CONSTRAINT fk_sales_types_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_types_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_types_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_types_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_types_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_types_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 2. SALES CUSTOMERS
+-- Companies and individual customers
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales_customers` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `customer_code` VARCHAR(50) NOT NULL UNIQUE,
+    `customer_name` VARCHAR(200) NOT NULL,
+    `customer_type` ENUM('COMPANY','INDIVIDUAL','WALK_IN')
+        DEFAULT 'INDIVIDUAL',
+    `billing_company_id` BIGINT UNSIGNED NULL,
+    `contact_person` VARCHAR(150) NULL,
+    `phone` VARCHAR(30) NULL,
+    `email` VARCHAR(150) NULL,
+    `address` TEXT NULL,
+    `credit_limit` DECIMAL(18,2) DEFAULT 0.00,
+    `payment_terms_days` INT DEFAULT 0,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    CONSTRAINT fk_sales_customers_billing_company
+        FOREIGN KEY (`billing_company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_customers_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 3. STAFF MEAL SHIFTS
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `staff_meal_shifts` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `shift_code` VARCHAR(30) NOT NULL,
+    `shift_name` VARCHAR(100) NOT NULL,
+    `start_time` TIME NULL,
+    `end_time` TIME NULL,
+    `display_order` INT DEFAULT 0,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY uq_staff_meal_shift_code (`company_id`, `branch_id`, `shift_code`),
+
+    CONSTRAINT fk_staff_meal_shifts_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_shifts_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_shifts_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_shifts_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_shifts_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_shifts_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 4. STAFF MEAL RATES
+-- Company-controlled meal prices with effective dates
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `staff_meal_rates` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `meal_type` VARCHAR(50) NOT NULL,
+    `shift_id` BIGINT UNSIGNED NULL,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `effective_from` DATE NOT NULL,
+    `effective_until` DATE NULL,
+    `approved_by` BIGINT UNSIGNED NULL,
+    `approved_at` TIMESTAMP NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_staff_meal_rates_lookup
+        (`company_id`, `branch_id`, `meal_type`, `effective_from`),
+
+    CONSTRAINT fk_staff_meal_rates_shift
+        FOREIGN KEY (`shift_id`) REFERENCES `staff_meal_shifts`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_approved_by
+        FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_rates_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 5. SALES BILLING PERIODS
+-- Weekly, monthly or custom company billing periods
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales_billing_periods` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `period_name` VARCHAR(150) NOT NULL,
+    `start_date` DATE NOT NULL,
+    `end_date` DATE NOT NULL,
+    `billing_frequency` ENUM('WEEKLY','MONTHLY','CUSTOM')
+        DEFAULT 'MONTHLY',
+    `closed_at` TIMESTAMP NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Open',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_sales_billing_period_dates (`company_id`, `start_date`, `end_date`),
+
+    CONSTRAINT fk_sales_billing_periods_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_periods_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_periods_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_periods_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_periods_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_periods_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+
+
+-- ============================================================
+-- 6. SALES
+-- Main sales transaction header
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `sale_no` VARCHAR(50) NOT NULL UNIQUE,
+    `sale_date` DATETIME NOT NULL,
+    `sales_type_id` BIGINT UNSIGNED NULL,
+    `customer_id` BIGINT UNSIGNED NULL,
+    `billing_period_id` BIGINT UNSIGNED NULL,
+    `cashier_id` BIGINT UNSIGNED NULL,
+    `payment_terms` ENUM('IMMEDIATE','CREDIT','COMPANY_ACCOUNT')
+        DEFAULT 'IMMEDIATE',
+    `payment_status` ENUM('UNPAID','PARTIAL','PAID')
+        DEFAULT 'UNPAID',
+    `subtotal` DECIMAL(18,2) DEFAULT 0.00,
+    `discount_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `tax_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `total_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `paid_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `balance_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `currency_code` VARCHAR(10) DEFAULT 'TZS',
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Draft',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_sales_date (`sale_date`),
+    KEY idx_sales_status (`Status`, `payment_status`),
+
+    CONSTRAINT fk_sales_type
+        FOREIGN KEY (`sales_type_id`) REFERENCES `sales_types`(`id`),
+    CONSTRAINT fk_sales_customer
+        FOREIGN KEY (`customer_id`) REFERENCES `sales_customers`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_billing_period
+        FOREIGN KEY (`billing_period_id`) REFERENCES `sales_billing_periods`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_cashier
+        FOREIGN KEY (`cashier_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 7. SALE ITEMS
+-- Products sold on each transaction
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sale_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `sale_id` BIGINT UNSIGNED NOT NULL,
+    `product_id` BIGINT UNSIGNED NOT NULL,
+    `quantity` DECIMAL(18,3) NOT NULL DEFAULT 1.000,
+    `unit_of_measure_id` BIGINT UNSIGNED NULL,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `discount_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `line_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_sale_items_sale (`sale_id`),
+
+    CONSTRAINT fk_sale_items_sale
+        FOREIGN KEY (`sale_id`) REFERENCES `sales`(`id`),
+    CONSTRAINT fk_sale_items_product
+        FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+    CONSTRAINT fk_sale_items_uom
+        FOREIGN KEY (`unit_of_measure_id`) REFERENCES `units_of_measure`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_items_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 8. SALE PAYMENTS
+-- Multiple payments can be made against one sale
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sale_payments` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `payment_no` VARCHAR(50) NOT NULL UNIQUE,
+    `sale_id` BIGINT UNSIGNED NOT NULL,
+    `payment_date` DATETIME NOT NULL,
+    `amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `payment_method_id` BIGINT UNSIGNED NULL,
+    `reference_transaction` VARCHAR(150) NULL,
+    `received_by` BIGINT UNSIGNED NULL,
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_sale_payments_sale (`sale_id`),
+
+    CONSTRAINT fk_sale_payments_sale
+        FOREIGN KEY (`sale_id`) REFERENCES `sales`(`id`),
+    CONSTRAINT fk_sale_payments_received_by
+        FOREIGN KEY (`received_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sale_payments_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 9. STAFF MEAL SHIFT RECORDS
+-- One consolidated count for each shift/session
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `staff_meal_shift_records` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `record_no` VARCHAR(50) NOT NULL UNIQUE,
+    `service_date` DATE NOT NULL,
+    `shift_id` BIGINT UNSIGNED NOT NULL,
+    `product_id` BIGINT UNSIGNED NULL,
+    `meal_type` VARCHAR(50) NOT NULL,
+    `meal_count` INT UNSIGNED NOT NULL DEFAULT 0,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `total_amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `billing_period_id` BIGINT UNSIGNED NULL,
+    `confirmed_by` BIGINT UNSIGNED NULL,
+    `confirmed_at` TIMESTAMP NULL,
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Draft',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY uq_staff_meal_shift_count
+        (`company_id`, `branch_id`, `service_date`, `shift_id`, `meal_type`),
+    KEY idx_staff_meal_billing (`billing_period_id`, `Status`),
+
+    CONSTRAINT fk_staff_meal_records_shift
+        FOREIGN KEY (`shift_id`) REFERENCES `staff_meal_shifts`(`id`),
+    CONSTRAINT `fk_staff_meal_shift_items_product`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`id`),
+    CONSTRAINT fk_staff_meal_records_period
+        FOREIGN KEY (`billing_period_id`) REFERENCES `sales_billing_periods`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_confirmed_by
+        FOREIGN KEY (`confirmed_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_staff_meal_records_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 10. COMPANY CONSUMPTION RECORDS
+-- Management tea and other company-sponsored consumption
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `company_consumption_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `staff_meal_shift_record_id` BIGINT UNSIGNED NOT NULL,
+    `product_id` BIGINT UNSIGNED NOT NULL,
+
+    `quantity` DECIMAL(18,3) NOT NULL DEFAULT 1.000,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `total_amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    CONSTRAINT `fk_company_consumption_items_record`
+        FOREIGN KEY (`staff_meal_shift_record_id`)
+        REFERENCES `staff_meal_shift_records` (`id`),
+
+    CONSTRAINT `fk_company_consumption_items_product`
+        FOREIGN KEY (`product_id`)
+        REFERENCES `products` (`id`),
+
+    CONSTRAINT `fk_company_consumption_items_company`
+        FOREIGN KEY (`company_id`)
+        REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+
+    CONSTRAINT `fk_company_consumption_items_branch`
+        FOREIGN KEY (`branch_id`)
+        REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+
+    CONSTRAINT `fk_company_consumption_items_user`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+
+    CONSTRAINT `fk_company_consumption_items_created_by`
+        FOREIGN KEY (`created_by`)
+        REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+
+    CONSTRAINT `fk_company_consumption_items_updated_by`
+        FOREIGN KEY (`updated_by`)
+        REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+
+    CONSTRAINT `fk_company_consumption_items_deleted_by`
+        FOREIGN KEY (`deleted_by`)
+        REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- 11. COMPANY BILLS
+-- Consolidated invoices for company-sponsored consumption
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales_company_bills` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `bill_no` VARCHAR(50) NOT NULL UNIQUE,
+    `customer_id` BIGINT UNSIGNED NULL,
+    `billing_period_id` BIGINT UNSIGNED  NULL,
+    `bill_date` DATE NOT NULL,
+    `due_date` DATE NULL,
+    `subtotal` DECIMAL(18,2) DEFAULT 0.00,
+    `adjustments` DECIMAL(18,2) DEFAULT 0.00,
+    `total_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `paid_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `balance_amount` DECIMAL(18,2) DEFAULT 0.00,
+    `approved_by` BIGINT UNSIGNED NULL,
+    `approved_at` TIMESTAMP NULL,
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Draft',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_sales_company_bills_period (`billing_period_id`),
+
+    CONSTRAINT fk_sales_company_bills_customer
+        FOREIGN KEY (`customer_id`) REFERENCES `sales_customers`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_period
+        FOREIGN KEY (`billing_period_id`) REFERENCES `sales_billing_periods`(`id`),
+    CONSTRAINT fk_sales_company_bills_approved_by
+        FOREIGN KEY (`approved_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bills_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ============================================================
+-- 12. COMPANY BILL ITEMS
+-- Connects invoices to the source consumption records
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `sales_company_bill_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+    `company_bill_id` BIGINT UNSIGNED NOT NULL,
+    `sale_id` BIGINT UNSIGNED NULL,
+    `shift_record_id` BIGINT UNSIGNED NULL,
+    `consumption_record_id` BIGINT UNSIGNED NULL,
+    `description` VARCHAR(255) NULL,
+    `quantity` DECIMAL(18,3) NOT NULL DEFAULT 1.000,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY idx_company_bill_items_bill (`company_bill_id`),
+
+    CONSTRAINT fk_sales_company_bill_items_bill
+        FOREIGN KEY (`company_bill_id`) REFERENCES `sales_company_bills`(`id`),
+    CONSTRAINT fk_sales_company_bill_items_sale
+        FOREIGN KEY (`sale_id`) REFERENCES `sales`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_shift
+        FOREIGN KEY (`shift_record_id`) REFERENCES `staff_meal_shift_records`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_company
+        FOREIGN KEY (`company_id`) REFERENCES `companies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_branch
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_user
+        FOREIGN KEY (`User_id`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_created_by
+        FOREIGN KEY (`created_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_updated_by
+        FOREIGN KEY (`updated_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT fk_sales_company_bill_items_deleted_by
+        FOREIGN KEY (`deleted_by`) REFERENCES `users`(`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+
+
+
+
+
+INSERT INTO permissions
+    (name, slug, description, Status, created_at, updated_at)
+VALUES
+
+-- =====================================================
+-- 1. SALES MANAGEMENT MENU
+-- =====================================================
+('Sales Management Menu', 'view-sales-management-menu',
+ 'Access the Sales Management Menu', 'Active', NOW(), NOW()),
+
+('View Sales Dashboard', 'view-sales-dashboard',
+ 'View Sales Dashboard and Sales Statistics', 'Active', NOW(), NOW()),
+
+('View All Sales Reports', 'view-sales-reports',
+ 'View Sales Reports and Summaries', 'Active', NOW(), NOW()),
+
+('Export Sales Reports', 'export-sales-reports',
+ 'Export Sales Reports and Sales Data', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 2. SALES TYPES
+-- =====================================================
+('Sales Types Menu', 'view-sales-types-menu',
+ 'Access the Sales Types Menu', 'Active', NOW(), NOW()),
+
+('View Sales Types', 'view-sales-types',
+ 'View Sales Type Records', 'Active', NOW(), NOW()),
+
+('Manage Sales Types', 'crud-sales-types',
+ 'Create, Update or Delete Sales Types', 'Active', NOW(), NOW()),
+
+('Restore Sales Types', 'restore-sales-types',
+ 'Restore Deleted Sales Type Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 3. SALES CUSTOMERS
+-- =====================================================
+('Sales Customers Menu', 'view-sales-customers-menu',
+ 'Access the Sales Customers Menu', 'Active', NOW(), NOW()),
+
+('View Sales Customers', 'view-sales-customers',
+ 'View Sales Customer Records', 'Active', NOW(), NOW()),
+
+('Manage Sales Customers', 'crud-sales-customers',
+ 'Create, Update or Delete Sales Customers', 'Active', NOW(), NOW()),
+
+('View Customer Account Balances', 'view-customer-account-balances',
+ 'View Customer Outstanding Balances and Account Details', 'Active', NOW(), NOW()),
+
+('Manage Customer Credit Limits', 'manage-customer-credit-limits',
+ 'Create or Update Customer Credit Limits and Payment Terms', 'Active', NOW(), NOW()),
+
+('Restore Sales Customers', 'restore-sales-customers',
+ 'Restore Deleted Sales Customer Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 4. SALES TRANSACTIONS
+-- =====================================================
+('Sales Transactions Menu', 'view-sales-transactions-menu',
+ 'Access the Sales Transactions Menu', 'Active', NOW(), NOW()),
+
+('View Sales Transactions', 'view-sales',
+ 'View Sales Transaction Records', 'Active', NOW(), NOW()),
+
+('Create Sales Transactions', 'create-sales',
+ 'Create New Sales Transactions', 'Active', NOW(), NOW()),
+
+('Update Sales Transactions', 'update-sales',
+ 'Update Existing Sales Transactions', 'Active', NOW(), NOW()),
+
+('Delete Sales Transactions', 'delete-sales',
+ 'Delete Sales Transaction Records', 'Active', NOW(), NOW()),
+
+('Cancel Sales Transactions', 'cancel-sales',
+ 'Cancel Sales Transactions', 'Active', NOW(), NOW()),
+
+('Approve Sales Transactions', 'approve-sales',
+ 'Approve Sales Transactions Where Approval Is Required', 'Active', NOW(), NOW()),
+
+('View Sales Transaction Details', 'view-sale-items',
+ 'View Individual Product Items Within Sales Transactions', 'Active', NOW(), NOW()),
+
+('Manage Sales Transaction Items', 'crud-sale-items',
+ 'Add, Update or Remove Product Items Within Sales Transactions', 'Active', NOW(), NOW()),
+
+('Apply Sales Discounts', 'apply-sales-discounts',
+ 'Apply Discounts to Sales Transactions', 'Active', NOW(), NOW()),
+
+('Restore Sales Transactions', 'restore-sales',
+ 'Restore Deleted Sales Transaction Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 5. SALES PAYMENTS
+-- =====================================================
+('Sales Payments Menu', 'view-sales-payments-menu',
+ 'Access the Sales Payments Menu', 'Active', NOW(), NOW()),
+
+('View Sales Payments', 'view-sales-payments',
+ 'View Sales Payment Records', 'Active', NOW(), NOW()),
+
+('Record Sales Payments', 'create-sales-payments',
+ 'Record Payments Received Against Sales', 'Active', NOW(), NOW()),
+
+('Update Sales Payments', 'update-sales-payments',
+ 'Update Sales Payment Records', 'Active', NOW(), NOW()),
+
+('Delete Sales Payments', 'delete-sales-payments',
+ 'Delete Sales Payment Records', 'Active', NOW(), NOW()),
+
+('Reverse Sales Payments', 'reverse-sales-payments',
+ 'Reverse or Void Recorded Sales Payments', 'Active', NOW(), NOW()),
+
+('View Unpaid Sales', 'view-unpaid-sales',
+ 'View Sales Transactions With Outstanding Balances', 'Active', NOW(), NOW()),
+
+('View Partially Paid Sales', 'view-partially-paid-sales',
+ 'View Sales Transactions With Partial Payments', 'Active', NOW(), NOW()),
+
+('View Paid Sales', 'view-paid-sales',
+ 'View Fully Paid Sales Transactions', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 6. STAFF MEAL SHIFTS
+-- =====================================================
+('Staff Meal Management Menu', 'view-staff-meal-management-menu',
+ 'Access Staff Meal Management', 'Active', NOW(), NOW()),
+
+('View Staff Meal Shifts', 'view-staff-meal-shifts',
+ 'View Configured Staff Meal Shifts', 'Active', NOW(), NOW()),
+
+('Manage Staff Meal Shifts', 'crud-staff-meal-shifts',
+ 'Create, Update or Delete Staff Meal Shifts', 'Active', NOW(), NOW()),
+
+('Restore Staff Meal Shifts', 'restore-staff-meal-shifts',
+ 'Restore Deleted Staff Meal Shift Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 7. STAFF MEAL RATES
+-- =====================================================
+('View Staff Meal Rates', 'view-staff-meal-rates',
+ 'View Staff Meal Prices and Effective Dates', 'Active', NOW(), NOW()),
+
+('Manage Staff Meal Rates', 'crud-staff-meal-rates',
+ 'Create, Update or Delete Staff Meal Rates', 'Active', NOW(), NOW()),
+
+('Approve Staff Meal Rates', 'approve-staff-meal-rates',
+ 'Approve Staff Meal Rates Before They Become Effective', 'Active', NOW(), NOW()),
+
+('View Staff Meal Rate History', 'view-staff-meal-rate-history',
+ 'View Historical Staff Meal Rates and Changes', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 8. STAFF MEAL SHIFT RECORDS
+-- =====================================================
+('View Staff Meal Shift Records', 'view-staff-meal-shift-records',
+ 'View Daily Staff Meal Counts Recorded Per Shift', 'Active', NOW(), NOW()),
+
+('Create Staff Meal Shift Records', 'create-staff-meal-shift-records',
+ 'Record Staff Meal Counts for Morning, Noon and Night Shifts', 'Active', NOW(), NOW()),
+
+('Update Staff Meal Shift Records', 'update-staff-meal-shift-records',
+ 'Update Existing Staff Meal Shift Counts Before Finalization', 'Active', NOW(), NOW()),
+
+('Delete Staff Meal Shift Records', 'delete-staff-meal-shift-records',
+ 'Delete Staff Meal Shift Records', 'Active', NOW(), NOW()),
+
+('Confirm Staff Meal Shift Records', 'confirm-staff-meal-shift-records',
+ 'Confirm and Finalize Staff Meal Counts for a Shift', 'Active', NOW(), NOW()),
+
+('Reopen Staff Meal Shift Records', 'reopen-staff-meal-shift-records',
+ 'Reopen Previously Confirmed Staff Meal Shift Records', 'Active', NOW(), NOW()),
+
+('Manage Staff Meal Shift Items', 'crud-staff-meal-shift-items',
+ 'Add, Update or Remove Products and Counts in Staff Meal Shifts', 'Active', NOW(), NOW()),
+
+('View Staff Meal Consumption History', 'view-staff-meal-consumption-history',
+ 'View Historical Staff Meal Counts, Prices and Totals', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 9. COMPANY CONSUMPTION
+-- =====================================================
+('Company Consumption Menu', 'view-company-consumption-menu',
+ 'Access Company-Sponsored Consumption Records', 'Active', NOW(), NOW()),
+
+('View Company Consumption', 'view-company-consumption',
+ 'View Company-Sponsored Meals, Tea, Drinks and Other Consumption', 'Active', NOW(), NOW()),
+
+('Create Company Consumption', 'create-company-consumption',
+ 'Record Company-Sponsored Meals, Tea, Drinks and Other Consumption', 'Active', NOW(), NOW()),
+
+('Update Company Consumption', 'update-company-consumption',
+ 'Update Company Consumption Records', 'Active', NOW(), NOW()),
+
+('Delete Company Consumption', 'delete-company-consumption',
+ 'Delete Company Consumption Records', 'Active', NOW(), NOW()),
+
+('Manage Company Consumption Items', 'crud-company-consumption-items',
+ 'Add, Update or Remove Products in Company Consumption Records', 'Active', NOW(), NOW()),
+
+('Approve Company Consumption', 'approve-company-consumption',
+ 'Approve Company-Sponsored Consumption Records', 'Active', NOW(), NOW()),
+
+('Restore Company Consumption', 'restore-company-consumption',
+ 'Restore Deleted Company Consumption Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 10. SALES BILLING PERIODS
+-- =====================================================
+('Sales Billing Periods Menu', 'view-sales-billing-periods-menu',
+ 'Access Sales Billing Periods', 'Active', NOW(), NOW()),
+
+('View Sales Billing Periods', 'view-sales-billing-periods',
+ 'View Weekly, Monthly and Custom Sales Billing Periods', 'Active', NOW(), NOW()),
+
+('Manage Sales Billing Periods', 'crud-sales-billing-periods',
+ 'Create, Update or Delete Sales Billing Periods', 'Active', NOW(), NOW()),
+
+('Close Sales Billing Periods', 'close-sales-billing-periods',
+ 'Close Billing Periods to Prevent Further Uncontrolled Changes', 'Active', NOW(), NOW()),
+
+('Reopen Sales Billing Periods', 'reopen-sales-billing-periods',
+ 'Reopen Previously Closed Sales Billing Periods', 'Active', NOW(), NOW()),
+
+('View Billing Period Summaries', 'view-billing-period-summaries',
+ 'View Sales and Company Consumption Totals for a Billing Period', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 11. COMPANY BILLS
+-- =====================================================
+('Company Billing Menu', 'view-sales-company-bills-menu',
+ 'Access Company Billing and Invoicing', 'Active', NOW(), NOW()),
+
+('View Company Bills', 'view-sales-company-bills',
+ 'View Company Bills and Invoices', 'Active', NOW(), NOW()),
+
+('Generate Company Bills', 'create-sales-company-bills',
+ 'Generate Bills From Sales, Staff Meals and Company Consumption', 'Active', NOW(), NOW()),
+
+('Update Company Bills', 'update-sales-company-bills',
+ 'Update Company Bills Before Finalization', 'Active', NOW(), NOW()),
+
+('Delete Company Bills', 'delete-sales-company-bills',
+ 'Delete Company Bills Where Permitted', 'Active', NOW(), NOW()),
+
+('Approve Company Bills', 'approve-sales-company-bills',
+ 'Approve Company Bills Before Issuing Them', 'Active', NOW(), NOW()),
+
+('Issue Company Bills', 'issue-sales-company-bills',
+ 'Finalize and Issue Company Bills to Customers or Departments', 'Active', NOW(), NOW()),
+
+('View Company Bill Items', 'view-sales-company-bill-items',
+ 'View Product and Consumption Details Included in Company Bills', 'Active', NOW(), NOW()),
+
+('Manage Company Bill Items', 'crud-sales-company-bill-items',
+ 'Add, Update or Remove Bill Items Before Finalization', 'Active', NOW(), NOW()),
+
+('Record Company Bill Payments', 'record-sales-company-bill-payments',
+ 'Record Payments Against Company Bills', 'Active', NOW(), NOW()),
+
+('View Outstanding Company Bills', 'view-outstanding-company-bills',
+ 'View Company Bills With Unpaid Balances', 'Active', NOW(), NOW()),
+
+('View Overdue Company Bills', 'view-overdue-company-bills',
+ 'View Company Bills Past Their Due Dates', 'Active', NOW(), NOW()),
+
+('Restore Company Bills', 'restore-sales-company-bills',
+ 'Restore Deleted Company Bill Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 12. SALES REPORTS
+-- =====================================================
+('View Daily Sales Report', 'view-daily-sales-report',
+ 'View Daily Sales Totals and Transaction Details', 'Active', NOW(), NOW()),
+
+('View Weekly Sales Report', 'view-weekly-sales-report',
+ 'View Weekly Sales Totals and Transaction Details', 'Active', NOW(), NOW()),
+
+('View Monthly Sales Report', 'view-monthly-sales-report',
+ 'View Monthly Sales Totals and Transaction Details', 'Active', NOW(), NOW()),
+
+('View Product Sales Report', 'view-product-sales-report',
+ 'View Sales Quantities and Revenue by Product', 'Active', NOW(), NOW()),
+
+('View Sales Type Report', 'view-sales-type-report',
+ 'View Sales Totals by Sales Type', 'Active', NOW(), NOW()),
+
+('View Cashier Sales Report', 'view-cashier-sales-report',
+ 'View Sales Transactions Grouped by Cashier', 'Active', NOW(), NOW()),
+
+('View Sales Payment Report', 'view-sales-payment-report',
+ 'View Sales Payments by Date and Payment Method', 'Active', NOW(), NOW()),
+
+('View Customer Sales Report', 'view-customer-sales-report',
+ 'View Sales and Outstanding Balances by Customer', 'Active', NOW(), NOW()),
+
+('View Staff Meal Report', 'view-staff-meal-report',
+ 'View Staff Meal Counts and Costs by Date and Shift', 'Active', NOW(), NOW()),
+
+('View Staff Meal Rate Report', 'view-staff-meal-rate-report',
+ 'View Staff Meal Rates and Historical Price Changes', 'Active', NOW(), NOW()),
+
+('View Company Consumption Report', 'view-company-consumption-report',
+ 'View Company-Sponsored Consumption by Product and Period', 'Active', NOW(), NOW()),
+
+('View Company Billing Report', 'view-company-billing-report',
+ 'View Company Bills, Payments and Outstanding Balances', 'Active', NOW(), NOW()),
+
+('View Sales Profit Report', 'view-sales-profit-report',
+ 'View Sales Profitability Where Cost Data Is Available', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- 13. SALES DATA RESTORATION AND AUDIT
+-- =====================================================
+('View Sales Audit Trail', 'view-sales-audit-trail',
+ 'View Audit History for Sales Records and Changes', 'Active', NOW(), NOW()),
+
+('Restore Sales Payments', 'restore-sales-payments',
+ 'Restore Deleted Sales Payment Records', 'Active', NOW(), NOW()),
+
+('Restore Staff Meal Shift Records', 'restore-staff-meal-shift-records',
+ 'Restore Deleted Staff Meal Shift Records', 'Active', NOW(), NOW()),
+
+('Restore Sales Billing Periods', 'restore-sales-billing-periods',
+ 'Restore Deleted Sales Billing Periods', 'Active', NOW(), NOW()),
+
+('Restore Company Bill Items', 'restore-sales-company-bill-items',
+ 'Restore Deleted Company Bill Item Records', 'Active', NOW(), NOW());
+
+
+ CREATE TABLE `billing_companies` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `company_code` VARCHAR(50) NOT NULL,
+    `company_name` VARCHAR(200) NOT NULL,
+    `tin_number` VARCHAR(50) NULL,
+    `vrn_number` VARCHAR(50) NULL,
+    `registration_number` VARCHAR(80) NULL,
+    `contact_person` VARCHAR(150) NULL,
+    `phone` VARCHAR(30) NULL,
+    `email` VARCHAR(150) NULL,
+    `city` VARCHAR(100) NULL,
+    `region` VARCHAR(100) NULL,
+    `country` VARCHAR(100) NOT NULL DEFAULT 'Tanzania',
+    `address` TEXT NULL,
+    `credit_limit` DECIMAL(15,2) NOT NULL DEFAULT 0.00,
+    `payment_terms_days` INT UNSIGNED NOT NULL DEFAULT 0,
+    `Status` VARCHAR(20) NOT NULL DEFAULT 'Active',
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `created_at` TIMESTAMP NULL DEFAULT NULL,
+    `updated_at` TIMESTAMP NULL DEFAULT NULL,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `billing_companies_company_code_unique` (`company_code`),
+    KEY `billing_companies_company_name_index` (`company_name`),
+    KEY `billing_companies_Status_index` (`Status`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+ALTER TABLE `sales_customers`
+    DROP FOREIGN KEY `fk_sales_customers_billing_company`;
+
+ALTER TABLE `sales_customers`
+    ADD CONSTRAINT `sales_customers_billing_company_id_foreign`
+    FOREIGN KEY (`billing_company_id`)
+    REFERENCES `billing_companies` (`id`)
+    ON DELETE SET NULL
+    ON UPDATE RESTRICT;
+
+
+ALTER TABLE `branchies`
+
+-- BANK INFORMATION
+ADD COLUMN `bank_name` VARCHAR(150) NULL AFTER `email`,
+ADD COLUMN `bank_branch` VARCHAR(150) NULL AFTER `bank_name`,
+ADD COLUMN `bank_account_name` VARCHAR(200) NULL AFTER `bank_branch`,
+ADD COLUMN `bank_account_number` VARCHAR(100) NULL AFTER `bank_account_name`,
+ADD COLUMN `bank_swift_code` VARCHAR(50) NULL AFTER `bank_account_number`,
+
+-- MOBILE MONEY INFORMATION
+ADD COLUMN `mobile_money_provider` VARCHAR(100) NULL AFTER `bank_swift_code`,
+ADD COLUMN `mobile_money_number` VARCHAR(30) NULL AFTER `mobile_money_provider`,
+ADD COLUMN `mobile_money_account_name` VARCHAR(200) NULL AFTER `mobile_money_number`,
+
+-- PAYMENT SETTINGS
+ADD COLUMN `default_payment_method` VARCHAR(50) NULL DEFAULT 'CASH' AFTER `mobile_money_account_name`,
+ADD COLUMN `default_currency` VARCHAR(10) NOT NULL DEFAULT 'TZS' AFTER `default_payment_method`,
+ADD COLUMN `payment_reference_prefix` VARCHAR(50) NULL AFTER `default_currency`,
+
+-- FINANCE CONTACT INFORMATION
+ADD COLUMN `finance_contact_person` VARCHAR(150) NULL AFTER `payment_reference_prefix`,
+ADD COLUMN `finance_phone` VARCHAR(30) NULL AFTER `finance_contact_person`,
+ADD COLUMN `finance_email` VARCHAR(150) NULL AFTER `finance_phone`,
+
+-- TAX INFORMATION
+ADD COLUMN `tin_number` VARCHAR(50) NULL AFTER `finance_email`,
+ADD COLUMN `vrn_number` VARCHAR(50) NULL AFTER `tin_number`;
+
+
+ALTER TABLE `companies`
+
+-- BANK INFORMATION
+ADD COLUMN `bank_name` VARCHAR(150) NULL AFTER `email`,
+ADD COLUMN `bank_branch` VARCHAR(150) NULL AFTER `bank_name`,
+ADD COLUMN `bank_account_name` VARCHAR(200) NULL AFTER `bank_branch`,
+ADD COLUMN `bank_account_number` VARCHAR(100) NULL AFTER `bank_account_name`,
+ADD COLUMN `bank_swift_code` VARCHAR(50) NULL AFTER `bank_account_number`,
+
+-- MOBILE MONEY INFORMATION
+ADD COLUMN `mobile_money_provider` VARCHAR(100) NULL AFTER `bank_swift_code`,
+ADD COLUMN `mobile_money_number` VARCHAR(30) NULL AFTER `mobile_money_provider`,
+ADD COLUMN `mobile_money_account_name` VARCHAR(200) NULL AFTER `mobile_money_number`,
+
+-- PAYMENT SETTINGS
+ADD COLUMN `default_payment_method` VARCHAR(50) NULL DEFAULT 'CASH' AFTER `mobile_money_account_name`,
+ADD COLUMN `default_currency` VARCHAR(10) NOT NULL DEFAULT 'TZS' AFTER `default_payment_method`,
+ADD COLUMN `payment_reference_prefix` VARCHAR(50) NULL AFTER `default_currency`,
+
+-- FINANCE CONTACT INFORMATION
+ADD COLUMN `finance_contact_person` VARCHAR(150) NULL AFTER `payment_reference_prefix`,
+ADD COLUMN `finance_phone` VARCHAR(30) NULL AFTER `finance_contact_person`,
+ADD COLUMN `finance_email` VARCHAR(150) NULL AFTER `finance_phone`,
+
+-- TAX INFORMATION
+ADD COLUMN `tin_number` VARCHAR(50) NULL AFTER `finance_email`,
+ADD COLUMN `vrn_number` VARCHAR(50) NULL AFTER `tin_number`;
+
+
+
+CREATE TABLE `committees` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `committee_code` VARCHAR(50) NOT NULL,
+    `committee_name` VARCHAR(200) NOT NULL,
+    `description` TEXT NULL,
+
+    `chairman_user_id` BIGINT UNSIGNED NULL,
+    `secretary_user_id` BIGINT UNSIGNED NULL,
+
+    `start_date` DATE NULL,
+    `end_date` DATE NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    UNIQUE KEY `uq_committee_code`
+        (`company_id`, `branch_id`, `committee_code`),
+
+    KEY `idx_committees_chairman` (`chairman_user_id`),
+    KEY `idx_committees_secretary` (`secretary_user_id`),
+
+    CONSTRAINT `fk_committees_chairman`
+        FOREIGN KEY (`chairman_user_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committees_secretary`
+        FOREIGN KEY (`secretary_user_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committees_company`
+        FOREIGN KEY (`company_id`)
+        REFERENCES `companies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committees_branch`
+        FOREIGN KEY (`branch_id`)
+        REFERENCES `branchies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committees_user`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `committee_positions` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `position_code` VARCHAR(50) NOT NULL,
+    `position_name` VARCHAR(150) NOT NULL,
+    `description` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    UNIQUE KEY `uq_committee_position_code`
+        (`company_id`, `branch_id`, `position_code`),
+
+    CONSTRAINT `fk_committee_positions_company`
+        FOREIGN KEY (`company_id`)
+        REFERENCES `companies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_positions_branch`
+        FOREIGN KEY (`branch_id`)
+        REFERENCES `branchies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_positions_user`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `committee_members` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `committee_id` BIGINT UNSIGNED NOT NULL,
+    `member_id` BIGINT UNSIGNED NOT NULL,
+    `committee_position_id` BIGINT UNSIGNED NOT NULL,
+
+    `appointment_date` DATE NULL,
+    `end_date` DATE NULL,
+    `membership_status` VARCHAR(50) NOT NULL DEFAULT 'Active',
+    `appointment_notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    UNIQUE KEY `uq_committee_member`
+        (`committee_id`, `member_id`),
+
+    KEY `idx_committee_members_position`
+        (`committee_position_id`),
+
+    KEY `idx_committee_members_status`
+        (`membership_status`),
+
+    CONSTRAINT `fk_committee_members_committee`
+        FOREIGN KEY (`committee_id`)
+        REFERENCES `committees` (`id`) ON DELETE RESTRICT,
+
+    CONSTRAINT `fk_committee_members_user`
+        FOREIGN KEY (`member_id`)
+        REFERENCES `members` (`id`) ON DELETE RESTRICT,
+
+    CONSTRAINT `fk_committee_members_position`
+        FOREIGN KEY (`committee_position_id`)
+        REFERENCES `committee_positions` (`id`) ON DELETE RESTRICT,
+
+    CONSTRAINT `fk_committee_members_company`
+        FOREIGN KEY (`company_id`)
+        REFERENCES `companies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_members_branch`
+        FOREIGN KEY (`branch_id`)
+        REFERENCES `branchies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_members_user_audit`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE `committee_member_responsibilities` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `committee_member_id` BIGINT UNSIGNED NOT NULL,
+    `responsibility_title` VARCHAR(200) NOT NULL,
+    `responsibility_description` TEXT NULL,
+
+    `start_date` DATE NULL,
+    `end_date` DATE NULL,
+    `is_primary` TINYINT(1) NOT NULL DEFAULT 0,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+
+    KEY `idx_committee_responsibility_member`
+        (`committee_member_id`),
+
+    CONSTRAINT `fk_committee_responsibilities_member`
+        FOREIGN KEY (`committee_member_id`)
+        REFERENCES `committee_members` (`id`) ON DELETE RESTRICT,
+
+    CONSTRAINT `fk_committee_responsibilities_company`
+        FOREIGN KEY (`company_id`)
+        REFERENCES `companies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_responsibilities_branch`
+        FOREIGN KEY (`branch_id`)
+        REFERENCES `branchies` (`id`) ON DELETE SET NULL,
+
+    CONSTRAINT `fk_committee_responsibilities_user`
+        FOREIGN KEY (`User_id`)
+        REFERENCES `users` (`id`) ON DELETE SET NULL
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 1. SERVICE CATEGORIES
+-- =========================================================
+
+CREATE TABLE `service_categories` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `category_code` VARCHAR(50) NOT NULL,
+    `category_name` VARCHAR(200) NOT NULL,
+    `description` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_service_category_code`
+        (`company_id`, `branch_id`, `category_code`),
+
+    CONSTRAINT `fk_service_categories_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_categories_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_categories_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 2. SERVICE CATALOG
+-- =========================================================
+
+CREATE TABLE `service_catalog` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `service_category_id` BIGINT UNSIGNED NOT NULL,
+    `service_code` VARCHAR(50) NOT NULL,
+    `service_name` VARCHAR(200) NOT NULL,
+    `description` TEXT NULL,
+
+    `default_unit` VARCHAR(50) NULL,
+    `default_unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `requires_product` TINYINT(1) NOT NULL DEFAULT 0,
+    `requires_attachment` TINYINT(1) NOT NULL DEFAULT 0,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uq_service_catalog_code`
+        (`company_id`, `branch_id`, `service_code`),
+    KEY `idx_service_catalog_category` (`service_category_id`),
+
+    CONSTRAINT `fk_service_catalog_category`
+        FOREIGN KEY (`service_category_id`)
+        REFERENCES `service_categories` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_catalog_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_catalog_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_catalog_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 3. SERVICE REQUESTS
+-- =========================================================
+
+CREATE TABLE `service_requests` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `request_no` VARCHAR(100) NOT NULL UNIQUE,
+    `request_date` DATE NOT NULL,
+    `required_date` DATE NULL,
+
+    `requester_id` BIGINT UNSIGNED NOT NULL,
+    `committee_name` VARCHAR(200) NULL,
+    `committee_chairman_id` BIGINT UNSIGNED NULL,
+
+    `request_title` VARCHAR(200) NOT NULL,
+    `purpose` TEXT NOT NULL,
+    `beneficiary_name` VARCHAR(200) NULL,
+    `priority` VARCHAR(30) NOT NULL DEFAULT 'Normal',
+
+    `estimated_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `requested_currency` VARCHAR(10) NOT NULL DEFAULT 'TZS',
+
+    -- Overall requisition workflow
+    `request_status` VARCHAR(50) NOT NULL DEFAULT 'Draft',
+
+    -- Requesting Committee Chairman approval
+    `committee_chairman_approval_status`
+        VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `committee_chairman_approved_by` BIGINT UNSIGNED NULL,
+    `committee_chairman_approved_at` TIMESTAMP NULL DEFAULT NULL,
+    `committee_chairman_approval_comment` TEXT NULL,
+
+    -- Group Chairman approval
+    `group_chairman_approval_status`
+        VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `group_chairman_approved_by` BIGINT UNSIGNED NULL,
+    `group_chairman_approved_at` TIMESTAMP NULL DEFAULT NULL,
+    `group_chairman_approval_comment` TEXT NULL,
+
+    -- Money processing summary on the request
+    `money_status` VARCHAR(50) NOT NULL DEFAULT 'NOT_REQUESTED',
+    `money_requested_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `money_approved_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `money_processed_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+
+    `completed_at` TIMESTAMP NULL DEFAULT NULL,
+    `cancellation_reason` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_request_date` (`request_date`),
+    KEY `idx_service_request_status` (`request_status`),
+    KEY `idx_service_request_money_status` (`money_status`),
+    KEY `idx_service_request_requester` (`requester_id`),
+
+    CONSTRAINT `fk_service_requests_requester`
+        FOREIGN KEY (`requester_id`) REFERENCES `users` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_requests_committee_chairman`
+        FOREIGN KEY (`committee_chairman_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_requests_committee_approver`
+        FOREIGN KEY (`committee_chairman_approved_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_requests_group_approver`
+        FOREIGN KEY (`group_chairman_approved_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_requests_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_requests_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_requests_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+ALTER TABLE `service_requests`
+    ADD COLUMN `committee_id` BIGINT UNSIGNED NULL
+        AFTER `requester_id`,
+    ADD INDEX `idx_service_requests_committee` (`committee_id`),
+    ADD CONSTRAINT `fk_service_requests_committee`
+        FOREIGN KEY (`committee_id`)
+        REFERENCES `committees` (`id`)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE;
+
+
+-- =========================================================
+-- 4. SERVICE REQUEST ITEMS
+-- =========================================================
+
+CREATE TABLE `service_request_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `service_request_id` BIGINT UNSIGNED NOT NULL,
+    `service_catalog_id` BIGINT UNSIGNED NULL,
+    `product_id` BIGINT UNSIGNED NULL,
+
+    `item_type` VARCHAR(30) NOT NULL DEFAULT 'SERVICE',
+    `item_description` VARCHAR(255) NOT NULL,
+
+    `quantity` DECIMAL(18,3) NOT NULL DEFAULT 1.000,
+    `unit_of_measure` VARCHAR(50) NULL,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `discount_amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `line_total` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_request_items_request` (`service_request_id`),
+    KEY `idx_service_request_items_product` (`product_id`),
+
+    CONSTRAINT `fk_service_request_items_request`
+        FOREIGN KEY (`service_request_id`)
+        REFERENCES `service_requests` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_request_items_catalog`
+        FOREIGN KEY (`service_catalog_id`)
+        REFERENCES `service_catalog` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_request_items_product`
+        FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_request_items_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_request_items_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_request_items_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 5. SERVICE REQUEST ATTACHMENTS
+-- =========================================================
+
+CREATE TABLE `service_request_attachments` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `service_request_id` BIGINT UNSIGNED NOT NULL,
+    `attachment_type` VARCHAR(100) NOT NULL,
+    `file_name` VARCHAR(255) NOT NULL,
+    `file_path` VARCHAR(500) NOT NULL,
+    `mime_type` VARCHAR(150) NULL,
+    `file_size` BIGINT UNSIGNED NULL,
+    `description` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_attachments_request` (`service_request_id`),
+
+    CONSTRAINT `fk_service_attachments_request`
+        FOREIGN KEY (`service_request_id`)
+        REFERENCES `service_requests` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_attachments_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_attachments_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_attachments_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 6. SERVICE MONEY REQUESTS
+-- =========================================================
+
+CREATE TABLE `service_money_requests` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `money_request_no` VARCHAR(100) NOT NULL UNIQUE,
+    `service_request_id` BIGINT UNSIGNED NOT NULL,
+
+    `money_request_date` DATE NOT NULL,
+    `payee_name` VARCHAR(200) NOT NULL,
+    `payment_purpose` TEXT NOT NULL,
+
+    `amount_requested` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `amount_approved` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `amount_processed` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `currency_code` VARCHAR(10) NOT NULL DEFAULT 'TZS',
+
+    -- Cashier prepares the money request
+    `prepared_by` BIGINT UNSIGNED NULL,
+    `prepared_at` TIMESTAMP NULL DEFAULT NULL,
+    `cashier_comment` TEXT NULL,
+
+    -- Finance Committee Chairman approval
+    `finance_chairman_approval_status`
+        VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `finance_chairman_approved_by` BIGINT UNSIGNED NULL,
+    `finance_chairman_approved_at` TIMESTAMP NULL DEFAULT NULL,
+    `finance_chairman_approval_comment` TEXT NULL,
+
+    -- Final Group Chairman approval
+    `group_chairman_approval_status`
+        VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `group_chairman_approved_by` BIGINT UNSIGNED NULL,
+    `group_chairman_approved_at` TIMESTAMP NULL DEFAULT NULL,
+    `group_chairman_approval_comment` TEXT NULL,
+
+    -- Money processing and cash-out status
+    `money_status` VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `payment_method` VARCHAR(50) NULL,
+    `payment_reference` VARCHAR(150) NULL,
+    `processed_by` BIGINT UNSIGNED NULL,
+    `processed_at` TIMESTAMP NULL DEFAULT NULL,
+
+    -- Financial posting status
+    `financial_posting_status` VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `financial_posted_by` BIGINT UNSIGNED NULL,
+    `financial_posted_at` TIMESTAMP NULL DEFAULT NULL,
+    `financial_transaction_reference` VARCHAR(150) NULL,
+
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_money_request_service` (`service_request_id`),
+    KEY `idx_service_money_status` (`money_status`),
+    KEY `idx_service_money_posting_status` (`financial_posting_status`),
+
+    CONSTRAINT `fk_service_money_requests_service`
+        FOREIGN KEY (`service_request_id`)
+        REFERENCES `service_requests` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_money_requests_prepared_by`
+        FOREIGN KEY (`prepared_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_finance_approver`
+        FOREIGN KEY (`finance_chairman_approved_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_group_approver`
+        FOREIGN KEY (`group_chairman_approved_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_processor`
+        FOREIGN KEY (`processed_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_posted_by`
+        FOREIGN KEY (`financial_posted_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_money_requests_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 7. SERVICE VOUCHERS
+-- =========================================================
+
+CREATE TABLE `service_vouchers` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `voucher_no` VARCHAR(100) NOT NULL UNIQUE,
+    `service_request_id` BIGINT UNSIGNED NOT NULL,
+    `service_money_request_id` BIGINT UNSIGNED NOT NULL,
+
+    `voucher_type` VARCHAR(50) NOT NULL DEFAULT 'PAYMENT',
+    `voucher_date` DATE NOT NULL,
+    `payee_name` VARCHAR(200) NOT NULL,
+    `description` TEXT NULL,
+
+    `voucher_amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `currency_code` VARCHAR(10) NOT NULL DEFAULT 'TZS',
+
+    `voucher_status` VARCHAR(50) NOT NULL DEFAULT 'Draft',
+    `prepared_by` BIGINT UNSIGNED NULL,
+    `approved_by` BIGINT UNSIGNED NULL,
+    `approved_at` TIMESTAMP NULL DEFAULT NULL,
+
+    `financial_posting_status` VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    `financial_transaction_reference` VARCHAR(150) NULL,
+    `posted_by` BIGINT UNSIGNED NULL,
+    `posted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_vouchers_request` (`service_request_id`),
+    KEY `idx_service_vouchers_money_request` (`service_money_request_id`),
+
+    CONSTRAINT `fk_service_vouchers_request`
+        FOREIGN KEY (`service_request_id`)
+        REFERENCES `service_requests` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_vouchers_money_request`
+        FOREIGN KEY (`service_money_request_id`)
+        REFERENCES `service_money_requests` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_vouchers_prepared_by`
+        FOREIGN KEY (`prepared_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_vouchers_approved_by`
+        FOREIGN KEY (`approved_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_vouchers_posted_by`
+        FOREIGN KEY (`posted_by`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_vouchers_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_vouchers_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_vouchers_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- =========================================================
+-- 8. SERVICE VOUCHER ITEMS
+-- =========================================================
+
+CREATE TABLE `service_voucher_items` (
+    `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `ReferenceNo` VARCHAR(100) NOT NULL UNIQUE,
+
+    `service_voucher_id` BIGINT UNSIGNED NOT NULL,
+    `service_request_item_id` BIGINT UNSIGNED NULL,
+    `product_id` BIGINT UNSIGNED NULL,
+
+    `description` VARCHAR(255) NOT NULL,
+    `quantity` DECIMAL(18,3) NOT NULL DEFAULT 1.000,
+    `unit_price` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+    `amount` DECIMAL(18,2) NOT NULL DEFAULT 0.00,
+
+    -- Link to your accounting chart when its exact table/key is confirmed.
+    `debit_account_id` BIGINT UNSIGNED NULL,
+    `credit_account_id` BIGINT UNSIGNED NULL,
+
+    `notes` TEXT NULL,
+
+    `company_id` BIGINT UNSIGNED NULL,
+    `branch_id` BIGINT UNSIGNED NULL,
+    `User_id` BIGINT UNSIGNED NULL,
+
+    `Status` VARCHAR(50) DEFAULT 'Active',
+    `AuditingStatus` VARCHAR(50) DEFAULT 'Pending',
+    `ReportStatus` VARCHAR(50) DEFAULT 'Pending',
+
+    `created_by` BIGINT UNSIGNED NULL,
+    `updated_by` BIGINT UNSIGNED NULL,
+    `deleted_by` BIGINT UNSIGNED NULL,
+
+    `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+    `deleted_at` TIMESTAMP NULL DEFAULT NULL,
+
+    PRIMARY KEY (`id`),
+    KEY `idx_service_voucher_items_voucher` (`service_voucher_id`),
+    KEY `idx_service_voucher_items_request_item` (`service_request_item_id`),
+    KEY `idx_service_voucher_items_product` (`product_id`),
+
+    CONSTRAINT `fk_service_voucher_items_voucher`
+        FOREIGN KEY (`service_voucher_id`)
+        REFERENCES `service_vouchers` (`id`)
+        ON DELETE RESTRICT,
+    CONSTRAINT `fk_service_voucher_items_request_item`
+        FOREIGN KEY (`service_request_item_id`)
+        REFERENCES `service_request_items` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_voucher_items_product`
+        FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_voucher_items_company`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_voucher_items_branch`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL,
+    CONSTRAINT `fk_service_voucher_items_user`
+        FOREIGN KEY (`User_id`) REFERENCES `users` (`id`)
+        ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+INSERT INTO `permissions`
+    (`name`, `slug`, `description`, `Status`, `created_at`, `updated_at`)
+VALUES
+
+-- =====================================================
+-- COMMITTEES
+-- =====================================================
+('Committees Menu', 'view-committees-menu', 'Committees Menu', 'Active', NOW(), NOW()),
+('View Committees', 'view-committees', 'View Committee Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Committees', 'crud-committees', 'Create, Update or Delete Committee Records', 'Active', NOW(), NOW()),
+('Restore Committees', 'restore-committees', 'Restore Deleted Committee Records', 'Active', NOW(), NOW()),
+('View Committees Reports', 'view-committees-report', 'View Committee Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- COMMITTEE POSITIONS
+-- =====================================================
+('Committee Positions Menu', 'view-committee-positions-menu', 'Committee Positions Menu', 'Active', NOW(), NOW()),
+('View Committee Positions', 'view-committee-positions', 'View Committee Position Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Committee Positions', 'crud-committee-positions', 'Create, Update or Delete Committee Position Records', 'Active', NOW(), NOW()),
+('Restore Committee Positions', 'restore-committee-positions', 'Restore Deleted Committee Position Records', 'Active', NOW(), NOW()),
+('View Committee Positions Reports', 'view-committee-positions-report', 'View Committee Position Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- COMMITTEE MEMBERS
+-- =====================================================
+('Committee Members Menu', 'view-committee-members-menu', 'Committee Members Menu', 'Active', NOW(), NOW()),
+('View Committee Members', 'view-committee-members', 'View Committee Member Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Committee Members', 'crud-committee-members', 'Create, Update or Delete Committee Member Records', 'Active', NOW(), NOW()),
+('Restore Committee Members', 'restore-committee-members', 'Restore Deleted Committee Member Records', 'Active', NOW(), NOW()),
+('View Committee Members Reports', 'view-committee-members-report', 'View Committee Member Reports', 'Active', NOW(), NOW()),
+('Appoint Committee Members', 'appoint-committee-members', 'Appoint Members to Committees', 'Active', NOW(), NOW()),
+('Remove Committee Members', 'remove-committee-members', 'Remove or End Committee Member Appointments', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- COMMITTEE MEMBER RESPONSIBILITIES
+-- =====================================================
+('Committee Responsibilities Menu', 'view-committee-member-responsibilities-menu', 'Committee Member Responsibilities Menu', 'Active', NOW(), NOW()),
+('View Committee Responsibilities', 'view-committee-member-responsibilities', 'View Committee Member Responsibilities', 'Active', NOW(), NOW()),
+('Create, Update, Delete Committee Responsibilities', 'crud-committee-member-responsibilities', 'Create, Update or Delete Committee Member Responsibilities', 'Active', NOW(), NOW()),
+('Restore Committee Responsibilities', 'restore-committee-member-responsibilities', 'Restore Deleted Committee Member Responsibilities', 'Active', NOW(), NOW()),
+('View Committee Responsibilities Reports', 'view-committee-member-responsibilities-report', 'View Committee Member Responsibility Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE REQUESTS
+-- =====================================================
+('Service Requests Menu', 'view-service-requests-menu', 'Service Requests Menu', 'Active', NOW(), NOW()),
+('View Service Requests', 'view-service-requests', 'View Service Request Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Service Requests', 'crud-service-requests', 'Create, Update or Delete Service Request Records', 'Active', NOW(), NOW()),
+('Submit Service Requests', 'submit-service-requests', 'Submit Draft Service Requests for Approval', 'Active', NOW(), NOW()),
+('Cancel Service Requests', 'cancel-service-requests', 'Cancel Service Requests', 'Active', NOW(), NOW()),
+('Approve Committee Service Requests', 'approve-committee-service-requests', 'Approve or Reject Service Requests at Committee Chairman Stage', 'Active', NOW(), NOW()),
+('Approve Group Service Requests', 'approve-group-service-requests', 'Approve or Reject Service Requests at Group Chairman Stage', 'Active', NOW(), NOW()),
+('Restore Service Requests', 'restore-service-requests', 'Restore Deleted Service Request Records', 'Active', NOW(), NOW()),
+('View Service Request Reports', 'view-service-requests-report', 'View Service Request Reports', 'Active', NOW(), NOW()),
+('Export Service Request Reports', 'export-service-requests-report', 'Export Service Request Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE CATEGORIES
+-- =====================================================
+('Service Categories Menu', 'view-service-categories-menu', 'Service Categories Menu', 'Active', NOW(), NOW()),
+('View Service Categories', 'view-service-categories', 'View Service Category Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Service Categories', 'crud-service-categories', 'Create, Update or Delete Service Category Records', 'Active', NOW(), NOW()),
+('Restore Service Categories', 'restore-service-categories', 'Restore Deleted Service Categories', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE CATALOG
+-- =====================================================
+('Service Catalog Menu', 'view-service-catalog-menu', 'Service Catalog Menu', 'Active', NOW(), NOW()),
+('View Service Catalog', 'view-service-catalog', 'View Available Services Catalog', 'Active', NOW(), NOW()),
+('Create, Update, Delete Service Catalog', 'crud-service-catalog', 'Create, Update or Delete Service Catalog Records', 'Active', NOW(), NOW()),
+('Restore Service Catalog', 'restore-service-catalog', 'Restore Deleted Service Catalog Records', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE REQUEST ITEMS
+-- =====================================================
+('View Service Request Items', 'view-service-request-items', 'View Items and Services Within Service Requests', 'Active', NOW(), NOW()),
+('Manage Service Request Items', 'crud-service-request-items', 'Add, Update or Remove Items and Services Within Service Requests', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE MONEY REQUESTS
+-- =====================================================
+('Service Money Requests Menu', 'view-service-money-requests-menu', 'Service Money Requests Menu', 'Active', NOW(), NOW()),
+('View Service Money Requests', 'view-service-money-requests', 'View Service Money Request Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Service Money Requests', 'crud-service-money-requests', 'Create, Update or Delete Service Money Request Records', 'Active', NOW(), NOW()),
+('Submit Service Money Requests', 'submit-service-money-requests', 'Submit Service Money Requests for Approval', 'Active', NOW(), NOW()),
+('Approve Finance Committee Money Requests', 'approve-finance-committee-money-requests', 'Approve or Reject Service Money Requests at Finance Committee Chairman Stage', 'Active', NOW(), NOW()),
+('Approve Group Chairman Money Requests', 'approve-group-chairman-money-requests', 'Approve or Reject Service Money Requests at Group Chairman Stage', 'Active', NOW(), NOW()),
+('Process Service Money Requests', 'process-service-money-requests', 'Process Approved Service Money Requests and Record Disbursements', 'Active', NOW(), NOW()),
+('Restore Service Money Requests', 'restore-service-money-requests', 'Restore Deleted Service Money Request Records', 'Active', NOW(), NOW()),
+('View Service Money Request Reports', 'view-service-money-requests-report', 'View Service Money Request Reports', 'Active', NOW(), NOW()),
+('Export Service Money Request Reports', 'export-service-money-requests-report', 'Export Service Money Request Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE VOUCHERS
+-- =====================================================
+('Service Vouchers Menu', 'view-service-vouchers-menu', 'Service Vouchers Menu', 'Active', NOW(), NOW()),
+('View Service Vouchers', 'view-service-vouchers', 'View Service Voucher Records', 'Active', NOW(), NOW()),
+('Create, Update, Delete Service Vouchers', 'crud-service-vouchers', 'Create, Update or Delete Service Voucher Records', 'Active', NOW(), NOW()),
+('Approve Service Vouchers', 'approve-service-vouchers', 'Approve Service Vouchers', 'Active', NOW(), NOW()),
+('Post Service Vouchers', 'post-service-vouchers', 'Post Service Vouchers to Financial Records', 'Active', NOW(), NOW()),
+('Restore Service Vouchers', 'restore-service-vouchers', 'Restore Deleted Service Voucher Records', 'Active', NOW(), NOW()),
+('View Service Voucher Reports', 'view-service-vouchers-report', 'View Service Voucher Reports', 'Active', NOW(), NOW()),
+('Export Service Voucher Reports', 'export-service-vouchers-report', 'Export Service Voucher Reports', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE VOUCHER ITEMS
+-- =====================================================
+('View Service Voucher Items', 'view-service-voucher-items', 'View Service Voucher Item Details', 'Active', NOW(), NOW()),
+('Manage Service Voucher Items', 'crud-service-voucher-items', 'Create, Update or Delete Service Voucher Item Details', 'Active', NOW(), NOW()),
+
+-- =====================================================
+-- SERVICE REQUEST ATTACHMENTS
+-- =====================================================
+('View Service Request Attachments', 'view-service-request-attachments', 'View Service Request Attachments', 'Active', NOW(), NOW()),
+('Manage Service Request Attachments', 'crud-service-request-attachments', 'Upload, Update or Delete Service Request Attachments', 'Active', NOW(), NOW());
+
+ALTER TABLE `service_requests`
+ADD COLUMN `service_category_id` BIGINT UNSIGNED NULL
+AFTER `committee_id`;
+
+ALTER TABLE `service_requests`
+ADD CONSTRAINT `fk_service_requests_service_category`
+FOREIGN KEY (`service_category_id`)
+REFERENCES `service_categories` (`id`)
+ON DELETE SET NULL
+ON UPDATE CASCADE;
+
+ALTER TABLE expense_items
+ADD COLUMN product_id BIGINT UNSIGNED NULL AFTER expense_id,
+ADD CONSTRAINT fk_expense_items_product 
+    FOREIGN KEY (product_id) REFERENCES products(id) 
+    ON DELETE SET NULL;
+
+-- 1. Add columns to expenses table
+ALTER TABLE expenses
+ADD COLUMN company_id BIGINT UNSIGNED NULL AFTER attachment,
+ADD COLUMN branch_id BIGINT UNSIGNED NULL AFTER company_id,
+ADD CONSTRAINT fk_expenses_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
+ADD CONSTRAINT fk_expenses_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL;
+
+
+-- 2. Add columns to expense_items table
+ALTER TABLE expense_items
+ADD COLUMN company_id BIGINT UNSIGNED NULL AFTER attachment,
+ADD COLUMN branch_id BIGINT UNSIGNED NULL AFTER company_id,
+ADD COLUMN User_id BIGINT UNSIGNED NULL AFTER branch_id,
+ADD CONSTRAINT fk_expense_items_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
+ADD CONSTRAINT fk_expense_items_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL,
+ADD CONSTRAINT fk_expense_items_user FOREIGN KEY (User_id) REFERENCES users(id) ON DELETE SET NULL;
+
+-- 3. Add columns to expense_payments table
+ALTER TABLE expense_payments
+ADD COLUMN company_id BIGINT UNSIGNED NULL AFTER id,
+ADD COLUMN branch_id BIGINT UNSIGNED NULL AFTER company_id,
+ADD CONSTRAINT fk_expense_payments_company FOREIGN KEY (company_id) REFERENCES companies(id) ON DELETE SET NULL,
+ADD CONSTRAINT fk_expense_payments_branch FOREIGN KEY (branch_id) REFERENCES branchies(id) ON DELETE SET NULL;
+
+
+ALTER TABLE `expense_categories`
+    ADD COLUMN `company_id` BIGINT UNSIGNED NULL AFTER `id`,
+    ADD COLUMN `branch_id` BIGINT UNSIGNED NULL AFTER `company_id`;
+
+ALTER TABLE `expense_categories`
+    ADD CONSTRAINT `expense_categories_company_id_foreign`
+        FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`)
+        ON DELETE SET NULL,
+    ADD CONSTRAINT `expense_categories_branch_id_foreign`
+        FOREIGN KEY (`branch_id`) REFERENCES `branchies` (`id`)
+        ON DELETE SET NULL;

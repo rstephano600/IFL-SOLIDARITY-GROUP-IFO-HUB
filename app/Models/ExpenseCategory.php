@@ -16,6 +16,8 @@ class ExpenseCategory extends Model
         'name',
         'description',
 
+        'company_id',
+        'branch_id',
         'User_id',
         'created_by',
         'updated_by',
@@ -49,4 +51,16 @@ class ExpenseCategory extends Model
     {
         return $this->belongsTo(User::class, 'updated_by');
     }
+
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
+    }
+
 }

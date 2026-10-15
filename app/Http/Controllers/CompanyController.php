@@ -54,10 +54,35 @@ class CompanyController extends Controller
             'phone' => 'nullable|string|max:30',
             'email' => 'nullable|email|max:150',
             'established_date' => 'nullable|date',
+
+            // Bank information
+            'bank_name' => 'nullable|string|max:150',
+            'bank_branch' => 'nullable|string|max:150',
+            'bank_account_name' => 'nullable|string|max:200',
+            'bank_account_number' => 'nullable|string|max:100',
+            'bank_swift_code' => 'nullable|string|max:50',
+
+            // Mobile money information
+            'mobile_money_provider' => 'nullable|string|max:100',
+            'mobile_money_number' => 'nullable|string|max:30',
+            'mobile_money_account_name' => 'nullable|string|max:200',
+
+            // Payment settings
+            'default_payment_method' => 'nullable|string|max:50',
+            'default_currency' => 'nullable|string|max:10',
+            'payment_reference_prefix' => 'nullable|string|max:50',
+
+            // Finance contacts
+            'finance_contact_person' => 'nullable|string|max:150',
+            'finance_phone' => 'nullable|string|max:30',
+            'finance_email' => 'nullable|email|max:150',
+
+            // Tax information
+            'tin_number' => 'nullable|string|max:50',
+            'vrn_number' => 'nullable|string|max:50',
         ]);
 
         try {
-
             Company::create([
                 'company_code' => $request->company_code,
                 'company_name' => $request->company_name,
@@ -72,6 +97,33 @@ class CompanyController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'established_date' => $request->established_date,
+
+                // Bank information
+                'bank_name' => $request->bank_name,
+                'bank_branch' => $request->bank_branch,
+                'bank_account_name' => $request->bank_account_name,
+                'bank_account_number' => $request->bank_account_number,
+                'bank_swift_code' => $request->bank_swift_code,
+
+                // Mobile money information
+                'mobile_money_provider' => $request->mobile_money_provider,
+                'mobile_money_number' => $request->mobile_money_number,
+                'mobile_money_account_name' => $request->mobile_money_account_name,
+
+                // Payment settings
+                'default_payment_method' => $request->default_payment_method ?? 'CASH',
+                'default_currency' => $request->default_currency ?? 'TZS',
+                'payment_reference_prefix' => $request->payment_reference_prefix,
+
+                // Finance contacts
+                'finance_contact_person' => $request->finance_contact_person,
+                'finance_phone' => $request->finance_phone,
+                'finance_email' => $request->finance_email,
+
+                // Tax information
+                'tin_number' => $request->tin_number,
+                'vrn_number' => $request->vrn_number,
+
                 'User_id' => auth()->id(),
                 'Status' => 'Active',
                 'AuditingStatus' => 'Pending',
@@ -80,21 +132,27 @@ class CompanyController extends Controller
             ]);
 
             Alert::success(
-                'Success ' . auth()->user()->name, 'Operation completed successfully.'
+                'Success ' . auth()->user()->name,
+                'Company registered successfully.'
             );
+
             return redirect()->back();
+
         } catch (\Throwable $th) {
-            \Log::error('Error', [
-                'user_id'   => Auth::id(), 'user_name' => auth()->user()->name, 'method'    => __METHOD__, 'message'   => $th->getMessage(), 'file'      => $th->getFile(), 'line'      => $th->getLine(), 'trace'     => $th->getTraceAsString(),
+            \Log::error('Company registration error', [
+                'user_id' => Auth::id(),
+                'user_name' => auth()->user()->name,
+                'method' => __METHOD__,
+                'message' => $th->getMessage(),
+                'file' => $th->getFile(),
+                'line' => $th->getLine(),
             ]);
+
             Alert::error(
-                'Sorry! ' . auth()->user()->name,
-                'Technical error exists, please contact Technical Support. Error: Tel: +255657856790.'
+                'Registration Failed',
+                'Unable to register company. Please contact Technical Support.'
             );
-            // Alert::error(
-            //     'Sorry! ' . auth()->user()->name,
-            //     'Technical error exists, please contact Technical Support. Error: ' . $th->getMessage()
-            // );
+
             return back()->withInput();
         }
     }
@@ -176,9 +234,11 @@ class CompanyController extends Controller
             return back()->withInput();
         }
     }
+
     public function updatecompaniesinformations(Request $request, $id)
     {
         $id = Crypt::decrypt($id);
+
         $request->validate([
             'company_code' => 'required|string|max:30|unique:companies,company_code,' . $id,
             'company_name' => 'required|string|max:200',
@@ -193,10 +253,35 @@ class CompanyController extends Controller
             'phone' => 'nullable|string|max:30',
             'email' => 'nullable|email|max:150',
             'established_date' => 'nullable|date',
+
+            // Bank information
+            'bank_name' => 'nullable|string|max:150',
+            'bank_branch' => 'nullable|string|max:150',
+            'bank_account_name' => 'nullable|string|max:200',
+            'bank_account_number' => 'nullable|string|max:100',
+            'bank_swift_code' => 'nullable|string|max:50',
+
+            // Mobile money information
+            'mobile_money_provider' => 'nullable|string|max:100',
+            'mobile_money_number' => 'nullable|string|max:30',
+            'mobile_money_account_name' => 'nullable|string|max:200',
+
+            // Payment settings
+            'default_payment_method' => 'nullable|string|max:50',
+            'default_currency' => 'nullable|string|max:10',
+            'payment_reference_prefix' => 'nullable|string|max:50',
+
+            // Finance contacts
+            'finance_contact_person' => 'nullable|string|max:150',
+            'finance_phone' => 'nullable|string|max:30',
+            'finance_email' => 'nullable|email|max:150',
+
+            // Tax information
+            'tin_number' => 'nullable|string|max:50',
+            'vrn_number' => 'nullable|string|max:50',
         ]);
 
-        try {
-
+        // try {
             $company = Company::findOrFail($id);
 
             $company->update([
@@ -213,21 +298,62 @@ class CompanyController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'established_date' => $request->established_date,
+
+                // Bank information
+                'bank_name' => $request->bank_name,
+                'bank_branch' => $request->bank_branch,
+                'bank_account_name' => $request->bank_account_name,
+                'bank_account_number' => $request->bank_account_number,
+                'bank_swift_code' => $request->bank_swift_code,
+
+                // Mobile money information
+                'mobile_money_provider' => $request->mobile_money_provider,
+                'mobile_money_number' => $request->mobile_money_number,
+                'mobile_money_account_name' => $request->mobile_money_account_name,
+
+                // Payment settings
+                'default_payment_method' => $request->default_payment_method ?? 'CASH',
+                'default_currency' => $request->default_currency ?? 'TZS',
+                'payment_reference_prefix' => $request->payment_reference_prefix,
+
+                // Finance contacts
+                'finance_contact_person' => $request->finance_contact_person,
+                'finance_phone' => $request->finance_phone,
+                'finance_email' => $request->finance_email,
+
+                // Tax information
+                'tin_number' => $request->tin_number,
+                'vrn_number' => $request->vrn_number,
+
                 'updated_by' => auth()->id(),
             ]);
 
-            Alert::success('Success', 'Company updated successfully.');
+            Alert::success(
+                'Success',
+                'Company updated successfully.'
+            );
 
             return redirect()->back();
 
-        } catch (\Exception $e) {
+        // } catch (\Throwable $th) {
+        //     \Log::error('Company update error', [
+        //         'user_id' => Auth::id(),
+        //         'user_name' => auth()->user()->name,
+        //         'method' => __METHOD__,
+        //         'message' => $th->getMessage(),
+        //         'file' => $th->getFile(),
+        //         'line' => $th->getLine(),
+        //     ]);
 
-            Alert::error('Error', $e->getMessage());
+        //     Alert::error(
+        //         'Update Failed',
+        //         'Unable to update company. Please contact Technical Support.'
+        //     );
 
-            return redirect()->back()->withInput();
-
-        }
+        //     return back()->withInput();
+        // }
     }
+
     public function deletecompaniesinformations($id)
     {
         try {
@@ -321,6 +447,33 @@ class CompanyController extends Controller
                 'phone' => 'nullable|max:30',
                 'email' => 'nullable|email|max:150',
                 'established_date' => 'nullable|date',
+
+                
+                // Bank information
+                'bank_name' => 'nullable|string|max:150',
+                'bank_branch' => 'nullable|string|max:150',
+                'bank_account_name' => 'nullable|string|max:200',
+                'bank_account_number' => 'nullable|string|max:100',
+                'bank_swift_code' => 'nullable|string|max:50',
+
+                // Mobile money information
+                'mobile_money_provider' => 'nullable|string|max:100',
+                'mobile_money_number' => 'nullable|string|max:30',
+                'mobile_money_account_name' => 'nullable|string|max:200',
+
+                // Payment settings
+                'default_payment_method' => 'nullable|string|max:50',
+                'default_currency' => 'nullable|string|max:10',
+                'payment_reference_prefix' => 'nullable|string|max:50',
+
+                // Finance contacts
+                'finance_contact_person' => 'nullable|string|max:150',
+                'finance_phone' => 'nullable|string|max:30',
+                'finance_email' => 'nullable|email|max:150',
+
+                // Tax information
+                'tin_number' => 'nullable|string|max:50',
+                'vrn_number' => 'nullable|string|max:50',
             ]);
 
             Branch::create([
@@ -336,6 +489,33 @@ class CompanyController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'established_date' => $request->established_date,
+                
+                // Bank information
+                'bank_name' => $request->bank_name,
+                'bank_branch' => $request->bank_branch,
+                'bank_account_name' => $request->bank_account_name,
+                'bank_account_number' => $request->bank_account_number,
+                'bank_swift_code' => $request->bank_swift_code,
+
+                // Mobile money information
+                'mobile_money_provider' => $request->mobile_money_provider,
+                'mobile_money_number' => $request->mobile_money_number,
+                'mobile_money_account_name' => $request->mobile_money_account_name,
+
+                // Payment settings
+                'default_payment_method' => $request->default_payment_method ?? 'CASH',
+                'default_currency' => $request->default_currency ?? 'TZS',
+                'payment_reference_prefix' => $request->payment_reference_prefix,
+
+                // Finance contacts
+                'finance_contact_person' => $request->finance_contact_person,
+                'finance_phone' => $request->finance_phone,
+                'finance_email' => $request->finance_email,
+
+                // Tax information
+                'tin_number' => $request->tin_number,
+                'vrn_number' => $request->vrn_number,
+
                 'User_id' => auth()->id(),
                 'Status' => 'Active',
                 'AuditingStatus' => 'Pending',
@@ -438,6 +618,33 @@ class CompanyController extends Controller
                 'phone' => 'nullable|max:30',
                 'email' => 'nullable|email|max:150',
                 'established_date' => 'nullable|date',
+
+                    
+                // Bank information
+                'bank_name' => 'nullable|string|max:150',
+                'bank_branch' => 'nullable|string|max:150',
+                'bank_account_name' => 'nullable|string|max:200',
+                'bank_account_number' => 'nullable|string|max:100',
+                'bank_swift_code' => 'nullable|string|max:50',
+
+                // Mobile money information
+                'mobile_money_provider' => 'nullable|string|max:100',
+                'mobile_money_number' => 'nullable|string|max:30',
+                'mobile_money_account_name' => 'nullable|string|max:200',
+
+                // Payment settings
+                'default_payment_method' => 'nullable|string|max:50',
+                'default_currency' => 'nullable|string|max:10',
+                'payment_reference_prefix' => 'nullable|string|max:50',
+
+                // Finance contacts
+                'finance_contact_person' => 'nullable|string|max:150',
+                'finance_phone' => 'nullable|string|max:30',
+                'finance_email' => 'nullable|email|max:150',
+
+                // Tax information
+                'tin_number' => 'nullable|string|max:50',
+                'vrn_number' => 'nullable|string|max:50',
             ]);
 
             $branch = Branch::findOrFail($id);
@@ -455,6 +662,33 @@ class CompanyController extends Controller
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'established_date' => $request->established_date,
+                
+                // Bank information
+                'bank_name' => $request->bank_name,
+                'bank_branch' => $request->bank_branch,
+                'bank_account_name' => $request->bank_account_name,
+                'bank_account_number' => $request->bank_account_number,
+                'bank_swift_code' => $request->bank_swift_code,
+
+                // Mobile money information
+                'mobile_money_provider' => $request->mobile_money_provider,
+                'mobile_money_number' => $request->mobile_money_number,
+                'mobile_money_account_name' => $request->mobile_money_account_name,
+
+                // Payment settings
+                'default_payment_method' => $request->default_payment_method ?? 'CASH',
+                'default_currency' => $request->default_currency ?? 'TZS',
+                'payment_reference_prefix' => $request->payment_reference_prefix,
+
+                // Finance contacts
+                'finance_contact_person' => $request->finance_contact_person,
+                'finance_phone' => $request->finance_phone,
+                'finance_email' => $request->finance_email,
+
+                // Tax information
+                'tin_number' => $request->tin_number,
+                'vrn_number' => $request->vrn_number,
+
                 'updated_by' => auth()->id(),
             ]);
 

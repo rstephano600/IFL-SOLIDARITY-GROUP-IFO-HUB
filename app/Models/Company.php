@@ -24,6 +24,32 @@ class Company extends Model
         'village',
         'phone',
         'email',
+        
+        // Bank information
+        'bank_name',
+        'bank_branch',
+        'bank_account_name',
+        'bank_account_number',
+        'bank_swift_code',
+
+        // Mobile money information
+        'mobile_money_provider',
+        'mobile_money_number',
+        'mobile_money_account_name',
+
+        // Payment settings
+        'default_payment_method',
+        'default_currency',
+        'payment_reference_prefix',
+
+        // Finance contacts
+        'finance_contact_person',
+        'finance_phone',
+        'finance_email',
+
+        // Tax information
+        'tin_number',
+        'vrn_number',
         'established_date',
         'User_id',
         'Status',

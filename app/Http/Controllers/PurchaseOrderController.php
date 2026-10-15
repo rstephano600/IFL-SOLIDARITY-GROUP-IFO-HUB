@@ -1011,7 +1011,7 @@ class PurchaseOrderController extends Controller
     {
         $year = date('Y');
 
-        $lastGRN = GoodsReceipt::where('receipt_no', 'like', 'IFLSG/GRN/' . $year . '-%')
+        $lastGRN = GoodsReceipt::where('receipt_no', 'like', 'IFLSG/GRN/' . $year . '/%')
             ->orderByDesc('id')
             ->first();
 

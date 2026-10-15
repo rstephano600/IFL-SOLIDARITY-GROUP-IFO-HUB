@@ -244,7 +244,32 @@
             </div>
         </div>
         @endcan
+        {{-- ── Sales Menu ── --}}
+        @can('view-sales-invoices-menu')
+        <div class="nav-item">
+            <a href="#salesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-cash-register me-2"></i>
+                <span>Sales Menu</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+            <div class="collapse" id="salesSubmenu">
+                <div class="ps-4 mt-2">
 
+                    @can('view-sales-invoices')
+                    <a href="{{ route('salesType') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-file-invoice-dollar me-2"></i> <span>Sales Types</span>
+                    </a>
+                    <a href="{{ route('deletedsalesType') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-trash me-2"></i> <span>Deleted Sales Types</span>
+                    </a>
+                    <a href="{{ route('staffMealShift') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-dollar me-2"></i> <span>staff Meal Shifts</span>
+                    </a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
         {{-- ============ PRODUCTS ============ --}}
 
         @can('view-products-menu')
@@ -297,7 +322,25 @@
             </div>
         </div>
         @endcan
-
+                {{-- ── Expenses Menu ── --}}
+        @can('view-expenses-menu')
+        <div class="nav-item">
+            <a href="#expensesSubmenu" class="nav-link" data-bs-toggle="collapse" role="button">
+                <i class="fas fa-receipt me-2"></i>
+                <span>Expenses Menu</span>
+                <i class="fas fa-chevron-down ms-auto transition-toggle"></i>
+            </a>
+            <div class="collapse" id="expensesSubmenu">
+                <div class="ps-4 mt-2">
+                    @can('view-expense-categories')
+                    <a href="{{ route('expensecategoryinformations') }}" class="nav-link d-flex align-items-center">
+                        <i class="fas fa-tags me-2"></i> <span>Expense Categories</span>
+                    </a>
+                    @endcan
+                </div>
+            </div>
+        </div>
+        @endcan
         {{-- ============ SYSTEM ADMINISTRATION ============ --}}
 
         @can('view-system-users-menu')

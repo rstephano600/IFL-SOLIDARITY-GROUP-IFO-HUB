@@ -157,7 +157,7 @@ class SalaryController extends Controller
         DB::beginTransaction();
 
         // try {
-            $batchCode = 'IFLSG-PAY-' . $month . '-' . strtoupper(Str::random(8));
+            $batchCode = 'IFLSG/PAY/' . $month . '/' . strtoupper(Str::random(8));
 
             $batch = new PayrollBatch();
             $batch->BatchCode    = $batchCode;

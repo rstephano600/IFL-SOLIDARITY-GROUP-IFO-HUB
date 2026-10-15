@@ -53,6 +53,13 @@
         font-weight: 600;
         margin-left: 15px;
     }
+    .permission-checkbox {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+        vertical-align: middle;
+    }
+
 </style>
 
 <div class="arbif-page-header">
@@ -113,8 +120,9 @@
                     <thead>
                         <tr>
 
-                            <th style="width:60px;text-align:center;">
-                                <input type="checkbox" id="selectAllHeader">
+
+                            <th style="width:100px; min-width:100px; text-align:center; vertical-align:middle;">
+                            <input type="checkbox" style="width: 24px; height: 24px; cursor: pointer;" id="selectAllHeader">
                             </th>
 
                             <th class="sortable">

@@ -30,7 +30,8 @@ class Expense extends Model
         'payment_method',
         'reference_number',
         'descriptions',
-
+        'company_id',
+        'branch_id',
         'created_by',
         'updated_by',
         'User_id',
@@ -116,5 +117,14 @@ class Expense extends Model
             ExpensePayment::class,
             'expense_id'
         );
+    }
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class, 'branch_id');
     }
 }

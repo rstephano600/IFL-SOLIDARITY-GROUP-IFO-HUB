@@ -135,7 +135,7 @@ class EmployeeController extends Controller
                 'Dob'         => $validated['Dob'],
                 'email'       => $validated['email'],
                 'phone'       => $validated['phone'],
-                'password'    => Hash::make('Sila123456'),
+                'password'    => Hash::make('IFLSG@123456'),
                 'Role'        => $validated['Role'],
                 'User_id'     => auth()->id(),
             ]);
@@ -231,7 +231,7 @@ class EmployeeController extends Controller
     {
         try {
             $employee    = Employee::with('user')->findOrFail(decrypt($id));
-            $branchies   = Branch::all();
+            $branchies = Branch::where('Status', 'Active')->get();
             $roles       = User::getRoles();
             $supervisors = Employee::where('Status', 'Active')
                                 ->where('id', '!=', $employee->id)
